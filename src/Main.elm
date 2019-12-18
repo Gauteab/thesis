@@ -1,12 +1,13 @@
 module Main exposing (..)
 
 import Browser
-import Element exposing (Element, alignRight, centerY, column, el, fill, padding, paddingXY, rgb255, row, spacing, text, width)
+import Element exposing (Element, alignRight, alignTop, centerY, column, el, fill, padding, paddingXY, rgb255, row, spacing, text, width)
 import Element.Background as Background exposing (color)
 import Element.Border as Border
-import Element.Font as Font
+import Element.Font as Font exposing (Font)
 import Html exposing (Html, div, h1, img)
 import Html.Attributes exposing (src)
+import List.Extra as List
 
 
 
@@ -41,7 +42,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    Element.layout []
+    Element.layout [ Font.family [ Font.monospace ], paddingXY 5 5 ]
         (renderExpression model)
 
 
@@ -61,11 +62,15 @@ main =
 
 example : Expression
 example =
-    Case (Character 'a') [ ( Character 'b', Character 'c' ) ]
+    Case (String "abc") [ ( Character 'a', List [ Integer 1, Integer 2, Case (String "xyz") [ ( Character 'b', List [ Integer 2, Character 'c' ] ) ] ] ) ]
 
 
 renderExpression : Expression -> Element msg
 renderExpression expression =
+    let
+        indent =
+            paddingXY 25 0
+    in
     case expression of
         Character char ->
             text <| "'" ++ String.fromChar char ++ "'"
@@ -75,16 +80,47 @@ renderExpression expression =
                 renderBranch ( pattern, expr ) =
                     column []
                         [ row [] [ renderExpression pattern, text " -> " ]
-                        , el [ paddingXY 20 0 ] (renderExpression expr)
+                        , el [ indent ] (renderExpression expr)
                         ]
             in
             column []
                 [ row [] [ text "case", el [ paddingXY 5 0 ] <| renderExpression e, text "of" ]
-                , row [ paddingXY 20 0 ] <| List.map renderBranch patterns
+                , row [ indent ] <| List.map renderBranch patterns
                 ]
+
+        String s ->
+            text <| "\"" ++ s ++ "\""
+
+        Integer int ->
+            text <| String.fromInt int
+
+        Float float ->
+            text <| String.fromFloat float
+
+        List [] ->
+            text "[]"
+
+        List (x :: xs) ->
+            column [] <|
+                row [] [ text "[", renderExpression x ]
+                    :: List.map (\e -> row [] [ el [ alignTop ] (text ","), renderExpression e ]) xs
+                    ++ [ text "]" ]
 
         _ ->
             Debug.todo ""
+
+
+
+{-
+   x =
+       case "abc" of
+           'a' ->
+               [ 1
+               , case "xyz" of
+                   'b' ->
+                       [ 2, 'c' ]
+               ]
+-}
 
 
 type Expression
