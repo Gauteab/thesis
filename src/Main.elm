@@ -42,7 +42,10 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    Element.layout [ Font.family [ Font.monospace ], paddingXY 5 5 ]
+    Element.layout
+        [ Font.family [ Font.monospace ]
+        , paddingXY 5 5
+        ]
         (renderExpression model)
 
 
@@ -65,11 +68,31 @@ example =
     Case (String "abc") [ ( Character 'a', List [ Integer 1, Integer 2, Case (String "xyz") [ ( Character 'b', List [ Integer 2, Character 'c' ] ) ] ] ) ]
 
 
+multiline : Expression -> Bool
+multiline expression =
+    case expression of
+        Case _ _ ->
+            True
+
+        List xs ->
+            List.any multiline xs
+
+        _ ->
+            False
+
+
 renderExpression : Expression -> Element msg
 renderExpression expression =
     let
         indent =
             paddingXY 25 0
+
+        codeElement e =
+            if multiline e then
+                column
+
+            else
+                row
     in
     case expression of
         Character char ->
@@ -101,7 +124,7 @@ renderExpression expression =
             text "[]"
 
         List (x :: xs) ->
-            column [] <|
+            codeElement expression [] <|
                 row [] [ text "[", renderExpression x ]
                     :: List.map (\e -> row [] [ el [ alignTop ] (text ","), renderExpression e ]) xs
                     ++ [ text "]" ]
