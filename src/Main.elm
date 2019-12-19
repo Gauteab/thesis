@@ -46,7 +46,7 @@ view model =
         [ Font.family [ Font.monospace ]
         , paddingXY 5 5
         ]
-        (renderExpression model)
+        (renderExpression [ "case", "list", "int" ] model)
 
 
 
@@ -65,34 +65,71 @@ main =
 
 example : Expression
 example =
-    Case (String "abc") [ ( Character 'a', List [ Integer 1, Integer 2, Case (String "xyz") [ ( Character 'b', List [ Integer 2, Character 'c' ] ) ] ] ) ]
+    Case (String "abc") [ ( Character 'a', List [ Integer 1, Integer 2, Case (String "xyz") [ ( Character 'b', List [ Integer 2, Character 'c' ] ) ] ] ), ( Integer 1, Integer 2 ) ]
 
 
-multiline : Expression -> Bool
-multiline expression =
+elementInfo : String -> Expression -> { name : String, multiline : Bool }
+elementInfo query expression =
     case expression of
         Case _ _ ->
-            True
+            { name = "case", multiline = True }
 
         List xs ->
-            List.any multiline xs
+            { name = "list", multiline = List.any (elementInfo query >> .multiline) xs }
+
+        Integer it ->
+            { name = "int", multiline = False }
 
         _ ->
-            False
+            { name = "", multiline = False }
 
 
-renderExpression : Expression -> Element msg
-renderExpression expression =
+queryMatch : String -> String -> Bool
+queryMatch query goal =
+    query == goal
+
+
+type alias Query =
+    List String
+
+
+renderExpression : Query -> Expression -> Element msg
+renderExpression query expression =
     let
+        ( q1, rest ) =
+            List.uncons query |> Maybe.withDefault ( "", [] )
+
+        { name, multiline } =
+            elementInfo q1 expression
+
+        ( newQuery, highlight ) =
+            case ( queryMatch q1 name, List.isEmpty rest ) of
+                ( True, True ) ->
+                    ( [], True )
+
+                ( True, False ) ->
+                    ( rest, False )
+
+                _ ->
+                    ( query, False )
+
         indent =
             paddingXY 25 0
 
         codeElement e =
-            if multiline e then
-                column
+            let
+                style =
+                    if highlight then
+                        [ Background.color (rgb255 0 0 255) ]
+
+                    else
+                        []
+            in
+            if multiline then
+                column style
 
             else
-                row
+                row style
     in
     case expression of
         Character char ->
@@ -102,20 +139,20 @@ renderExpression expression =
             let
                 renderBranch ( pattern, expr ) =
                     column []
-                        [ row [] [ renderExpression pattern, text " -> " ]
-                        , el [ indent ] (renderExpression expr)
+                        [ row [] [ renderExpression newQuery pattern, text " -> " ]
+                        , el [ indent ] (renderExpression newQuery expr)
                         ]
             in
-            column []
-                [ row [] [ text "case", el [ paddingXY 5 0 ] <| renderExpression e, text "of" ]
-                , row [ indent ] <| List.map renderBranch patterns
+            codeElement expression
+                [ row [] [ text "case", el [ paddingXY 5 0 ] <| renderExpression newQuery e, text "of" ]
+                , column [ indent ] <| List.map renderBranch patterns
                 ]
 
         String s ->
             text <| "\"" ++ s ++ "\""
 
         Integer int ->
-            text <| String.fromInt int
+            codeElement expression <| [ text (String.fromInt int) ]
 
         Float float ->
             text <| String.fromFloat float
@@ -124,9 +161,9 @@ renderExpression expression =
             text "[]"
 
         List (x :: xs) ->
-            codeElement expression [] <|
-                row [] [ text "[", renderExpression x ]
-                    :: List.map (\e -> row [] [ el [ alignTop ] (text ","), renderExpression e ]) xs
+            codeElement expression <|
+                row [] [ text "[", renderExpression newQuery x ]
+                    :: List.map (\e -> row [] [ el [ alignTop ] (text ","), renderExpression newQuery e ]) xs
                     ++ [ text "]" ]
 
         _ ->
