@@ -8,6 +8,7 @@ import Element.Font as Font exposing (Font)
 import Html exposing (Html, div, h1, img)
 import Html.Attributes exposing (src)
 import List.Extra as List
+import Tuple.Extra as Tuple
 
 
 
@@ -46,7 +47,7 @@ view model =
         [ Font.family [ Font.monospace ]
         , paddingXY 5 5
         ]
-        (renderConcept model)
+        (renderConcept (runQuery [] [ "list", "int" ] model) model)
 
 
 
@@ -72,20 +73,20 @@ example2 =
     case_ 0 (string 1 "abc") [ ( string 2 "a", list 7 [ int 3 1, int 4 2, case_ 5 (string 6 "xyz") [ ( string 8 "b", list 9 [ int 10 2 ] ) ] ] ), ( int 11 1, int 12 2 ) ]
 
 
-elementInfo : String -> Expression -> { name : String, multiline : Bool }
-elementInfo query expression =
-    case expression of
-        Case _ _ ->
-            { name = "case", multiline = True }
+isMultiline : ConceptNode -> Bool
+isMultiline conceptNode =
+    case conceptNode.concept of
+        IntC _ ->
+            False
 
-        List xs ->
-            { name = "list", multiline = List.any (elementInfo query >> .multiline) xs }
+        StringC _ ->
+            False
 
-        Integer it ->
-            { name = "int", multiline = False }
+        CaseC _ _ ->
+            True
 
-        _ ->
-            { name = "", multiline = False }
+        ListC xs ->
+            List.any isMultiline xs
 
 
 queryMatch : String -> String -> Bool
@@ -118,16 +119,22 @@ runQuery found query conceptNode =
                 _ ->
                     ( query, found )
     in
-    Debug.todo ""
+    case conceptNode.concept of
+        CaseC e es ->
+            runQuery newFound newQuery e
+                ++ List.concat (List.concatMap ((\( x, y ) -> [ x, y ]) << Tuple.map (runQuery newFound newQuery)) es)
+
+        ListC xs ->
+            List.concatMap (runQuery newFound newQuery) xs
+
+        _ ->
+            newFound
 
 
-codeElement2 =
+codeElement multiline highlight =
     let
-        ( multiline, highlight ) =
-            ( True, False )
-
         style =
-            [ Background.color (rgb255 0 0 255) ]
+            [ Background.color (rgb255 55 210 185) ]
     in
     case ( multiline, highlight ) of
         ( False, False ) ->
@@ -143,126 +150,40 @@ codeElement2 =
             column style
 
 
-renderConcept : ConceptNode -> Element msg
-renderConcept conceptNode =
+renderConcept : List Id -> ConceptNode -> Element msg
+renderConcept hits conceptNode =
+    let
+        cEl =
+            codeElement (isMultiline conceptNode) (List.member conceptNode.id hits)
+    in
     case conceptNode.concept of
         IntC x ->
-            codeElement2 [ text (String.fromInt x) ]
+            cEl [ text (String.fromInt x) ]
 
         StringC s ->
-            codeElement2 [ text <| "\"" ++ s ++ "\"" ]
+            cEl [ text <| "\"" ++ s ++ "\"" ]
 
         CaseC e es ->
             let
                 renderBranch ( pattern, expr ) =
                     column []
-                        [ row [] [ renderConcept pattern, text " -> " ]
-                        , el [ paddingXY 25 0 ] (renderConcept expr)
+                        [ row [] [ renderConcept hits pattern, text " -> " ]
+                        , el [ paddingXY 25 0 ] (renderConcept hits expr)
                         ]
             in
-            codeElement2
-                [ row [] [ text "case", el [ paddingXY 5 0 ] <| renderConcept e, text "of" ]
+            cEl
+                [ row [] [ text "case", el [ paddingXY 5 0 ] <| renderConcept hits e, text "of" ]
                 , column [ paddingXY 25 0 ] <| List.map renderBranch es
                 ]
 
         ListC [] ->
-            codeElement2 []
+            cEl []
 
         ListC (x :: xs) ->
-            codeElement2 <|
-                row [] [ text "[", renderConcept x ]
-                    :: List.map (\e -> row [] [ el [ alignTop ] (text ","), renderConcept e ]) xs
+            cEl <|
+                row [] [ text "[", renderConcept hits x ]
+                    :: List.map (\e -> row [] [ el [ alignTop ] (text ","), renderConcept hits e ]) xs
                     ++ [ text "]" ]
-
-
-renderExpression : Query -> Expression -> Element msg
-renderExpression query expression =
-    let
-        ( q1, rest ) =
-            List.uncons query |> Maybe.withDefault ( "", [] )
-
-        { name, multiline } =
-            elementInfo q1 expression
-
-        ( newQuery, highlight ) =
-            case ( queryMatch q1 name, List.isEmpty rest ) of
-                ( True, True ) ->
-                    ( [], True )
-
-                ( True, False ) ->
-                    ( rest, False )
-
-                _ ->
-                    ( query, False )
-
-        indent =
-            paddingXY 25 0
-
-        codeElement_ e =
-            let
-                style =
-                    if highlight then
-                        [ Background.color (rgb255 0 0 255) ]
-
-                    else
-                        []
-            in
-            if multiline then
-                column style
-
-            else
-                row style
-    in
-    case expression of
-        Character char ->
-            text <| "'" ++ String.fromChar char ++ "'"
-
-        Case e patterns ->
-            let
-                renderBranch ( pattern, expr ) =
-                    column []
-                        [ row [] [ renderExpression newQuery pattern, text " -> " ]
-                        , el [ indent ] (renderExpression newQuery expr)
-                        ]
-            in
-            codeElement_ expression
-                [ row [] [ text "case", el [ paddingXY 5 0 ] <| renderExpression newQuery e, text "of" ]
-                , column [ indent ] <| List.map renderBranch patterns
-                ]
-
-        String s ->
-            text <| "\"" ++ s ++ "\""
-
-        Integer x ->
-            codeElement_ expression <| [ text (String.fromInt x) ]
-
-        Float float ->
-            text <| String.fromFloat float
-
-        List [] ->
-            text "[]"
-
-        List (x :: xs) ->
-            codeElement_ expression <|
-                row [] [ text "[", renderExpression newQuery x ]
-                    :: List.map (\e -> row [] [ el [ alignTop ] (text ","), renderExpression newQuery e ]) xs
-                    ++ [ text "]" ]
-
-        _ ->
-            Debug.todo ""
-
-
-
-{-
-   x =
-       case "abc" of
-           'a' ->
-               [ 1
-               , case "xyz" of
-                   'b' ->
-                       [ 2, 'c' ]
-               ]
--}
 
 
 type alias ConceptNode =
