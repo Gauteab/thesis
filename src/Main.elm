@@ -230,10 +230,10 @@ expressionToConceptNode : Int -> Expression -> ( Int, ConceptNode )
 expressionToConceptNode count expression =
     case expression of
         String s ->
-            ( count + 1, { name = "string", id = count, concept = Leaf s } )
+            ( count + 1, ConceptNode "string" count <| Leaf s )
 
         Integer x ->
-            ( count + 1, { name = "int", id = count, concept = Leaf (String.fromInt x) } )
+            ( count + 1, ConceptNode "int" count <| Leaf (String.fromInt x) )
 
         List xs ->
             let
@@ -247,7 +247,7 @@ expressionToConceptNode count expression =
                 ( newCount_, cs ) =
                     List.foldl f ( count + 1, [] ) xs
             in
-            ( newCount_, { name = "list", id = count, concept = Node (List.reverse cs) } )
+            ( newCount_, ConceptNode "list" count <| Node (List.reverse cs) )
 
         Case e patterns ->
             let
@@ -259,7 +259,7 @@ expressionToConceptNode count expression =
                         ( count2, concept2 ) =
                             expressionToConceptNode count1 b
                     in
-                    ( count2, { name = "branch", id = currentCount, concept = Node [ concept1, concept2 ] } :: currentConcepts )
+                    ( count2, (ConceptNode "branch" currentCount <| Node [ concept1, concept2 ]) :: currentConcepts )
 
                 ( newCount, c ) =
                     expressionToConceptNode (count + 1) e
@@ -267,10 +267,10 @@ expressionToConceptNode count expression =
                 ( newCount2, cs ) =
                     List.foldl toBranch ( newCount, [] ) patterns
             in
-            ( newCount2, { name = "case", id = count, concept = Node (c :: List.reverse cs) } )
+            ( newCount2, ConceptNode "case" count <| Node (c :: List.reverse cs) )
 
         _ ->
-            Debug.todo ""
+            Debug.todo "Unhandled expression in expressionToConceptNode"
 
 
 main : Program () Model Msg
