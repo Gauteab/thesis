@@ -1,14 +1,11 @@
 module Main exposing (..)
 
 import Browser
-import Element exposing (Element, alignRight, alignTop, centerY, column, el, fill, padding, paddingXY, rgb255, row, spacing, text, width)
-import Element.Background as Background exposing (color)
-import Element.Border as Border
+import Element exposing (Element, alignTop, column, el, paddingXY, rgb255, row, text)
+import Element.Background as Background
 import Element.Font as Font exposing (Font)
-import Html exposing (Html, div, h1, img)
-import Html.Attributes exposing (src)
+import Html exposing (Html)
 import List.Extra as List
-import Tuple.Extra as Tuple
 
 
 
@@ -19,9 +16,77 @@ type alias Model =
     ConceptNode
 
 
+exampleQuery =
+    [ "branch"
+    , "int"
+    ]
+
+
+example =
+    List
+        [ Integer 1
+        , Case (String "avc")
+            [ ( String "a"
+              , List
+                    [ Integer 2
+                    , Integer 3
+                    , Case (String "xyz")
+                        [ ( String "b"
+                          , List [ Integer 4, String "c" ]
+                          )
+                        ]
+                    ]
+              )
+            , ( Integer 5, Integer 6 )
+            ]
+        ]
+        |> expressionToConceptNode 0
+
+
 init : ( Model, Cmd Msg )
 init =
-    ( example2, Cmd.none )
+    ( Tuple.second example, Cmd.none )
+
+
+type alias Query =
+    List String
+
+
+type alias Id =
+    Int
+
+
+type alias ConceptNode =
+    { name : String
+    , id : Id
+    , concept : Concept
+    }
+
+
+type Concept
+    = Hole
+    | Leaf String
+    | Node (List ConceptNode)
+
+
+type Expression
+    = Character Char
+    | String String
+    | Integer Int
+    | Float Float
+    | Variable (List String)
+    | List (List Expression)
+    | Tuple (List Expression)
+    | Access Expression (List String)
+    | AccessFunction String
+    | Record (List ( String, Expression ))
+    | RecordUpdate String (List ( String, Expression ))
+    | If Expression Expression Expression
+    | Let (List ( Expression, Expression )) Expression
+    | Case Expression (List ( Expression, Expression ))
+    | Lambda (List Expression) Expression
+    | Application Expression Expression
+    | BinOp Expression Expression Expression
 
 
 
@@ -47,88 +112,65 @@ view model =
         [ Font.family [ Font.monospace ]
         , paddingXY 5 5
         ]
-        (renderConcept (runQuery [] [ "list", "int" ] model) model)
+    <|
+        column
+            []
+            [ renderConcept (runQuery [] exampleQuery model) model
+            ]
 
 
+renderConcept : List Id -> ConceptNode -> Element msg
+renderConcept hits conceptNode =
+    let
+        cEl =
+            codeElement (isMultiline conceptNode) (List.member conceptNode.id hits)
+    in
+    row [] <|
+        [ --el [ alignTop ] <| text (String.fromInt conceptNode.id ++ ": ")
+          case ( conceptNode.name, conceptNode.concept ) of
+            ( "int", Leaf x ) ->
+                cEl [ text x ]
 
----- PROGRAM ----
+            ( "string", Leaf x ) ->
+                cEl [ text <| "\"" ++ x ++ "\"" ]
 
+            ( "case", Node (e :: es) ) ->
+                cEl
+                    [ row [] [ text "case", el [ paddingXY 5 0 ] <| renderConcept hits e, text "of" ]
+                    , column [ paddingXY 25 0 ] <| List.map (renderConcept hits) es
+                    ]
 
-main : Program () Model Msg
-main =
-    Browser.element
-        { view = view
-        , init = \_ -> init
-        , update = update
-        , subscriptions = always Sub.none
-        }
+            ( "list", Node [] ) ->
+                cEl []
 
+            ( "list", Node (e :: es) ) ->
+                cEl <|
+                    row [] [ text "[", renderConcept hits e ]
+                        :: List.map (\it -> row [] [ el [ alignTop ] (text ","), renderConcept hits it ]) es
+                        ++ [ text "]" ]
 
-example : Expression
-example =
-    Case (String "abc") [ ( Character 'a', List [ Integer 1, Integer 2, Case (String "xyz") [ ( Character 'b', List [ Integer 2, Character 'c' ] ) ] ] ), ( Integer 1, Integer 2 ) ]
+            ( "branch", Node [ pattern, expr ] ) ->
+                column []
+                    [ row [] [ renderConcept hits pattern, text " -> " ]
+                    , el [ paddingXY 25 0 ] (renderConcept hits expr)
+                    ]
 
-
-example2 =
-    case_ 0 (string 1 "abc") [ ( string 2 "a", list 7 [ int 3 1, int 4 2, case_ 5 (string 6 "xyz") [ ( string 8 "b", list 9 [ int 10 2 ] ) ] ] ), ( int 11 1, int 12 2 ) ]
+            _ ->
+                Debug.todo "render concept"
+        ]
 
 
 isMultiline : ConceptNode -> Bool
-isMultiline conceptNode =
-    case conceptNode.concept of
-        IntC _ ->
-            False
-
-        StringC _ ->
-            False
-
-        CaseC _ _ ->
+isMultiline conceptNode2 =
+    case ( conceptNode2.concept, conceptNode2.name ) of
+        ( Node _, "case" ) ->
             True
 
-        ListC xs ->
-            List.any isMultiline xs
-
-
-queryMatch : String -> String -> Bool
-queryMatch query goal =
-    query == goal
-
-
-type alias Query =
-    List String
-
-
-type alias Id =
-    Int
-
-
-runQuery : List Id -> Query -> ConceptNode -> List Id
-runQuery found query conceptNode =
-    let
-        ( queryHead, queryTail ) =
-            List.uncons query |> Maybe.withDefault ( "", [] )
-
-        ( newQuery, newFound ) =
-            case ( queryMatch queryHead conceptNode.name, List.isEmpty queryTail ) of
-                ( True, True ) ->
-                    ( [], conceptNode.id :: found )
-
-                ( True, False ) ->
-                    ( queryTail, found )
-
-                _ ->
-                    ( query, found )
-    in
-    case conceptNode.concept of
-        CaseC e es ->
-            runQuery newFound newQuery e
-                ++ List.concat (List.concatMap ((\( x, y ) -> [ x, y ]) << Tuple.map (runQuery newFound newQuery)) es)
-
-        ListC xs ->
-            List.concatMap (runQuery newFound newQuery) xs
+        ( Node list, "list" ) ->
+            List.any isMultiline list
 
         _ ->
-            newFound
+            False
 
 
 codeElement multiline highlight =
@@ -150,95 +192,92 @@ codeElement multiline highlight =
             column style
 
 
-renderConcept : List Id -> ConceptNode -> Element msg
-renderConcept hits conceptNode =
+
+---- PROGRAM ----
+
+
+runQuery : List Id -> Query -> ConceptNode -> List Id
+runQuery found query conceptNode =
     let
-        cEl =
-            codeElement (isMultiline conceptNode) (List.member conceptNode.id hits)
+        ( queryHead, queryTail ) =
+            List.uncons query |> Maybe.withDefault ( "", [] )
+
+        ( newQuery, newFound ) =
+            case ( queryMatch queryHead conceptNode.name, List.isEmpty queryTail ) of
+                ( True, True ) ->
+                    ( [], conceptNode.id :: found )
+
+                ( True, False ) ->
+                    ( queryTail, found )
+
+                _ ->
+                    ( query, found )
     in
     case conceptNode.concept of
-        IntC x ->
-            cEl [ text (String.fromInt x) ]
+        Node xs ->
+            List.concatMap (runQuery newFound newQuery) xs
 
-        StringC s ->
-            cEl [ text <| "\"" ++ s ++ "\"" ]
+        _ ->
+            newFound
 
-        CaseC e es ->
+
+queryMatch : String -> String -> Bool
+queryMatch query goal =
+    query == goal
+
+
+expressionToConceptNode : Int -> Expression -> ( Int, ConceptNode )
+expressionToConceptNode count expression =
+    case expression of
+        String s ->
+            ( count + 1, { name = "string", id = count, concept = Leaf s } )
+
+        Integer x ->
+            ( count + 1, { name = "int", id = count, concept = Leaf (String.fromInt x) } )
+
+        List xs ->
             let
-                renderBranch ( pattern, expr ) =
-                    column []
-                        [ row [] [ renderConcept hits pattern, text " -> " ]
-                        , el [ paddingXY 25 0 ] (renderConcept hits expr)
-                        ]
+                f expr ( currentCount, currentConcepts ) =
+                    let
+                        ( newCount, newConcepts ) =
+                            expressionToConceptNode currentCount expr
+                    in
+                    ( newCount, newConcepts :: currentConcepts )
+
+                ( newCount_, cs ) =
+                    List.foldl f ( count + 1, [] ) xs
             in
-            cEl
-                [ row [] [ text "case", el [ paddingXY 5 0 ] <| renderConcept hits e, text "of" ]
-                , column [ paddingXY 25 0 ] <| List.map renderBranch es
-                ]
+            ( newCount_, { name = "list", id = count, concept = Node (List.reverse cs) } )
 
-        ListC [] ->
-            cEl []
+        Case e patterns ->
+            let
+                toBranch ( a, b ) ( currentCount, currentConcepts ) =
+                    let
+                        ( count1, concept1 ) =
+                            expressionToConceptNode (currentCount + 1) a
 
-        ListC (x :: xs) ->
-            cEl <|
-                row [] [ text "[", renderConcept hits x ]
-                    :: List.map (\e -> row [] [ el [ alignTop ] (text ","), renderConcept hits e ]) xs
-                    ++ [ text "]" ]
+                        ( count2, concept2 ) =
+                            expressionToConceptNode count1 b
+                    in
+                    ( count2, { name = "branch", id = currentCount, concept = Node [ concept1, concept2 ] } :: currentConcepts )
 
+                ( newCount, c ) =
+                    expressionToConceptNode (count + 1) e
 
-type alias ConceptNode =
-    { name : String
-    , id : Id
-    , concept : Concept
-    }
+                ( newCount2, cs ) =
+                    List.foldl toBranch ( newCount, [] ) patterns
+            in
+            ( newCount2, { name = "case", id = count, concept = Node (c :: List.reverse cs) } )
 
-
-type Concept
-    = IntC Int
-    | StringC String
-    | CaseC ConceptNode (List ( ConceptNode, ConceptNode ))
-    | ListC (List ConceptNode)
+        _ ->
+            Debug.todo ""
 
 
-type Expression
-    = Character Char
-    | String String
-    | Integer Int
-    | Float Float
-    | Variable (List String)
-    | List (List Expression)
-    | Tuple (List Expression)
-    | Access Expression (List String)
-    | AccessFunction String
-    | Record (List ( String, Expression ))
-    | RecordUpdate String (List ( String, Expression ))
-    | If Expression Expression Expression
-    | Let (List ( Expression, Expression )) Expression
-    | Case Expression (List ( Expression, Expression ))
-    | Lambda (List Expression) Expression
-    | Application Expression Expression
-    | BinOp Expression Expression Expression
-
-
-defaultInfo =
-    { name = "", selected = False }
-
-
-case_ : Int -> ConceptNode -> List ( ConceptNode, ConceptNode ) -> ConceptNode
-case_ id e branches =
-    { name = "case", id = id, concept = CaseC e branches }
-
-
-string : Int -> String -> ConceptNode
-string id e =
-    { name = "string", id = id, concept = StringC e }
-
-
-int : Int -> Int -> ConceptNode
-int id e =
-    { name = "int", id = id, concept = IntC e }
-
-
-list : Int -> List ConceptNode -> ConceptNode
-list id e =
-    { name = "list", id = id, concept = ListC e }
+main : Program () Model Msg
+main =
+    Browser.element
+        { view = view
+        , init = \_ -> init
+        , update = update
+        , subscriptions = always Sub.none
+        }
