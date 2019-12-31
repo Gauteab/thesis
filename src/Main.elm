@@ -1,8 +1,9 @@
 module Main exposing (..)
 
 import Browser
-import Element exposing (Element, alignTop, column, el, paddingXY, rgb255, row, text)
+import Element exposing (Element, alignTop, column, el, paddingXY, rgb255, row, spacing, text)
 import Element.Background as Background
+import Element.Border as Border
 import Element.Font as Font exposing (Font)
 import Html exposing (Html)
 import List.Extra as List
@@ -52,7 +53,15 @@ type alias Query =
     List String
 
 
+type alias QueryResult =
+    List ( Index, Id )
+
+
 type alias Id =
+    Int
+
+
+type alias Index =
     Int
 
 
@@ -115,49 +124,51 @@ view model =
     <|
         column
             []
-            [ renderConcept (runQuery [] exampleQuery model) model
+            [ renderConcept (runQuery exampleQuery model) model
             ]
 
 
-renderConcept : List Id -> ConceptNode -> Element msg
-renderConcept hits conceptNode =
+renderConcept : QueryResult -> ConceptNode -> Element msg
+renderConcept queryResult conceptNode =
     let
+        maybeHit =
+            queryResult
+                |> List.find (Tuple.second >> (==) conceptNode.id)
+                |> Maybe.map Tuple.first
+
         cEl =
-            codeElement (isMultiline conceptNode) (List.member conceptNode.id hits)
+            codeElement (isMultiline conceptNode) maybeHit
     in
-    row [] <|
-        [ --el [ alignTop ] <| text (String.fromInt conceptNode.id ++ ": ")
-          case ( conceptNode.name, conceptNode.concept ) of
-            ( "int", Leaf x ) ->
-                cEl [ text x ]
+    case ( conceptNode.name, conceptNode.concept ) of
+        ( "int", Leaf x ) ->
+            cEl [ text x ]
 
-            ( "string", Leaf x ) ->
-                cEl [ text <| "\"" ++ x ++ "\"" ]
+        ( "string", Leaf x ) ->
+            cEl [ text <| "\"" ++ x ++ "\"" ]
 
-            ( "case", Node (e :: es) ) ->
-                cEl
-                    [ row [] [ text "case", el [ paddingXY 5 0 ] <| renderConcept hits e, text "of" ]
-                    , column [ paddingXY 25 0 ] <| List.map (renderConcept hits) es
-                    ]
+        ( "case", Node (e :: es) ) ->
+            cEl
+                [ row [] [ text "case", el [ paddingXY 5 0 ] <| renderConcept queryResult e, text "of" ]
+                , column [ paddingXY 25 0 ] <| List.map (renderConcept queryResult) es
+                ]
 
-            ( "list", Node [] ) ->
-                cEl []
+        ( "list", Node [] ) ->
+            cEl []
 
-            ( "list", Node (e :: es) ) ->
-                cEl <|
-                    row [] [ text "[", renderConcept hits e ]
-                        :: List.map (\it -> row [] [ el [ alignTop ] (text ","), renderConcept hits it ]) es
-                        ++ [ text "]" ]
+        ( "list", Node (e :: es) ) ->
+            cEl <|
+                row [] [ text "[", renderConcept queryResult e ]
+                    :: List.map (\it -> row [] [ el [ alignTop ] (text ","), renderConcept queryResult it ]) es
+                    ++ [ text "]" ]
 
-            ( "branch", Node [ pattern, expr ] ) ->
-                column []
-                    [ row [] [ renderConcept hits pattern, text " -> " ]
-                    , el [ paddingXY 25 0 ] (renderConcept hits expr)
-                    ]
+        ( "branch", Node [ pattern, expr ] ) ->
+            column []
+                [ row [] [ renderConcept queryResult pattern, text " -> " ]
+                , el [ paddingXY 25 0 ] (renderConcept queryResult expr)
+                ]
 
-            _ ->
-                Debug.todo "render concept"
-        ]
+        _ ->
+            Debug.todo "render concept"
 
 
 isMultiline : ConceptNode -> Bool
@@ -173,52 +184,70 @@ isMultiline conceptNode2 =
             False
 
 
-codeElement multiline highlight =
+codeElement : Bool -> Maybe Index -> List (Element msg) -> Element msg
+codeElement multiline maybeHit =
     let
-        style =
-            [ Background.color (rgb255 55 210 185) ]
+        indicator : Id -> Element msg
+        indicator id =
+            el
+                [ Border.solid
+                , Border.width 1
+                , alignTop
+                , Background.color (rgb255 240 225 180)
+                ]
+            <|
+                text (String.fromInt id)
+
+        highlightColor =
+            Background.color (rgb255 55 210 185)
     in
-    case ( multiline, highlight ) of
-        ( False, False ) ->
+    case ( multiline, maybeHit ) of
+        ( False, Nothing ) ->
             row []
 
-        ( False, True ) ->
-            row style
+        ( False, Just index ) ->
+            \elements -> row [ spacing 4 ] [ indicator index, row [ highlightColor ] elements ]
 
-        ( True, False ) ->
+        ( True, Nothing ) ->
             column []
 
-        ( True, True ) ->
-            column style
+        ( True, Just index ) ->
+            \elements -> row [ spacing 4 ] [ indicator index, column [ highlightColor ] elements ]
 
 
 
 ---- PROGRAM ----
 
 
-runQuery : List Id -> Query -> ConceptNode -> List Id
-runQuery found query conceptNode =
+runQuery : Query -> ConceptNode -> QueryResult
+runQuery q cn =
     let
-        ( queryHead, queryTail ) =
-            List.uncons query |> Maybe.withDefault ( "", [] )
+        go : List Id -> Query -> ConceptNode -> List Id
+        go found query conceptNode =
+            let
+                ( queryHead, queryTail ) =
+                    List.uncons query |> Maybe.withDefault ( "", [] )
 
-        ( newQuery, newFound ) =
-            case ( queryMatch queryHead conceptNode.name, List.isEmpty queryTail ) of
-                ( True, True ) ->
-                    ( [], conceptNode.id :: found )
+                ( newQuery, newFound ) =
+                    case ( queryMatch queryHead conceptNode.name, List.isEmpty queryTail ) of
+                        ( True, True ) ->
+                            ( [], conceptNode.id :: found )
 
-                ( True, False ) ->
-                    ( queryTail, found )
+                        ( True, False ) ->
+                            ( queryTail, found )
+
+                        _ ->
+                            ( query, found )
+            in
+            case conceptNode.concept of
+                Node xs ->
+                    List.concatMap (go newFound newQuery) xs
 
                 _ ->
-                    ( query, found )
+                    newFound
     in
-    case conceptNode.concept of
-        Node xs ->
-            List.concatMap (runQuery newFound newQuery) xs
-
-        _ ->
-            newFound
+    go [] q cn
+        |> List.indexedMap Tuple.pair
 
 
 queryMatch : String -> String -> Bool
@@ -245,9 +274,9 @@ expressionToConceptNode count expression =
                     ( newCount, newConcepts :: currentConcepts )
 
                 ( newCount_, cs ) =
-                    List.foldl f ( count + 1, [] ) xs
+                    List.foldr f ( count + 1, [] ) xs
             in
-            ( newCount_, ConceptNode "list" count <| Node (List.reverse cs) )
+            ( newCount_, ConceptNode "list" count <| Node cs )
 
         Case e patterns ->
             let
@@ -265,9 +294,9 @@ expressionToConceptNode count expression =
                     expressionToConceptNode (count + 1) e
 
                 ( newCount2, cs ) =
-                    List.foldl toBranch ( newCount, [] ) patterns
+                    List.foldr toBranch ( newCount, [] ) patterns
             in
-            ( newCount2, ConceptNode "case" count <| Node (c :: List.reverse cs) )
+            ( newCount2, ConceptNode "case" count <| Node (c :: cs) )
 
         _ ->
             Debug.todo "Unhandled expression in expressionToConceptNode"
