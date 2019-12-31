@@ -18,27 +18,28 @@ type alias Model =
 
 
 exampleQuery =
-    [ "branch"
+    [ "case"
     , "int"
     ]
 
 
 example =
-    List
-        [ Integer 1
-        , Case (String "avc")
-            [ ( String "a"
-              , List
-                    [ Integer 2
-                    , Integer 3
-                    , Case (String "xyz")
-                        [ ( String "b"
-                          , List [ Integer 4, String "c" ]
+    EList
+        [ EInteger 1
+        , EList [ EInteger 6 ]
+        , ECase (EString "avc")
+            [ ( EString "a"
+              , EList
+                    [ EInteger 2
+                    , EInteger 3
+                    , ECase (EString "xyz")
+                        [ ( EString "b"
+                          , EList [ EInteger 4, EString "c" ]
                           )
                         ]
                     ]
               )
-            , ( Integer 5, Integer 6 )
+            , ( EInteger 5, EInteger 6 )
             ]
         ]
         |> expressionToConceptNode 0
@@ -54,6 +55,10 @@ type alias Query =
 
 
 type alias QueryResult =
+    List Id
+
+
+type alias QueryResultIndexed =
     List ( Index, Id )
 
 
@@ -66,36 +71,46 @@ type alias Index =
 
 
 type alias ConceptNode =
-    { name : String
-    , id : Id
+    { id : Id
     , concept : Concept
     }
 
 
+type LeafName
+    = String
+    | Integer
+
+
+type NodeName
+    = List
+    | Branch
+    | Case
+
+
 type Concept
     = Hole
-    | Leaf String
-    | Node (List ConceptNode)
+    | Leaf LeafName String
+    | Node NodeName (List ConceptNode)
 
 
 type Expression
-    = Character Char
-    | String String
-    | Integer Int
-    | Float Float
-    | Variable (List String)
-    | List (List Expression)
-    | Tuple (List Expression)
-    | Access Expression (List String)
-    | AccessFunction String
-    | Record (List ( String, Expression ))
-    | RecordUpdate String (List ( String, Expression ))
-    | If Expression Expression Expression
-    | Let (List ( Expression, Expression )) Expression
-    | Case Expression (List ( Expression, Expression ))
-    | Lambda (List Expression) Expression
-    | Application Expression Expression
-    | BinOp Expression Expression Expression
+    = ECharacter Char
+    | EString String
+    | EInteger Int
+    | EFloat Float
+    | EVariable (List String)
+    | EList (List Expression)
+    | ETuple (List Expression)
+    | EAccess Expression (List String)
+    | EAccessFunction String
+    | ERecord (List ( String, Expression ))
+    | ERecordUpdate String (List ( String, Expression ))
+    | EIf Expression Expression Expression
+    | ELet (List ( Expression, Expression )) Expression
+    | ECase Expression (List ( Expression, Expression ))
+    | ELambda (List Expression) Expression
+    | EApplication Expression Expression
+    | EBinOp Expression Expression Expression
 
 
 
@@ -124,11 +139,13 @@ view model =
     <|
         column
             []
-            [ renderConcept (runQuery exampleQuery model) model
+            [ renderConcept
+                (Debug.log "" <| List.indexedMap Tuple.pair <| runQuery exampleQuery model)
+                (Debug.log "model" model)
             ]
 
 
-renderConcept : QueryResult -> ConceptNode -> Element msg
+renderConcept : QueryResultIndexed -> ConceptNode -> Element msg
 renderConcept queryResult conceptNode =
     let
         maybeHit =
@@ -139,65 +156,75 @@ renderConcept queryResult conceptNode =
         cEl =
             codeElement (isMultiline conceptNode) maybeHit
     in
-    case ( conceptNode.name, conceptNode.concept ) of
-        ( "int", Leaf x ) ->
-            cEl [ text x ]
+    row []
+        [ -- indicator conceptNode.id
+          case conceptNode.concept of
+            Leaf Integer string ->
+                cEl [ text string ]
 
-        ( "string", Leaf x ) ->
-            cEl [ text <| "\"" ++ x ++ "\"" ]
+            Leaf String string ->
+                cEl [ text <| "\"" ++ string ++ "\"" ]
 
-        ( "case", Node (e :: es) ) ->
-            cEl
-                [ row [] [ text "case", el [ paddingXY 5 0 ] <| renderConcept queryResult e, text "of" ]
-                , column [ paddingXY 25 0 ] <| List.map (renderConcept queryResult) es
-                ]
+            Node Case (pattern :: branches) ->
+                cEl
+                    [ row [] [ text "case", el [ paddingXY 5 0 ] <| renderConcept queryResult pattern, text "of" ]
+                    , column [ paddingXY 25 0 ] <| List.map (renderConcept queryResult) branches
+                    ]
 
-        ( "list", Node [] ) ->
-            cEl []
+            Node List [] ->
+                cEl []
 
-        ( "list", Node (e :: es) ) ->
-            cEl <|
-                row [] [ text "[", renderConcept queryResult e ]
-                    :: List.map (\it -> row [] [ el [ alignTop ] (text ","), renderConcept queryResult it ]) es
-                    ++ [ text "]" ]
+            Node List (e :: es) ->
+                cEl <|
+                    row [] [ text "[", renderConcept queryResult e ]
+                        :: List.map (\it -> row [] [ el [ alignTop ] (text ","), renderConcept queryResult it ]) es
+                        ++ [ text "]" ]
 
-        ( "branch", Node [ pattern, expr ] ) ->
-            column []
-                [ row [] [ renderConcept queryResult pattern, text " -> " ]
-                , el [ paddingXY 25 0 ] (renderConcept queryResult expr)
-                ]
+            Node Branch [ pattern, expr ] ->
+                cEl <|
+                    [ row [] [ renderConcept queryResult pattern, text " -> " ]
+                    , el [ paddingXY 25 0 ] (renderConcept queryResult expr)
+                    ]
 
-        _ ->
-            Debug.todo "render concept"
+            _ ->
+                Debug.todo "render concept"
+        ]
 
 
 isMultiline : ConceptNode -> Bool
 isMultiline conceptNode2 =
-    case ( conceptNode2.concept, conceptNode2.name ) of
-        ( Node _, "case" ) ->
+    case conceptNode2.concept of
+        Node Case _ ->
             True
 
-        ( Node list, "list" ) ->
+        Node Branch _ ->
+            True
+
+        Node List list ->
             List.any isMultiline list
 
-        _ ->
+        Hole ->
+            False
+
+        Leaf _ _ ->
             False
 
 
-codeElement : Bool -> Maybe Index -> List (Element msg) -> Element msg
+indicator : Id -> Element msg
+indicator id =
+    el
+        [ Border.solid
+        , Border.width 1
+        , alignTop
+        , Background.color (rgb255 240 225 180)
+        ]
+    <|
+        text (String.fromInt id)
+
+
+codeElement : Bool -> Maybe Index -> (List (Element msg) -> Element msg)
 codeElement multiline maybeHit =
     let
-        indicator : Id -> Element msg
-        indicator id =
-            el
-                [ Border.solid
-                , Border.width 1
-                , alignTop
-                , Background.color (rgb255 240 225 180)
-                ]
-            <|
-                text (String.fromInt id)
-
         highlightColor =
             Background.color (rgb255 55 210 185)
     in
@@ -219,52 +246,85 @@ codeElement multiline maybeHit =
 ---- PROGRAM ----
 
 
+getChildren : ConceptNode -> List ConceptNode
+getChildren node =
+    case node.concept of
+        Node _ xs ->
+            xs
+
+        _ ->
+            []
+
+
 runQuery : Query -> ConceptNode -> QueryResult
-runQuery q cn =
+runQuery originalQuery conceptNode =
     let
-        go : List Id -> Query -> ConceptNode -> List Id
-        go found query conceptNode =
+        go query node =
             let
                 ( queryHead, queryTail ) =
                     List.uncons query |> Maybe.withDefault ( "", [] )
 
                 ( newQuery, newFound ) =
-                    case ( queryMatch queryHead conceptNode.name, List.isEmpty queryTail ) of
+                    case ( queryMatch queryHead node, List.isEmpty queryTail ) of
                         ( True, True ) ->
-                            ( [], conceptNode.id :: found )
+                            ( originalQuery, Just node.id )
 
                         ( True, False ) ->
-                            ( queryTail, found )
+                            ( queryTail, Nothing )
 
                         _ ->
-                            ( query, found )
+                            ( query, Nothing )
             in
-            case conceptNode.concept of
-                Node xs ->
-                    List.concatMap (go newFound newQuery) xs
+            case newFound of
+                Just found ->
+                    found :: List.concatMap (go newQuery) (getChildren node)
 
-                _ ->
-                    newFound
+                Nothing ->
+                    List.concatMap (go newQuery) (getChildren node)
     in
-    go [] q cn
-        |> List.indexedMap Tuple.pair
+    go originalQuery conceptNode
 
 
-queryMatch : String -> String -> Bool
+queryMatch : String -> ConceptNode -> Bool
 queryMatch query goal =
-    query == goal
+    case ( query, goal.concept ) of
+        ( "hole", Hole ) ->
+            True
+
+        ( "string", Leaf String _ ) ->
+            True
+
+        ( "int", Leaf Integer _ ) ->
+            True
+
+        ( "case", Node Case _ ) ->
+            True
+
+        ( "branch", Node Branch _ ) ->
+            True
+
+        ( "list", Node List _ ) ->
+            True
+
+        _ ->
+            False
+
+
+delete : QueryResult -> ConceptNode -> ConceptNode
+delete queryResult conceptNode =
+    Debug.todo ""
 
 
 expressionToConceptNode : Int -> Expression -> ( Int, ConceptNode )
 expressionToConceptNode count expression =
     case expression of
-        String s ->
-            ( count + 1, ConceptNode "string" count <| Leaf s )
+        EInteger x ->
+            ( count + 1, ConceptNode count <| Leaf Integer (String.fromInt x) )
 
-        Integer x ->
-            ( count + 1, ConceptNode "int" count <| Leaf (String.fromInt x) )
+        EString s ->
+            ( count + 1, ConceptNode count <| Leaf String s )
 
-        List xs ->
+        EList xs ->
             let
                 f expr ( currentCount, currentConcepts ) =
                     let
@@ -276,9 +336,9 @@ expressionToConceptNode count expression =
                 ( newCount_, cs ) =
                     List.foldr f ( count + 1, [] ) xs
             in
-            ( newCount_, ConceptNode "list" count <| Node cs )
+            ( newCount_, ConceptNode count <| Node List cs )
 
-        Case e patterns ->
+        ECase e patterns ->
             let
                 toBranch ( a, b ) ( currentCount, currentConcepts ) =
                     let
@@ -288,7 +348,7 @@ expressionToConceptNode count expression =
                         ( count2, concept2 ) =
                             expressionToConceptNode count1 b
                     in
-                    ( count2, (ConceptNode "branch" currentCount <| Node [ concept1, concept2 ]) :: currentConcepts )
+                    ( count2, (ConceptNode currentCount <| Node Branch [ concept1, concept2 ]) :: currentConcepts )
 
                 ( newCount, c ) =
                     expressionToConceptNode (count + 1) e
@@ -296,7 +356,7 @@ expressionToConceptNode count expression =
                 ( newCount2, cs ) =
                     List.foldr toBranch ( newCount, [] ) patterns
             in
-            ( newCount2, ConceptNode "case" count <| Node (c :: cs) )
+            ( newCount2, ConceptNode count <| Node Case (c :: cs) )
 
         _ ->
             Debug.todo "Unhandled expression in expressionToConceptNode"
