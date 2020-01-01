@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Browser
-import Element exposing (Element, alignTop, column, el, paddingXY, rgb255, row, spacing, text)
+import Element exposing (Color, Element, alignTop, column, el, fill, paddingXY, px, rgb255, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (Font)
@@ -14,13 +14,14 @@ import List.Extra as List
 
 
 type alias Model =
-    ConceptNode
+    { maxId : Int
+    , conceptNode : ConceptNode
+    , queryResult : QueryResult
+    }
 
 
-exampleQuery =
-    [ "case"
-    , "int"
-    ]
+example2 =
+    EList [ EInteger 1, EList [ EInteger 2 ] ]
 
 
 example =
@@ -42,12 +43,23 @@ example =
             , ( EInteger 5, EInteger 6 )
             ]
         ]
-        |> expressionToConceptNode 0
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Tuple.second example, Cmd.none )
+    let
+        ( id, node ) =
+            example |> expressionToConceptNode 0
+
+        exampleQuery =
+            [ "list"
+            , "list"
+            ]
+
+        q =
+            runQuery exampleQuery node |> Debug.log "hits"
+    in
+    ( { maxId = id, conceptNode = delete q node, queryResult = [] }, Cmd.none )
 
 
 type alias Query =
@@ -132,6 +144,10 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
+    let
+        hitsIndexed =
+            List.indexedMap Tuple.pair model.queryResult
+    in
     Element.layout
         [ Font.family [ Font.monospace ]
         , paddingXY 5 5
@@ -139,9 +155,7 @@ view model =
     <|
         column
             []
-            [ renderConcept
-                (Debug.log "" <| List.indexedMap Tuple.pair <| runQuery exampleQuery model)
-                (Debug.log "model" model)
+            [ renderConcept hitsIndexed (Debug.log "model" model.conceptNode)
             ]
 
 
@@ -184,6 +198,14 @@ renderConcept queryResult conceptNode =
                 cEl <|
                     [ row [] [ renderConcept queryResult pattern, text " -> " ]
                     , el [ paddingXY 25 0 ] (renderConcept queryResult expr)
+                    ]
+
+            Hole ->
+                cEl <|
+                    [ el
+                        [ Background.color (rgb255 255 110 110) ]
+                      <|
+                        text (String.fromInt conceptNode.id)
                     ]
 
             _ ->
@@ -312,7 +334,25 @@ queryMatch query goal =
 
 delete : QueryResult -> ConceptNode -> ConceptNode
 delete queryResult conceptNode =
-    Debug.todo ""
+    { conceptNode
+        | concept =
+            if List.member conceptNode.id queryResult then
+                Hole
+
+            else
+                case conceptNode.concept of
+                    Node List list ->
+                        list
+                            |> List.filterNot (\it -> List.member it.id queryResult)
+                            |> List.map (delete queryResult)
+                            |> Node List
+
+                    Node name children ->
+                        Node name <| List.map (delete queryResult) children
+
+                    otherwise ->
+                        otherwise
+    }
 
 
 expressionToConceptNode : Int -> Expression -> ( Int, ConceptNode )
