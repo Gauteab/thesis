@@ -5,6 +5,7 @@ import Element exposing (Color, Element, alignTop, column, el, fill, paddingXY, 
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (Font)
+import Element.Input as Input exposing (labelHidden)
 import Html exposing (Html)
 import List.Extra as List
 
@@ -17,6 +18,7 @@ type alias Model =
     { maxId : Int
     , conceptNode : ConceptNode
     , queryResult : QueryResult
+    , inputText : String
     }
 
 
@@ -59,7 +61,7 @@ init =
         q =
             runQuery exampleQuery node |> Debug.log "hits"
     in
-    ( { maxId = id, conceptNode = delete q node, queryResult = [] }, Cmd.none )
+    ( { maxId = id, conceptNode = node, queryResult = q, inputText = "" }, Cmd.none )
 
 
 type alias Query =
@@ -91,6 +93,11 @@ type alias ConceptNode =
 type LeafName
     = String
     | Integer
+
+
+type Name
+    = LeafName LeafName
+    | NodeName NodeName
 
 
 type NodeName
@@ -131,11 +138,17 @@ type Expression
 
 type Msg
     = NoOp
+    | TextInput String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        NoOp ->
+            ( model, Cmd.none )
+
+        TextInput string ->
+            ( { model | inputText = string }, Cmd.none )
 
 
 
@@ -154,8 +167,14 @@ view model =
         ]
     <|
         column
-            []
-            [ renderConcept hitsIndexed (Debug.log "model" model.conceptNode)
+            [ spacing 50 ]
+            [ renderConcept hitsIndexed (Debug.log "model" model).conceptNode
+            , Input.text []
+                { onChange = TextInput
+                , text = model.inputText
+                , placeholder = Nothing
+                , label = labelHidden "command input field"
+                }
             ]
 
 
