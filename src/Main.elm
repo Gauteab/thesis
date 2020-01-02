@@ -54,9 +54,10 @@ init =
             example |> expressionToConceptNode 0
 
         exampleQuery =
-            [ "list"
-            , "list"
-            ]
+            ( [ List
+              ]
+            , NodeName List
+            )
 
         q =
             runQuery exampleQuery node |> Debug.log "hits"
@@ -65,7 +66,7 @@ init =
 
 
 type alias Query =
-    List String
+    ( List NodeName, Name )
 
 
 type alias QueryResult =
@@ -298,54 +299,40 @@ getChildren node =
 
 
 runQuery : Query -> ConceptNode -> QueryResult
-runQuery originalQuery conceptNode =
+runQuery ( query, name ) node =
     let
-        go query node =
-            let
-                ( queryHead, queryTail ) =
-                    List.uncons query |> Maybe.withDefault ( "", [] )
+        ( newQuery, newFound ) =
+            case query of
+                [] ->
+                    if match name node.concept then
+                        ( [], Just node.id )
 
-                ( newQuery, newFound ) =
-                    case ( queryMatch queryHead node, List.isEmpty queryTail ) of
-                        ( True, True ) ->
-                            ( originalQuery, Just node.id )
+                    else
+                        ( [], Nothing )
 
-                        ( True, False ) ->
-                            ( queryTail, Nothing )
+                queryHead :: queryTail ->
+                    if match (NodeName queryHead) node.concept then
+                        ( queryTail, Nothing )
 
-                        _ ->
-                            ( query, Nothing )
-            in
-            case newFound of
-                Just found ->
-                    found :: List.concatMap (go newQuery) (getChildren node)
-
-                Nothing ->
-                    List.concatMap (go newQuery) (getChildren node)
+                    else
+                        ( query, Nothing )
     in
-    go originalQuery conceptNode
+    case newFound of
+        Just found ->
+            found :: List.concatMap (runQuery ( newQuery, name )) (getChildren node)
+
+        Nothing ->
+            List.concatMap (runQuery ( newQuery, name )) (getChildren node)
 
 
-queryMatch : String -> ConceptNode -> Bool
-queryMatch query goal =
-    case ( query, goal.concept ) of
-        ( "hole", Hole ) ->
-            True
+match : Name -> Concept -> Bool
+match name concept =
+    case ( name, concept ) of
+        ( LeafName n1, Leaf n2 _ ) ->
+            n1 == n2
 
-        ( "string", Leaf String _ ) ->
-            True
-
-        ( "int", Leaf Integer _ ) ->
-            True
-
-        ( "case", Node Case _ ) ->
-            True
-
-        ( "branch", Node Branch _ ) ->
-            True
-
-        ( "list", Node List _ ) ->
-            True
+        ( NodeName n1, Node n2 _ ) ->
+            n1 == n2
 
         _ ->
             False
