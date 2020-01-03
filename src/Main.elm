@@ -8,6 +8,7 @@ import Element.Font as Font exposing (Font)
 import Element.Input as Input exposing (labelHidden)
 import Html exposing (Html)
 import List.Extra as List
+import Parser as P exposing (Parser, keyword, oneOf, token)
 
 
 
@@ -83,6 +84,48 @@ type alias Id =
 
 type alias Index =
     Int
+
+
+type Action
+    = Delete
+
+
+type Command
+    = Command Query Action
+
+
+action : Parser Action
+action =
+    P.map (always Delete) (keyword "delete")
+
+
+fromToken : String -> a -> Parser a
+fromToken string a =
+    P.map (always a) <| token string
+
+
+parseName : List (Parser Name)
+parseName =
+    [ leafName |> P.map LeafName
+    , nodeName |> P.map NodeName
+    ]
+
+
+leafName : Parser LeafName
+leafName =
+    oneOf
+        [ fromToken "string" String
+        , fromToken "int" Integer
+        ]
+
+
+nodeName : Parser NodeName
+nodeName =
+    oneOf
+        [ fromToken "list" List
+        , fromToken "branch" Branch
+        , fromToken "case" Case
+        ]
 
 
 type alias ConceptNode =
@@ -301,7 +344,7 @@ getChildren node =
 runQuery : Query -> ConceptNode -> QueryResult
 runQuery ( query, name ) node =
     let
-        ( newQuery, newFound ) =
+        ( newQuery, maybeFound ) =
             case query of
                 [] ->
                     if match name node.concept then
@@ -317,7 +360,7 @@ runQuery ( query, name ) node =
                     else
                         ( query, Nothing )
     in
-    case newFound of
+    case maybeFound of
         Just found ->
             found :: List.concatMap (runQuery ( newQuery, name )) (getChildren node)
 
