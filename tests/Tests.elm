@@ -1,7 +1,7 @@
 module Tests exposing (..)
 
 import Expect
-import Main exposing (Action(..), action)
+import Main exposing (..)
 import Parser exposing ((|.), end)
 import Test exposing (..)
 
@@ -20,4 +20,6 @@ parsers =
                         Expect.equal expected <| Parser.run (parser |. end) input
         in
         [ testParser "action" action "delete" (Ok Delete)
+        , testParser "node then leaf" parseQuery "list.int" (Ok ( LeafName Integer, [ NodeName List ] ))
+        , testParser "two nodes" parseQuery "list.case" (Ok ( NodeName Case, [ NodeName List ] ))
         ]

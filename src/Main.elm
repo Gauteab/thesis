@@ -8,7 +8,7 @@ import Element.Font as Font exposing (Font)
 import Element.Input as Input exposing (labelHidden)
 import Html exposing (Html)
 import List.Extra as List
-import Parser as P exposing (Parser, keyword, oneOf, token)
+import Parser as P exposing ((|=), Parser, Trailing(..), keyword, oneOf, spaces, token)
 
 
 
@@ -55,9 +55,9 @@ init =
             example |> expressionToConceptNode 0
 
         exampleQuery =
-            ( [ List
+            ( NodeName List
+            , [ NodeName List
               ]
-            , NodeName List
             )
 
         q =
@@ -67,7 +67,7 @@ init =
 
 
 type alias Query =
-    ( List NodeName, Name )
+    ( Name, List Name )
 
 
 type alias QueryResult =
@@ -99,16 +99,36 @@ action =
     P.map (always Delete) (keyword "delete")
 
 
+parseQuery : Parser Query
+parseQuery =
+    let
+        toQuery names =
+            List.unconsLast names
+                |> Maybe.map P.succeed
+                |> Maybe.withDefault (P.problem "empty query")
+    in
+    P.sequence
+        { start = ""
+        , separator = "."
+        , end = ""
+        , spaces = spaces
+        , item = parseName
+        , trailing = Forbidden
+        }
+        |> P.andThen toQuery
+
+
 fromToken : String -> a -> Parser a
 fromToken string a =
     P.map (always a) <| token string
 
 
-parseName : List (Parser Name)
+parseName : Parser Name
 parseName =
-    [ leafName |> P.map LeafName
-    , nodeName |> P.map NodeName
-    ]
+    oneOf
+        [ leafName |> P.map LeafName
+        , nodeName |> P.map NodeName
+        ]
 
 
 leafName : Parser LeafName
@@ -342,7 +362,7 @@ getChildren node =
 
 
 runQuery : Query -> ConceptNode -> QueryResult
-runQuery ( query, name ) node =
+runQuery ( name, query ) node =
     let
         ( newQuery, maybeFound ) =
             case query of
@@ -354,7 +374,7 @@ runQuery ( query, name ) node =
                         ( [], Nothing )
 
                 queryHead :: queryTail ->
-                    if match (NodeName queryHead) node.concept then
+                    if match queryHead node.concept then
                         ( queryTail, Nothing )
 
                     else
@@ -362,10 +382,10 @@ runQuery ( query, name ) node =
     in
     case maybeFound of
         Just found ->
-            found :: List.concatMap (runQuery ( newQuery, name )) (getChildren node)
+            found :: List.concatMap (runQuery ( name, newQuery )) (getChildren node)
 
         Nothing ->
-            List.concatMap (runQuery ( newQuery, name )) (getChildren node)
+            List.concatMap (runQuery ( name, newQuery )) (getChildren node)
 
 
 match : Name -> Concept -> Bool
