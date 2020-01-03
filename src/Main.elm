@@ -212,7 +212,19 @@ update msg model =
             ( model, Cmd.none )
 
         TextInput string ->
-            ( { model | inputText = string }, Cmd.none )
+            let
+                queryResult : List Id
+                queryResult =
+                    P.run parseQuery string
+                        |> Result.map (\x -> runQuery x model.conceptNode)
+                        |> Result.withDefault []
+            in
+            ( { model
+                | queryResult = queryResult
+                , inputText = string
+              }
+            , Cmd.none
+            )
 
 
 
