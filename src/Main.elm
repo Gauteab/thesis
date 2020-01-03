@@ -8,7 +8,7 @@ import Element.Font as Font exposing (Font)
 import Element.Input as Input exposing (labelHidden)
 import Html exposing (Html)
 import List.Extra as List
-import Parser as P exposing ((|=), Parser, Trailing(..), keyword, oneOf, spaces, token)
+import Parser as P exposing ((|.), (|=), Parser, Trailing(..), backtrackable, keyword, oneOf, spaces, succeed, symbol, token)
 
 
 
@@ -23,47 +23,37 @@ type alias Model =
     }
 
 
-example2 =
-    EList [ EInteger 1, EList [ EInteger 2 ] ]
-
-
-example =
-    EList
-        [ EInteger 1
-        , EList [ EInteger 6 ]
-        , ECase (EString "avc")
-            [ ( EString "a"
-              , EList
-                    [ EInteger 2
-                    , EInteger 3
-                    , ECase (EString "xyz")
-                        [ ( EString "b"
-                          , EList [ EInteger 4, EString "c" ]
-                          )
-                        ]
-                    ]
-              )
-            , ( EInteger 5, EInteger 6 )
-            ]
-        ]
-
-
 init : ( Model, Cmd Msg )
 init =
     let
         ( id, node ) =
-            example |> expressionToConceptNode 0
-
-        exampleQuery =
-            ( NodeName List
-            , [ NodeName List
-              ]
-            )
-
-        q =
-            runQuery exampleQuery node |> Debug.log "hits"
+            expressionToConceptNode 0 <|
+                EList
+                    [ EInteger 1
+                    , EList [ EInteger 6 ]
+                    , ECase (EString "avc")
+                        [ ( EString "a"
+                          , EList
+                                [ EInteger 2
+                                , EInteger 3
+                                , ECase (EString "xyz")
+                                    [ ( EString "b"
+                                      , EList [ EInteger 4, EString "c" ]
+                                      )
+                                    ]
+                                ]
+                          )
+                        , ( EInteger 5, EInteger 6 )
+                        ]
+                    ]
     in
-    ( { maxId = id, conceptNode = node, queryResult = q, inputText = "" }, Cmd.none )
+    ( { maxId = id
+      , conceptNode = node
+      , queryResult = []
+      , inputText = ""
+      }
+    , Cmd.none
+    )
 
 
 type alias Query =
@@ -88,15 +78,26 @@ type alias Index =
 
 type Action
     = Delete
+    | NoAction
 
 
 type Command
     = Command Query Action
 
 
+command : Parser Command
+command =
+    P.succeed Command
+        |= parseQuery
+        |= oneOf
+            [ backtrackable <| succeed identity |. spaces |= action |. symbol " "
+            , P.succeed NoAction
+            ]
+
+
 action : Parser Action
 action =
-    P.map (always Delete) (keyword "delete")
+    P.map (always Delete) <| oneOf [ keyword "delete", keyword "d" ]
 
 
 parseQuery : Parser Query
@@ -107,14 +108,7 @@ parseQuery =
                 |> Maybe.map P.succeed
                 |> Maybe.withDefault (P.problem "empty query")
     in
-    P.sequence
-        { start = ""
-        , separator = "."
-        , end = ""
-        , spaces = spaces
-        , item = parseName
-        , trailing = Forbidden
-        }
+    P.sequence { start = "", separator = ".", end = "", spaces = spaces, item = parseName, trailing = Forbidden }
         |> P.andThen toQuery
 
 
@@ -213,18 +207,28 @@ update msg model =
 
         TextInput string ->
             let
-                queryResult : List Id
-                queryResult =
-                    P.run parseQuery string
-                        |> Result.map (\x -> runQuery x model.conceptNode)
-                        |> Result.withDefault []
+                ( act, queryResult ) =
+                    P.run command string
+                        |> Result.map (\(Command q a) -> ( a, runQuery q model.conceptNode ))
+                        |> Result.withDefault ( NoAction, [] )
             in
-            ( { model
-                | queryResult = queryResult
-                , inputText = string
-              }
-            , Cmd.none
-            )
+            case act of
+                NoAction ->
+                    ( { model
+                        | queryResult = queryResult
+                        , inputText = string
+                      }
+                    , Cmd.none
+                    )
+
+                Delete ->
+                    ( { model
+                        | queryResult = []
+                        , inputText = ""
+                        , conceptNode = delete queryResult model.conceptNode
+                      }
+                    , Cmd.none
+                    )
 
 
 
@@ -281,7 +285,7 @@ renderConcept queryResult conceptNode =
                     ]
 
             Node List [] ->
-                cEl []
+                cEl [ text "[]" ]
 
             Node List (e :: es) ->
                 cEl <|
