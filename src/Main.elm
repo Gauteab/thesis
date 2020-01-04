@@ -8,7 +8,7 @@ import Element.Font as Font exposing (Font)
 import Element.Input as Input exposing (labelHidden)
 import Html exposing (Html)
 import List.Extra as List
-import Parser as P exposing ((|.), (|=), Parser, Trailing(..), backtrackable, keyword, oneOf, spaces, succeed, symbol, token)
+import Parser exposing ((|.), (|=), Parser, Trailing(..), backtrackable, keyword, oneOf, problem, run, sequence, spaces, succeed, symbol, token)
 
 
 
@@ -56,6 +56,14 @@ init =
     )
 
 
+type alias Id =
+    Int
+
+
+type alias Index =
+    Int
+
+
 type alias Query =
     ( Name, List Name )
 
@@ -68,78 +76,14 @@ type alias QueryResultIndexed =
     List ( Index, Id )
 
 
-type alias Id =
-    Int
-
-
-type alias Index =
-    Int
+type alias Command =
+    ( Query, Action )
 
 
 type Action
     = Delete
     | NoAction
-
-
-type Command
-    = Command Query Action
-
-
-command : Parser Command
-command =
-    P.succeed Command
-        |= parseQuery
-        |= oneOf
-            [ backtrackable <| succeed identity |. spaces |= action |. symbol " "
-            , P.succeed NoAction
-            ]
-
-
-action : Parser Action
-action =
-    P.map (always Delete) <| oneOf [ keyword "delete", keyword "d" ]
-
-
-parseQuery : Parser Query
-parseQuery =
-    let
-        toQuery names =
-            List.unconsLast names
-                |> Maybe.map P.succeed
-                |> Maybe.withDefault (P.problem "empty query")
-    in
-    P.sequence { start = "", separator = ".", end = "", spaces = spaces, item = parseName, trailing = Forbidden }
-        |> P.andThen toQuery
-
-
-fromToken : String -> a -> Parser a
-fromToken string a =
-    P.map (always a) <| token string
-
-
-parseName : Parser Name
-parseName =
-    oneOf
-        [ leafName |> P.map LeafName
-        , nodeName |> P.map NodeName
-        ]
-
-
-leafName : Parser LeafName
-leafName =
-    oneOf
-        [ fromToken "string" String
-        , fromToken "int" Integer
-        ]
-
-
-nodeName : Parser NodeName
-nodeName =
-    oneOf
-        [ fromToken "list" List
-        , fromToken "branch" Branch
-        , fromToken "case" Case
-        ]
+    | Reverse
 
 
 type alias ConceptNode =
@@ -148,9 +92,10 @@ type alias ConceptNode =
     }
 
 
-type LeafName
-    = String
-    | Integer
+type Concept
+    = Hole
+    | Leaf LeafName String
+    | Node NodeName (List ConceptNode)
 
 
 type Name
@@ -158,16 +103,15 @@ type Name
     | NodeName NodeName
 
 
+type LeafName
+    = String
+    | Integer
+
+
 type NodeName
     = List
     | Branch
     | Case
-
-
-type Concept
-    = Hole
-    | Leaf LeafName String
-    | Node NodeName (List ConceptNode)
 
 
 type Expression
@@ -208,27 +152,31 @@ update msg model =
         TextInput string ->
             let
                 ( act, queryResult ) =
-                    P.run command string
-                        |> Result.map (\(Command q a) -> ( a, runQuery q model.conceptNode ))
+                    run command string
+                        |> Result.map (\( q, a ) -> ( a, runQuery q model.conceptNode ))
                         |> Result.withDefault ( NoAction, [] )
-            in
-            case act of
-                NoAction ->
-                    ( { model
-                        | queryResult = queryResult
-                        , inputText = string
-                      }
-                    , Cmd.none
-                    )
 
-                Delete ->
-                    ( { model
+                applyAction action_ =
+                    { model
                         | queryResult = []
                         , inputText = ""
-                        , conceptNode = delete queryResult model.conceptNode
-                      }
-                    , Cmd.none
-                    )
+                        , conceptNode = action_ queryResult model.conceptNode
+                    }
+            in
+            ( case act of
+                NoAction ->
+                    { model
+                        | queryResult = queryResult
+                        , inputText = string
+                    }
+
+                Delete ->
+                    applyAction delete
+
+                Reverse ->
+                    applyAction reverse
+            , Cmd.none
+            )
 
 
 
@@ -440,6 +388,25 @@ delete queryResult conceptNode =
     }
 
 
+reverse : QueryResult -> ConceptNode -> ConceptNode
+reverse queryResult conceptNode =
+    { conceptNode
+        | concept =
+            case ( List.member conceptNode.id queryResult, conceptNode.concept ) of
+                ( True, Node a list ) ->
+                    list
+                        |> List.reverse
+                        |> List.map (reverse queryResult)
+                        |> Node a
+
+                ( False, Node name children ) ->
+                    Node name <| List.map (reverse queryResult) children
+
+                ( _, otherwise ) ->
+                    otherwise
+    }
+
+
 expressionToConceptNode : Int -> Expression -> ( Int, ConceptNode )
 expressionToConceptNode count expression =
     case expression of
@@ -495,3 +462,67 @@ main =
         , update = update
         , subscriptions = always Sub.none
         }
+
+
+
+---- Parsers ----
+
+
+command : Parser Command
+command =
+    succeed Tuple.pair
+        |= parseQuery
+        |= oneOf
+            [ backtrackable <| succeed identity |. spaces |= action |. symbol " "
+            , succeed NoAction
+            ]
+
+
+action : Parser Action
+action =
+    oneOf
+        [ Parser.map (always Delete) <| oneOf [ keyword "delete", keyword "d" ]
+        , Parser.map (always Reverse) <| oneOf [ keyword "reverse", keyword "r" ]
+        ]
+
+
+parseQuery : Parser Query
+parseQuery =
+    let
+        toQuery names =
+            List.unconsLast names
+                |> Maybe.map succeed
+                |> Maybe.withDefault (problem "empty query")
+    in
+    sequence { start = "", separator = ".", end = "", spaces = spaces, item = parseName, trailing = Forbidden }
+        |> Parser.andThen toQuery
+
+
+fromToken : String -> a -> Parser a
+fromToken string a =
+    Parser.map (always a) <| token string
+
+
+parseName : Parser Name
+parseName =
+    oneOf
+        [ leafName |> Parser.map LeafName
+        , nodeName |> Parser.map NodeName
+        ]
+
+
+leafName : Parser LeafName
+leafName =
+    oneOf
+        [ fromToken "string" String
+        , fromToken "int" Integer
+        ]
+
+
+nodeName : Parser NodeName
+nodeName =
+    oneOf
+        [ fromToken "list" List
+        , fromToken "branch" Branch
+        , fromToken "case" Case
+        ]

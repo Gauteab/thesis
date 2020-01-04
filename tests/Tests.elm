@@ -22,6 +22,6 @@ parsers =
         [ testParser "action" action "delete" (Ok Delete)
         , testParser "node then leaf" parseQuery "list.int" (Ok ( LeafName Integer, [ NodeName List ] ))
         , testParser "two nodes" parseQuery "list.case" (Ok ( NodeName Case, [ NodeName List ] ))
-        , testParser "command" command "list.case delete " (Ok <| Command ( NodeName Case, [ NodeName List ] ) Delete)
-        , testParser "command no action" command "list.case" (Ok <| Command ( NodeName Case, [ NodeName List ] ) NoAction)
+        , testParser "command" command "list.case delete " (Ok ( ( NodeName Case, [ NodeName List ] ), Delete ))
+        , testParser "command no action" command "list.case" (Ok ( ( NodeName Case, [ NodeName List ] ), NoAction ))
         ]
