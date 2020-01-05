@@ -202,10 +202,6 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    let
-        hitsIndexed =
-            List.indexedMap Tuple.pair model.queryResult
-    in
     Element.layout
         [ Font.family [ Font.monospace ]
         , paddingXY 5 5
