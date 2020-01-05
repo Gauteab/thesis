@@ -8,7 +8,10 @@ import Element.Font as Font exposing (Font)
 import Element.Input as Input exposing (labelHidden)
 import Html exposing (Html)
 import List.Extra as List
-import Parser exposing ((|.), (|=), Parser, Trailing(..), backtrackable, keyword, oneOf, problem, run, sequence, spaces, succeed, symbol, token)
+import List.Nonempty as Nonempty exposing (Nonempty)
+import Parser exposing ((|.), (|=), Parser, Trailing(..), backtrackable, keyword, oneOf, problem, run, sequence, spaces, succeed, symbol, token, variable)
+import Parser.Extras exposing (some)
+import Set
 
 
 
@@ -18,34 +21,38 @@ import Parser exposing ((|.), (|=), Parser, Trailing(..), backtrackable, keyword
 type alias Model =
     { maxId : Int
     , conceptNode : ConceptNode
-    , queryResult : QueryResult
+    , queryResult : QueryResultIndexed
     , inputText : String
     }
+
+
+example =
+    expressionToConceptNode 0 <|
+        EList
+            [ EInteger 1
+            , EList [ EInteger 6 ]
+            , ECase (EString "avc")
+                [ ( EString "a"
+                  , EList
+                        [ EInteger 2
+                        , EInteger 3
+                        , ECase (EString "xyz")
+                            [ ( EString "b"
+                              , EList [ EInteger 4, EString "c" ]
+                              )
+                            ]
+                        ]
+                  )
+                , ( EInteger 5, EInteger 6 )
+                ]
+            ]
 
 
 init : ( Model, Cmd Msg )
 init =
     let
         ( id, node ) =
-            expressionToConceptNode 0 <|
-                EList
-                    [ EInteger 1
-                    , EList [ EInteger 6 ]
-                    , ECase (EString "avc")
-                        [ ( EString "a"
-                          , EList
-                                [ EInteger 2
-                                , EInteger 3
-                                , ECase (EString "xyz")
-                                    [ ( EString "b"
-                                      , EList [ EInteger 4, EString "c" ]
-                                      )
-                                    ]
-                                ]
-                          )
-                        , ( EInteger 5, EInteger 6 )
-                        ]
-                    ]
+            example
     in
     ( { maxId = id
       , conceptNode = node
@@ -65,7 +72,15 @@ type alias Index =
 
 
 type alias Query =
-    ( Name, List Name )
+    { target : SubQuery
+    , subQueries : List SubQuery
+    }
+
+
+type alias SubQuery =
+    { name : Name
+    , selection : List Id
+    }
 
 
 type alias QueryResult =
@@ -155,28 +170,30 @@ update msg model =
                     run command string
                         |> Result.map (\( q, a ) -> ( a, runQuery q model.conceptNode ))
                         |> Result.withDefault ( NoAction, [] )
+                        |> Debug.log ""
 
                 applyAction action_ =
                     { model
                         | queryResult = []
                         , inputText = ""
-                        , conceptNode = action_ queryResult model.conceptNode
+                        , conceptNode = action_ (List.map Tuple.second queryResult) model.conceptNode
                     }
             in
-            ( case act of
-                NoAction ->
-                    { model
-                        | queryResult = queryResult
-                        , inputText = string
-                    }
+            Debug.log "" <|
+                ( case act of
+                    NoAction ->
+                        { model
+                            | queryResult = queryResult
+                            , inputText = string
+                        }
 
-                Delete ->
-                    applyAction delete
+                    Delete ->
+                        applyAction delete
 
-                Reverse ->
-                    applyAction reverse
-            , Cmd.none
-            )
+                    Reverse ->
+                        applyAction reverse
+                , Cmd.none
+                )
 
 
 
@@ -196,7 +213,7 @@ view model =
     <|
         column
             [ spacing 50 ]
-            [ renderConcept hitsIndexed (Debug.log "model" model).conceptNode
+            [ renderConcept model.queryResult model.conceptNode
             , Input.text []
                 { onChange = TextInput
                 , text = model.inputText
@@ -216,34 +233,37 @@ renderConcept queryResult conceptNode =
 
         cEl =
             codeElement (isMultiline conceptNode) maybeHit
+
+        tokenEl string =
+            el [ alignTop ] <| text string
     in
     row []
         [ -- indicator conceptNode.id
           case conceptNode.concept of
             Leaf Integer string ->
-                cEl [ text string ]
+                cEl [ tokenEl string ]
 
             Leaf String string ->
-                cEl [ text <| "\"" ++ string ++ "\"" ]
+                cEl [ tokenEl <| "\"" ++ string ++ "\"" ]
 
             Node Case (pattern :: branches) ->
                 cEl
-                    [ row [] [ text "case", el [ paddingXY 5 0 ] <| renderConcept queryResult pattern, text "of" ]
+                    [ row [] [ tokenEl "case", el [ paddingXY 5 0 ] <| renderConcept queryResult pattern, tokenEl "of" ]
                     , column [ paddingXY 25 0 ] <| List.map (renderConcept queryResult) branches
                     ]
 
             Node List [] ->
-                cEl [ text "[]" ]
+                cEl [ tokenEl "[]" ]
 
             Node List (e :: es) ->
                 cEl <|
-                    row [] [ text "[", renderConcept queryResult e ]
-                        :: List.map (\it -> row [] [ el [ alignTop ] (text ","), renderConcept queryResult it ]) es
-                        ++ [ text "]" ]
+                    row [] [ tokenEl "[", renderConcept queryResult e ]
+                        :: List.map (\it -> row [] [ el [ alignTop ] (tokenEl ","), renderConcept queryResult it ]) es
+                        ++ [ tokenEl "]" ]
 
             Node Branch [ pattern, expr ] ->
                 cEl <|
-                    [ row [] [ renderConcept queryResult pattern, text " -> " ]
+                    [ row [] [ renderConcept queryResult pattern, tokenEl " -> " ]
                     , el [ paddingXY 25 0 ] (renderConcept queryResult expr)
                     ]
 
@@ -325,36 +345,43 @@ getChildren node =
             []
 
 
-runQuery : Query -> ConceptNode -> QueryResult
-runQuery ( name, query ) node =
+runQuery : Query -> ConceptNode -> QueryResultIndexed
+runQuery query root =
     let
-        ( newQuery, maybeFound ) =
-            case query of
-                [] ->
-                    if match name node.concept then
-                        ( [], Just node.id )
+        subQueries =
+            query.subQueries ++ [ query.target ]
 
-                    else
-                        ( [], Nothing )
+        findMatches : Name -> ConceptNode -> List ConceptNode
+        findMatches name node =
+            if match name node then
+                node :: List.concatMap (findMatches name) (getChildren node)
 
-                queryHead :: queryTail ->
-                    if match queryHead node.concept then
-                        ( queryTail, Nothing )
+            else
+                List.concatMap (findMatches name) (getChildren node)
 
-                    else
-                        ( query, Nothing )
+        findFilteredMatches : SubQuery -> ConceptNode -> List ConceptNode
+        findFilteredMatches subQuery node =
+            if List.isEmpty subQuery.selection then
+                findMatches subQuery.name node
+
+            else
+                findMatches subQuery.name node
+                    |> List.indexedMap Tuple.pair
+                    |> List.filter (\( i, _ ) -> List.member i subQuery.selection)
+                    |> List.map Tuple.second
+
+        go : SubQuery -> List ConceptNode -> List ConceptNode
+        go subQuery nodes =
+            List.concatMap (findFilteredMatches subQuery) nodes
     in
-    case maybeFound of
-        Just found ->
-            found :: List.concatMap (runQuery ( name, newQuery )) (getChildren node)
-
-        Nothing ->
-            List.concatMap (runQuery ( name, newQuery )) (getChildren node)
+    List.foldl go [ root ] subQueries
+        |> List.map .id
+        |> List.indexedMap Tuple.pair
 
 
-match : Name -> Concept -> Bool
-match name concept =
-    case ( name, concept ) of
+match : Name -> ConceptNode -> Bool
+match name node =
+    case ( name, node.concept ) of
         ( LeafName n1, Leaf n2 _ ) ->
             n1 == n2
 
@@ -491,11 +518,28 @@ parseQuery =
     let
         toQuery names =
             List.unconsLast names
-                |> Maybe.map succeed
+                |> Maybe.map (\( name, queries ) -> succeed <| Query name queries)
                 |> Maybe.withDefault (problem "empty query")
     in
-    sequence { start = "", separator = ".", end = "", spaces = spaces, item = parseName, trailing = Forbidden }
+    sequence { start = "", separator = ".", end = "", spaces = spaces, item = parseSubQuery, trailing = Forbidden }
         |> Parser.andThen toQuery
+
+
+parseInt : Parser Int
+parseInt =
+    variable { start = Char.isDigit, inner = Char.isDigit, reserved = Set.empty }
+        |> Parser.andThen
+            (String.toInt >> Maybe.map succeed >> Maybe.withDefault (problem "invalid integer"))
+
+
+parseSubQuery : Parser SubQuery
+parseSubQuery =
+    succeed SubQuery
+        |= parseName
+        |= oneOf
+            [ backtrackable <| succeed List.singleton |= parseInt
+            , succeed []
+            ]
 
 
 fromToken : String -> a -> Parser a
