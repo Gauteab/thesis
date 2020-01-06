@@ -247,6 +247,7 @@ view : Model -> Html Msg
 view model =
     Element.layout
         [ Font.family [ Font.monospace ]
+        , Font.color (rgb255 0 0 0)
         , paddingXY 5 5
         ]
     <|
@@ -273,6 +274,9 @@ renderConcept queryResult conceptNode =
         cEl =
             codeElement (isMultiline conceptNode) maybeHit
 
+        keywordEl string =
+            el [ Font.color (rgb255 137 89 168), alignTop ] <| text string
+
         tokenEl string =
             el [ alignTop ] <| text string
     in
@@ -282,62 +286,58 @@ renderConcept queryResult conceptNode =
 
           else
             Element.none
-        , case conceptNode.concept of
-            Leaf Integer string ->
-                cEl [ tokenEl string ]
+        , cEl <|
+            case conceptNode.concept of
+                Leaf Integer string ->
+                    [ el [ Font.color (rgb255 26 79 171) ] <| text string ]
 
-            Leaf String string ->
-                cEl [ tokenEl <| "\"" ++ string ++ "\"" ]
+                Leaf String string ->
+                    [ el [ Font.color (rgb255 33 122 17) ] <| text <| "\"" ++ string ++ "\"" ]
 
-            Leaf Character string ->
-                cEl [ tokenEl <| "'" ++ string ++ "'" ]
+                Leaf Character string ->
+                    [ el [ Font.color (rgb255 33 122 17) ] <| text <| "'" ++ string ++ "'" ]
 
-            Leaf Identifier string ->
-                cEl [ tokenEl string ]
+                Leaf Identifier string ->
+                    [ text string ]
 
-            Node Case (pattern :: branches) ->
-                cEl
-                    [ row [] [ tokenEl "case", el [ paddingXY 5 0 ] <| renderConcept queryResult pattern, tokenEl "of" ]
+                Node Case (pattern :: branches) ->
+                    [ row [] [ keywordEl "case", el [ paddingXY 5 0 ] <| renderConcept queryResult pattern, keywordEl "of" ]
                     , column [ paddingXY 25 0 ] <| List.map (renderConcept queryResult) branches
                     ]
 
-            Node List [] ->
-                cEl [ tokenEl "[]" ]
+                Node List [] ->
+                    [ tokenEl "[]" ]
 
-            Node List (e :: es) ->
-                cEl <|
+                Node List (e :: es) ->
                     row [] [ tokenEl "[", renderConcept queryResult e ]
                         :: List.map (\it -> row [] [ el [ alignTop ] (tokenEl ","), renderConcept queryResult it ]) es
                         ++ [ tokenEl "]" ]
 
-            Node Branch [ pattern, expr ] ->
-                cEl
+                Node Branch [ pattern, expr ] ->
                     [ row [] [ renderConcept queryResult pattern, tokenEl " -> " ]
                     , el [ paddingXY 25 0 ] (renderConcept queryResult expr)
                     ]
 
-            Node Assignment [ name, expression ] ->
-                cEl
+                Node Assignment [ name, expression ] ->
                     [ row [] [ renderConcept queryResult name, tokenEl " = " ]
                     , el [ paddingXY 25 0 ] (renderConcept queryResult expression)
                     ]
 
-            Node Assignment _ ->
-                Debug.todo "invalid assignment"
+                Node Assignment _ ->
+                    Debug.todo "invalid assignment"
 
-            Hole ->
-                cEl <|
+                Hole ->
                     [ el
                         [ Background.color (rgb255 255 110 110) ]
                       <|
                         text (String.fromInt conceptNode.id)
                     ]
 
-            Node Branch _ ->
-                Debug.todo "invalid branch"
+                Node Branch _ ->
+                    Debug.todo "invalid branch"
 
-            Node Case _ ->
-                Debug.todo "invalid case expression"
+                Node Case _ ->
+                    Debug.todo "invalid case expression"
         ]
 
 
