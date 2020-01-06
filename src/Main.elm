@@ -1,11 +1,11 @@
 module Main exposing (..)
 
 import Browser
-import Element exposing (Color, Element, alignTop, column, el, fill, paddingXY, px, rgb255, row, spacing, text, width)
+import Element exposing (Color, Element, alignLeft, alignTop, column, el, fill, paddingXY, px, rgb255, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (Font)
-import Element.Input as Input exposing (labelHidden)
+import Element.Input as Input exposing (labelHidden, placeholder)
 import Html exposing (Html)
 import List.Extra as List
 import List.Nonempty as Nonempty exposing (Nonempty)
@@ -64,26 +64,26 @@ example =
     in
     assignIds 0 <|
         assignment
-            [ ident "hello"
+            [ ident "foo"
             , li
-                [ int 1
-                , li [ int 6 ]
+                [ li [ int 1 ]
                 , ca
-                    [ ident "name"
+                    [ ident "bar"
                     , br
                         [ str "a"
                         , li
                             [ int 2
                             , int 3
                             , ca
-                                [ str "xyz"
-                                , br [ str "b", li [ int 4, str "c", ch 'c' ] ]
+                                [ ident "baz"
+                                , br [ str "b", int 4 ]
+                                , br [ str "c", int 5 ]
                                 ]
                             ]
                         ]
                     , br
-                        [ int 5
-                        , int 6
+                        [ str "d"
+                        , li [ int 6, int 7, int 8 ]
                         ]
                     ]
                 ]
@@ -257,7 +257,7 @@ view model =
             , Input.text []
                 { onChange = TextInput
                 , text = model.inputText
-                , placeholder = Nothing
+                , placeholder = Just (placeholder [ alignLeft ] <| text "eg: case1.int")
                 , label = labelHidden "command input field"
                 }
             ]
@@ -471,6 +471,12 @@ delete queryResult conceptNode =
                             |> List.map (delete queryResult)
                             |> Node List
 
+                    --                    Node Case branches ->
+                    --                        branches
+                    --                            |> List.filterNot (\it -> List.member it.id queryResult)
+                    --                            |> List.map (delete queryResult)
+                    --                            |> Node Case
+                    -- TODO: Deleting all branches from a case leaves one hole per branch instead of one branch hole
                     Node name children ->
                         Node name <| List.map (delete queryResult) children
 
@@ -572,7 +578,8 @@ parseSubQuery =
     succeed SubQuery
         |= parseName
         |= oneOf
-            [ backtrackable <| succeed List.singleton |= parseInt
+            [ backtrackable <| sequence { start = "", separator = ",", end = "", spaces = spaces, item = parseInt, trailing = Forbidden }
+            , backtrackable <| succeed List.range |= parseInt |. token "-" |= parseInt
             , succeed []
             ]
 
