@@ -14,6 +14,13 @@ import Parser.Extras exposing (some)
 import Set
 
 
+{-| Displays debug information in the view
+-}
+debug : Bool
+debug =
+    False |> Debug.log "debug mode"
+
+
 
 ---- MODEL ----
 
@@ -27,23 +34,58 @@ type alias Model =
 
 
 example =
-    expressionToConceptNode 0 <|
-        EList
-            [ EInteger 1
-            , EList [ EInteger 6 ]
-            , ECase (EString "avc")
-                [ ( EString "a"
-                  , EList
-                        [ EInteger 2
-                        , EInteger 3
-                        , ECase (EString "xyz")
-                            [ ( EString "b"
-                              , EList [ EInteger 4, EString "c" ]
-                              )
+    let
+        node =
+            ConceptNode 0
+
+        int =
+            node << Leaf Integer << String.fromInt
+
+        str =
+            node << Leaf String
+
+        li =
+            node << Node List
+
+        ca =
+            node << Node Case
+
+        br =
+            node << Node Branch
+
+        assignment =
+            node << Node Assignment
+
+        ident =
+            node << Leaf Identifier
+
+        ch =
+            node << Leaf Character << String.fromChar
+    in
+    assignIds 0 <|
+        assignment
+            [ ident "hello"
+            , li
+                [ int 1
+                , li [ int 6 ]
+                , ca
+                    [ ident "name"
+                    , br
+                        [ str "a"
+                        , li
+                            [ int 2
+                            , int 3
+                            , ca
+                                [ str "xyz"
+                                , br [ str "b", li [ int 4, str "c", ch 'c' ] ]
+                                ]
                             ]
                         ]
-                  )
-                , ( EInteger 5, EInteger 6 )
+                    , br
+                        [ int 5
+                        , int 6
+                        ]
+                    ]
                 ]
             ]
 
@@ -121,35 +163,36 @@ type Name
 type LeafName
     = String
     | Integer
+    | Identifier
+    | Character
 
 
 type NodeName
     = List
     | Branch
     | Case
-
-
-type Expression
-    = ECharacter Char
-    | EString String
-    | EInteger Int
-    | EFloat Float
-    | EVariable (List String)
-    | EList (List Expression)
-    | ETuple (List Expression)
-    | EAccess Expression (List String)
-    | EAccessFunction String
-    | ERecord (List ( String, Expression ))
-    | ERecordUpdate String (List ( String, Expression ))
-    | EIf Expression Expression Expression
-    | ELet (List ( Expression, Expression )) Expression
-    | ECase Expression (List ( Expression, Expression ))
-    | ELambda (List Expression) Expression
-    | EApplication Expression Expression
-    | EBinOp Expression Expression Expression
+    | Assignment
 
 
 
+--type Expression
+--    = Character Char
+--    | String String
+--    | Integer Int
+--    | Float Float
+--    | Variable (List String)
+--    | List (List Expression)
+--    | Tuple (List Expression)
+--    | Access Expression (List String)
+--    | AccessFunction String
+--    | Record (List ( String, Expression ))
+--    | RecordUpdate String (List ( String, Expression ))
+--    | If Expression Expression Expression
+--    | Let (List ( Expression, Expression )) Expression
+--    | Case Expression (List ( Expression, Expression ))
+--    | Lambda (List Expression) Expression
+--    | Application Expression Expression
+--    | BinOp Expression Expression Expression
 ---- UPDATE ----
 
 
@@ -234,13 +277,23 @@ renderConcept queryResult conceptNode =
             el [ alignTop ] <| text string
     in
     row []
-        [ -- indicator conceptNode.id
-          case conceptNode.concept of
+        [ if debug then
+            indicator conceptNode.id
+
+          else
+            Element.none
+        , case conceptNode.concept of
             Leaf Integer string ->
                 cEl [ tokenEl string ]
 
             Leaf String string ->
                 cEl [ tokenEl <| "\"" ++ string ++ "\"" ]
+
+            Leaf Character string ->
+                cEl [ tokenEl <| "'" ++ string ++ "'" ]
+
+            Leaf Identifier string ->
+                cEl [ tokenEl string ]
 
             Node Case (pattern :: branches) ->
                 cEl
@@ -258,10 +311,19 @@ renderConcept queryResult conceptNode =
                         ++ [ tokenEl "]" ]
 
             Node Branch [ pattern, expr ] ->
-                cEl <|
+                cEl
                     [ row [] [ renderConcept queryResult pattern, tokenEl " -> " ]
                     , el [ paddingXY 25 0 ] (renderConcept queryResult expr)
                     ]
+
+            Node Assignment [ name, expression ] ->
+                cEl
+                    [ row [] [ renderConcept queryResult name, tokenEl " = " ]
+                    , el [ paddingXY 25 0 ] (renderConcept queryResult expression)
+                    ]
+
+            Node Assignment _ ->
+                Debug.todo "invalid assignment"
 
             Hole ->
                 cEl <|
@@ -271,14 +333,20 @@ renderConcept queryResult conceptNode =
                         text (String.fromInt conceptNode.id)
                     ]
 
-            _ ->
-                Debug.todo "render concept"
+            Node Branch _ ->
+                Debug.todo "invalid branch"
+
+            Node Case _ ->
+                Debug.todo "invalid case expression"
         ]
 
 
 isMultiline : ConceptNode -> Bool
 isMultiline conceptNode2 =
     case conceptNode2.concept of
+        Node Assignment _ ->
+            True
+
         Node Case _ ->
             True
 
@@ -430,51 +498,22 @@ reverse queryResult conceptNode =
     }
 
 
-expressionToConceptNode : Int -> Expression -> ( Int, ConceptNode )
-expressionToConceptNode count expression =
-    case expression of
-        EInteger x ->
-            ( count + 1, ConceptNode count <| Leaf Integer (String.fromInt x) )
-
-        EString s ->
-            ( count + 1, ConceptNode count <| Leaf String s )
-
-        EList xs ->
+assignIds : Int -> ConceptNode -> ( Int, ConceptNode )
+assignIds count conceptNode =
+    case conceptNode.concept of
+        Node name children ->
             let
-                f expr ( currentCount, currentConcepts ) =
-                    let
-                        ( newCount, newConcepts ) =
-                            expressionToConceptNode currentCount expr
-                    in
-                    ( newCount, newConcepts :: currentConcepts )
+                rec node ( currentCount, currentConcepts ) =
+                    assignIds currentCount node
+                        |> Tuple.mapSecond (\newConcept -> newConcept :: currentConcepts)
 
-                ( newCount_, cs ) =
-                    List.foldr f ( count + 1, [] ) xs
+                ( newCount, newChildren ) =
+                    List.foldr rec ( count + 1, [] ) children
             in
-            ( newCount_, ConceptNode count <| Node List cs )
-
-        ECase e patterns ->
-            let
-                toBranch ( a, b ) ( currentCount, currentConcepts ) =
-                    let
-                        ( count1, concept1 ) =
-                            expressionToConceptNode (currentCount + 1) a
-
-                        ( count2, concept2 ) =
-                            expressionToConceptNode count1 b
-                    in
-                    ( count2, (ConceptNode currentCount <| Node Branch [ concept1, concept2 ]) :: currentConcepts )
-
-                ( newCount, c ) =
-                    expressionToConceptNode (count + 1) e
-
-                ( newCount2, cs ) =
-                    List.foldr toBranch ( newCount, [] ) patterns
-            in
-            ( newCount2, ConceptNode count <| Node Case (c :: cs) )
+            ( newCount, ConceptNode count <| Node name newChildren )
 
         _ ->
-            Debug.todo "Unhandled expression in expressionToConceptNode"
+            ( count + 1, { conceptNode | id = count } )
 
 
 main : Program () Model Msg
@@ -556,6 +595,8 @@ leafName =
     oneOf
         [ fromToken "string" String
         , fromToken "int" Integer
+        , fromToken "id" Identifier
+        , fromToken "char" Character
         ]
 
 
@@ -565,4 +606,5 @@ nodeName =
         [ fromToken "list" List
         , fromToken "branch" Branch
         , fromToken "case" Case
+        , fromToken "ass" Assignment
         ]
