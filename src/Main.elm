@@ -551,10 +551,7 @@ action =
 
 parseQuery : Parser Query
 parseQuery =
-    oneOf
-        --        [ end |> map (always [])
-        [ many parseSubQuery
-        ]
+    some parseSubQuery |> map (\( x, y ) -> x :: y)
 
 
 parseInt : Parser Int
@@ -580,7 +577,7 @@ parseSelection =
             (\y ->
                 oneOf
                     [ succeed (List.range y) |. symbol "-" |= parseInt
-                    , succeed [ y ]
+                    , many (symbol "," |> andThen (\_ -> parseInt)) |> map ((::) y)
                     ]
             )
 
