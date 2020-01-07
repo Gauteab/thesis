@@ -156,6 +156,7 @@ type Concept
 type Name
     = LeafName LeafName
     | NodeName NodeName
+    | HoleName
 
 
 type LeafName
@@ -447,6 +448,9 @@ match name node =
         ( NodeName n1, Node n2 _ ) ->
             n1 == n2
 
+        ( HoleName, Hole ) ->
+            True
+
         _ ->
             False
 
@@ -592,6 +596,7 @@ parseName =
     oneOf
         [ leafName |> Parser.map LeafName
         , nodeName |> Parser.map NodeName
+        , symbol "hole" |> map (always HoleName)
         ]
 
 
