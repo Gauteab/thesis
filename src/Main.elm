@@ -9,8 +9,8 @@ import Element.Input as Input exposing (labelHidden, placeholder)
 import Html exposing (Html)
 import List.Extra as List
 import List.Nonempty as Nonempty exposing (Nonempty)
-import Parser exposing ((|.), (|=), Parser, Trailing(..), backtrackable, keyword, oneOf, problem, run, sequence, spaces, succeed, symbol, token, variable)
-import Parser.Extras exposing (some)
+import Parser exposing ((|.), (|=), Parser, Trailing(..), andThen, backtrackable, end, keyword, map, oneOf, problem, run, sequence, spaces, succeed, symbol, token, variable)
+import Parser.Extras exposing (many, some)
 import Set
 
 
@@ -114,15 +114,13 @@ type alias Index =
 
 
 type alias Query =
-    { target : SubQuery
-    , subQueries : List SubQuery
-    }
+    List SubQuery
 
 
-type alias SubQuery =
-    { name : Name
-    , selection : List Id
-    }
+type SubQuery
+    = NameQuery Name
+    | NumberQuery (List Int)
+    | ChildQuery
 
 
 type alias QueryResult =
@@ -412,9 +410,6 @@ getChildren node =
 runQuery : Query -> ConceptNode -> QueryResultIndexed
 runQuery query root =
     let
-        subQueries =
-            query.subQueries ++ [ query.target ]
-
         findMatches : Name -> ConceptNode -> List ConceptNode
         findMatches name node =
             if match name node then
@@ -423,22 +418,22 @@ runQuery query root =
             else
                 List.concatMap (findMatches name) (getChildren node)
 
-        findFilteredMatches : SubQuery -> ConceptNode -> List ConceptNode
-        findFilteredMatches subQuery node =
-            if List.isEmpty subQuery.selection then
-                findMatches subQuery.name node
+        executeSubQuery : SubQuery -> List ConceptNode -> List ConceptNode
+        executeSubQuery subQuery nodes =
+            case subQuery of
+                NameQuery name ->
+                    List.concatMap (findMatches name) nodes
 
-            else
-                findMatches subQuery.name node
-                    |> List.indexedMap Tuple.pair
-                    |> List.filter (\( i, _ ) -> List.member i subQuery.selection)
-                    |> List.map Tuple.second
+                NumberQuery selection ->
+                    nodes
+                        |> List.indexedMap Tuple.pair
+                        |> List.filter (\( i, _ ) -> List.member i selection)
+                        |> List.map Tuple.second
 
-        go : SubQuery -> List ConceptNode -> List ConceptNode
-        go subQuery nodes =
-            List.concatMap (findFilteredMatches subQuery) nodes
+                ChildQuery ->
+                    List.concatMap getChildren nodes
     in
-    List.foldl go [ root ] subQueries
+    List.foldl executeSubQuery [ root ] query
         |> List.map .id
         |> List.indexedMap Tuple.pair
 
@@ -556,14 +551,10 @@ action =
 
 parseQuery : Parser Query
 parseQuery =
-    let
-        toQuery names =
-            List.unconsLast names
-                |> Maybe.map (\( name, queries ) -> succeed <| Query name queries)
-                |> Maybe.withDefault (problem "empty query")
-    in
-    sequence { start = "", separator = ".", end = "", spaces = spaces, item = parseSubQuery, trailing = Forbidden }
-        |> Parser.andThen toQuery
+    oneOf
+        --        [ end |> map (always [])
+        [ many parseSubQuery
+        ]
 
 
 parseInt : Parser Int
@@ -575,13 +566,23 @@ parseInt =
 
 parseSubQuery : Parser SubQuery
 parseSubQuery =
-    succeed SubQuery
-        |= parseName
-        |= oneOf
-            [ backtrackable <| sequence { start = "", separator = ",", end = "", spaces = spaces, item = parseInt, trailing = Forbidden }
-            , backtrackable <| succeed List.range |= parseInt |. token "-" |= parseInt
-            , succeed []
-            ]
+    oneOf
+        [ map NameQuery parseName
+        , map NumberQuery parseSelection
+        , succeed ChildQuery |. symbol "."
+        ]
+
+
+parseSelection : Parser (List Int)
+parseSelection =
+    parseInt
+        |> andThen
+            (\y ->
+                oneOf
+                    [ succeed (List.range y) |. symbol "-" |= parseInt
+                    , succeed [ y ]
+                    ]
+            )
 
 
 fromToken : String -> a -> Parser a

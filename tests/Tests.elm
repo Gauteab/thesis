@@ -2,7 +2,8 @@ module Tests exposing (..)
 
 import Expect
 import Main exposing (..)
-import Parser exposing ((|.), end)
+import Parser exposing ((|.), end, symbol)
+import Parser.Extras exposing (many)
 import Test exposing (..)
 
 
@@ -24,19 +25,10 @@ parsers =
 
             int =
                 LeafName Integer
-
-            sq =
-                SubQuery
-
-            q a b =
-                Ok <| Query a b
         in
-        [ testParser "action" action "delete" (Ok Delete)
-        , testParser "target" parseSubQuery "list" <| Ok (sq li [])
-        , testParser "target with id" parseSubQuery "list1" <| Ok (SubQuery (NodeName List) [ 1 ])
-        , testParser "query" parseQuery "list1" <| q (sq li [ 1 ]) []
-        , testParser "query with leaf" parseQuery "list.int" <| q (sq int []) [ sq li [] ]
-        , testParser "query with leaf and id" parseQuery "list1.int1" <| q (sq int [ 1 ]) [ sq li [ 1 ] ]
+        [ testParser "name sub-query" parseSubQuery "int" <| Ok (NameQuery <| LeafName Integer)
+        , testParser "name query" parseQuery "int" <| Ok [ NameQuery <| LeafName Integer ]
+        , testParser "empty query" (many parseSubQuery) "" <| Ok []
         ]
 
 
