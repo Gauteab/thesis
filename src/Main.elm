@@ -5,7 +5,7 @@ import Element exposing (Color, Element, alignLeft, alignTop, column, el, fill, 
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (Font)
-import Element.Input as Input exposing (labelHidden, placeholder)
+import Element.Input as Input exposing (focusedOnLoad, labelHidden, placeholder)
 import Html exposing (Html)
 import List.Extra as List
 import List.Nonempty as Nonempty exposing (Nonempty)
@@ -253,7 +253,7 @@ view model =
         column
             [ spacing 50 ]
             [ renderConcept model.queryResult model.conceptNode
-            , Input.text []
+            , Input.text [ focusedOnLoad ]
                 { onChange = TextInput
                 , text = model.inputText
                 , placeholder = Just (placeholder [ alignLeft ] <| text "eg: case1.int")
