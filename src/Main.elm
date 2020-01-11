@@ -70,7 +70,7 @@ example =
                 , ca
                     [ ident "bar"
                     , br
-                        [ str "a"
+                        [ str "abc"
                         , li
                             [ int 2
                             , int 3
@@ -218,7 +218,7 @@ update msg model =
                     { model
                         | queryResult = []
                         , inputText = ""
-                        , conceptNode = action_ (List.map Tuple.second queryResult) model.conceptNode
+                        , conceptNode = change action_ (List.map Tuple.second queryResult) model.conceptNode
                     }
             in
             Debug.log "" <|
@@ -455,52 +455,69 @@ match name node =
             False
 
 
-delete : QueryResult -> ConceptNode -> ConceptNode
-delete queryResult conceptNode =
-    { conceptNode
+newNode : NodeName -> List ConceptNode -> Maybe Concept
+newNode name nodes =
+    Maybe.map (Node name) <|
+        case ( name, nodes ) of
+            ( List, _ ) ->
+                Just <| List.filter (not << match HoleName) nodes
+
+            ( Branch, [ pattern, expression ] ) ->
+                Just <| nodes
+
+            ( Case, expression :: branch :: branches ) ->
+                Just <|
+                    expression
+                        :: (Nonempty.Nonempty branch branches
+                                |> Nonempty.filter (not << match HoleName) { branch | concept = Hole }
+                                |> Nonempty.toList
+                           )
+
+            ( Assignment, [ _, _ ] ) ->
+                Just <| nodes
+
+            _ ->
+                Nothing
+
+
+change : (Concept -> Concept) -> QueryResult -> ConceptNode -> ConceptNode
+change f results node =
+    { node
         | concept =
-            if List.member conceptNode.id queryResult then
-                Hole
+            if List.member node.id results then
+                f node.concept
 
             else
-                case conceptNode.concept of
-                    Node List list ->
-                        list
-                            |> List.filterNot (\it -> List.member it.id queryResult)
-                            |> List.map (delete queryResult)
-                            |> Node List
-
-                    --                    Node Case branches ->
-                    --                        branches
-                    --                            |> List.filterNot (\it -> List.member it.id queryResult)
-                    --                            |> List.map (delete queryResult)
-                    --                            |> Node Case
-                    -- TODO: Deleting all branches from a case leaves one hole per branch instead of one branch hole
+                case node.concept of
                     Node name children ->
-                        Node name <| List.map (delete queryResult) children
+                        List.map (change f results) children
+                            |> newNode name
+                            |> Maybe.withDefault node.concept
 
-                    otherwise ->
-                        otherwise
+                    a ->
+                        a
     }
 
 
-reverse : QueryResult -> ConceptNode -> ConceptNode
-reverse queryResult conceptNode =
-    { conceptNode
-        | concept =
-            case ( List.member conceptNode.id queryResult, conceptNode.concept ) of
-                ( True, Node a list ) ->
-                    list
-                        |> List.reverse
-                        |> List.map (reverse queryResult)
-                        |> Node a
+delete : Concept -> Concept
+delete _ =
+    Hole
 
-                ( False, Node name children ) ->
-                    Node name <| List.map (reverse queryResult) children
 
-                ( _, otherwise ) ->
-                    otherwise
-    }
+reverse : Concept -> Concept
+reverse concept =
+    case concept of
+        Node Case (e :: bs) ->
+            Node Case (e :: List.reverse bs)
+
+        Node name children ->
+            Node name (List.reverse children)
+
+        Leaf String string ->
+            Leaf String (String.reverse string)
+
+        a ->
+            a
 
 
 assignIds : Int -> ConceptNode -> ( Int, ConceptNode )
@@ -596,25 +613,25 @@ parseName =
     oneOf
         [ leafName |> Parser.map LeafName
         , nodeName |> Parser.map NodeName
-        , symbol "hole" |> map (always HoleName)
+        , symbol "ho" |> map (always HoleName)
         ]
 
 
 leafName : Parser LeafName
 leafName =
     oneOf
-        [ fromToken "string" String
+        [ fromToken "str" String
         , fromToken "int" Integer
         , fromToken "id" Identifier
-        , fromToken "char" Character
+        , fromToken "ch" Character
         ]
 
 
 nodeName : Parser NodeName
 nodeName =
     oneOf
-        [ fromToken "list" List
-        , fromToken "branch" Branch
-        , fromToken "case" Case
-        , fromToken "ass" Assignment
+        [ fromToken "li" List
+        , fromToken "br" Branch
+        , fromToken "ca" Case
+        , fromToken "as" Assignment
         ]

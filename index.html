@@ -5421,7 +5421,7 @@ var $author$project$Main$example = function () {
 									br(
 									_List_fromArray(
 										[
-											str('a'),
+											str('abc'),
 											li(
 											_List_fromArray(
 												[
@@ -5475,6 +5475,236 @@ var $author$project$Main$init = function () {
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Main$NoAction = {$: 'NoAction'};
+var $elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
+var $author$project$Main$Hole = {$: 'Hole'};
+var $author$project$Main$HoleName = {$: 'HoleName'};
+var $mgold$elm_nonempty_list$List$Nonempty$Nonempty = F2(
+	function (a, b) {
+		return {$: 'Nonempty', a: a, b: b};
+	});
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $mgold$elm_nonempty_list$List$Nonempty$filter = F3(
+	function (p, d, _v0) {
+		var x = _v0.a;
+		var xs = _v0.b;
+		if (p(x)) {
+			return A2(
+				$mgold$elm_nonempty_list$List$Nonempty$Nonempty,
+				x,
+				A2($elm$core$List$filter, p, xs));
+		} else {
+			var _v1 = A2($elm$core$List$filter, p, xs);
+			if (!_v1.b) {
+				return A2($mgold$elm_nonempty_list$List$Nonempty$Nonempty, d, _List_Nil);
+			} else {
+				var y = _v1.a;
+				var ys = _v1.b;
+				return A2($mgold$elm_nonempty_list$List$Nonempty$Nonempty, y, ys);
+			}
+		}
+	});
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $author$project$Main$match = F2(
+	function (name, node) {
+		var _v0 = _Utils_Tuple2(name, node.concept);
+		_v0$3:
+		while (true) {
+			switch (_v0.a.$) {
+				case 'LeafName':
+					if (_v0.b.$ === 'Leaf') {
+						var n1 = _v0.a.a;
+						var _v1 = _v0.b;
+						var n2 = _v1.a;
+						return _Utils_eq(n1, n2);
+					} else {
+						break _v0$3;
+					}
+				case 'NodeName':
+					if (_v0.b.$ === 'Node') {
+						var n1 = _v0.a.a;
+						var _v2 = _v0.b;
+						var n2 = _v2.a;
+						return _Utils_eq(n1, n2);
+					} else {
+						break _v0$3;
+					}
+				default:
+					if (_v0.b.$ === 'Hole') {
+						var _v3 = _v0.a;
+						var _v4 = _v0.b;
+						return true;
+					} else {
+						break _v0$3;
+					}
+			}
+		}
+		return false;
+	});
+var $elm$core$Basics$not = _Basics_not;
+var $mgold$elm_nonempty_list$List$Nonempty$toList = function (_v0) {
+	var x = _v0.a;
+	var xs = _v0.b;
+	return A2($elm$core$List$cons, x, xs);
+};
+var $author$project$Main$newNode = F2(
+	function (name, nodes) {
+		return A2(
+			$elm$core$Maybe$map,
+			$author$project$Main$Node(name),
+			function () {
+				var _v0 = _Utils_Tuple2(name, nodes);
+				_v0$4:
+				while (true) {
+					switch (_v0.a.$) {
+						case 'List':
+							var _v1 = _v0.a;
+							return $elm$core$Maybe$Just(
+								A2(
+									$elm$core$List$filter,
+									A2(
+										$elm$core$Basics$composeL,
+										$elm$core$Basics$not,
+										$author$project$Main$match($author$project$Main$HoleName)),
+									nodes));
+						case 'Branch':
+							if ((_v0.b.b && _v0.b.b.b) && (!_v0.b.b.b.b)) {
+								var _v2 = _v0.a;
+								var _v3 = _v0.b;
+								var pattern = _v3.a;
+								var _v4 = _v3.b;
+								var expression = _v4.a;
+								return $elm$core$Maybe$Just(nodes);
+							} else {
+								break _v0$4;
+							}
+						case 'Case':
+							if (_v0.b.b && _v0.b.b.b) {
+								var _v5 = _v0.a;
+								var _v6 = _v0.b;
+								var expression = _v6.a;
+								var _v7 = _v6.b;
+								var branch = _v7.a;
+								var branches = _v7.b;
+								return $elm$core$Maybe$Just(
+									A2(
+										$elm$core$List$cons,
+										expression,
+										$mgold$elm_nonempty_list$List$Nonempty$toList(
+											A3(
+												$mgold$elm_nonempty_list$List$Nonempty$filter,
+												A2(
+													$elm$core$Basics$composeL,
+													$elm$core$Basics$not,
+													$author$project$Main$match($author$project$Main$HoleName)),
+												_Utils_update(
+													branch,
+													{concept: $author$project$Main$Hole}),
+												A2($mgold$elm_nonempty_list$List$Nonempty$Nonempty, branch, branches)))));
+							} else {
+								break _v0$4;
+							}
+						default:
+							if ((_v0.b.b && _v0.b.b.b) && (!_v0.b.b.b.b)) {
+								var _v8 = _v0.a;
+								var _v9 = _v0.b;
+								var _v10 = _v9.b;
+								return $elm$core$Maybe$Just(nodes);
+							} else {
+								break _v0$4;
+							}
+					}
+				}
+				return $elm$core$Maybe$Nothing;
+			}());
+	});
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $author$project$Main$change = F3(
+	function (f, results, node) {
+		return _Utils_update(
+			node,
+			{
+				concept: function () {
+					if (A2($elm$core$List$member, node.id, results)) {
+						return f(node.concept);
+					} else {
+						var _v0 = node.concept;
+						if (_v0.$ === 'Node') {
+							var name = _v0.a;
+							var children = _v0.b;
+							return A2(
+								$elm$core$Maybe$withDefault,
+								node.concept,
+								A2(
+									$author$project$Main$newNode,
+									name,
+									A2(
+										$elm$core$List$map,
+										A2($author$project$Main$change, f, results),
+										children)));
+						} else {
+							var a = _v0;
+							return a;
+						}
+					}
+				}()
+			});
+	});
 var $author$project$Main$Delete = {$: 'Delete'};
 var $author$project$Main$Reverse = {$: 'Reverse'};
 var $elm$parser$Parser$ExpectingKeyword = function (a) {
@@ -5516,7 +5746,6 @@ var $elm$parser$Parser$Advanced$isSubString = _Parser_isSubString;
 var $elm$core$Basics$negate = function (n) {
 	return -n;
 };
-var $elm$core$Basics$not = _Basics_not;
 var $elm$parser$Parser$Advanced$keyword = function (_v0) {
 	var kwd = _v0.a;
 	var expecting = _v0.b;
@@ -5710,7 +5939,6 @@ var $author$project$Main$NameQuery = function (a) {
 var $author$project$Main$NumberQuery = function (a) {
 	return {$: 'NumberQuery', a: a};
 };
-var $author$project$Main$HoleName = {$: 'HoleName'};
 var $author$project$Main$LeafName = function (a) {
 	return {$: 'LeafName', a: a};
 };
@@ -5760,18 +5988,18 @@ var $author$project$Main$fromToken = F2(
 var $author$project$Main$leafName = $elm$parser$Parser$oneOf(
 	_List_fromArray(
 		[
-			A2($author$project$Main$fromToken, 'string', $author$project$Main$String),
+			A2($author$project$Main$fromToken, 'str', $author$project$Main$String),
 			A2($author$project$Main$fromToken, 'int', $author$project$Main$Integer),
 			A2($author$project$Main$fromToken, 'id', $author$project$Main$Identifier),
-			A2($author$project$Main$fromToken, 'char', $author$project$Main$Character)
+			A2($author$project$Main$fromToken, 'ch', $author$project$Main$Character)
 		]));
 var $author$project$Main$nodeName = $elm$parser$Parser$oneOf(
 	_List_fromArray(
 		[
-			A2($author$project$Main$fromToken, 'list', $author$project$Main$List),
-			A2($author$project$Main$fromToken, 'branch', $author$project$Main$Branch),
-			A2($author$project$Main$fromToken, 'case', $author$project$Main$Case),
-			A2($author$project$Main$fromToken, 'ass', $author$project$Main$Assignment)
+			A2($author$project$Main$fromToken, 'li', $author$project$Main$List),
+			A2($author$project$Main$fromToken, 'br', $author$project$Main$Branch),
+			A2($author$project$Main$fromToken, 'ca', $author$project$Main$Case),
+			A2($author$project$Main$fromToken, 'as', $author$project$Main$Assignment)
 		]));
 var $elm$parser$Parser$ExpectingSymbol = function (a) {
 	return {$: 'ExpectingSymbol', a: a};
@@ -5792,7 +6020,7 @@ var $author$project$Main$parseName = $elm$parser$Parser$oneOf(
 			A2(
 			$elm$parser$Parser$map,
 			$elm$core$Basics$always($author$project$Main$HoleName),
-			$elm$parser$Parser$symbol('hole'))
+			$elm$parser$Parser$symbol('ho'))
 		]));
 var $elm$parser$Parser$Advanced$andThen = F2(
 	function (callback, _v0) {
@@ -6001,16 +6229,6 @@ var $elm$core$Set$Set_elm_builtin = function (a) {
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
 var $elm$core$Set$empty = $elm$core$Set$Set_elm_builtin($elm$core$Dict$empty);
-var $elm$core$Maybe$map = F2(
-	function (f, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return $elm$core$Maybe$Just(
-				f(value));
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
 var $elm$parser$Parser$Problem = function (a) {
 	return {$: 'Problem', a: a};
 };
@@ -6141,15 +6359,6 @@ var $elm$parser$Parser$variable = function (i) {
 	return $elm$parser$Parser$Advanced$variable(
 		{expecting: $elm$parser$Parser$ExpectingVariable, inner: i.inner, reserved: i.reserved, start: i.start});
 };
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
 var $author$project$Main$parseInt = A2(
 	$elm$parser$Parser$andThen,
 	A2(
@@ -6238,100 +6447,9 @@ var $author$project$Main$command = A2(
 						$elm$parser$Parser$symbol(' ')))),
 				$elm$parser$Parser$succeed($author$project$Main$NoAction)
 			])));
-var $author$project$Main$Hole = {$: 'Hole'};
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
-var $elm_community$list_extra$List$Extra$filterNot = F2(
-	function (pred, list) {
-		return A2(
-			$elm$core$List$filter,
-			A2($elm$core$Basics$composeL, $elm$core$Basics$not, pred),
-			list);
-	});
-var $elm$core$List$any = F2(
-	function (isOkay, list) {
-		any:
-		while (true) {
-			if (!list.b) {
-				return false;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				if (isOkay(x)) {
-					return true;
-				} else {
-					var $temp$isOkay = isOkay,
-						$temp$list = xs;
-					isOkay = $temp$isOkay;
-					list = $temp$list;
-					continue any;
-				}
-			}
-		}
-	});
-var $elm$core$List$member = F2(
-	function (x, xs) {
-		return A2(
-			$elm$core$List$any,
-			function (a) {
-				return _Utils_eq(a, x);
-			},
-			xs);
-	});
-var $author$project$Main$delete = F2(
-	function (queryResult, conceptNode) {
-		return _Utils_update(
-			conceptNode,
-			{
-				concept: function () {
-					if (A2($elm$core$List$member, conceptNode.id, queryResult)) {
-						return $author$project$Main$Hole;
-					} else {
-						var _v0 = conceptNode.concept;
-						if (_v0.$ === 'Node') {
-							if (_v0.a.$ === 'List') {
-								var _v1 = _v0.a;
-								var list = _v0.b;
-								return A2(
-									$author$project$Main$Node,
-									$author$project$Main$List,
-									A2(
-										$elm$core$List$map,
-										$author$project$Main$delete(queryResult),
-										A2(
-											$elm_community$list_extra$List$Extra$filterNot,
-											function (it) {
-												return A2($elm$core$List$member, it.id, queryResult);
-											},
-											list)));
-							} else {
-								var name = _v0.a;
-								var children = _v0.b;
-								return A2(
-									$author$project$Main$Node,
-									name,
-									A2(
-										$elm$core$List$map,
-										$author$project$Main$delete(queryResult),
-										children));
-							}
-						} else {
-							var otherwise = _v0;
-							return otherwise;
-						}
-					}
-				}()
-			});
-	});
+var $author$project$Main$delete = function (_v0) {
+	return $author$project$Main$Hole;
+};
 var $elm$core$Debug$log = _Debug_log;
 var $elm$core$Result$map = F2(
 	function (func, ra) {
@@ -6344,54 +6462,50 @@ var $elm$core$Result$map = F2(
 			return $elm$core$Result$Err(e);
 		}
 	});
-var $author$project$Main$reverse = F2(
-	function (queryResult, conceptNode) {
-		return _Utils_update(
-			conceptNode,
-			{
-				concept: function () {
-					var _v0 = _Utils_Tuple2(
-						A2($elm$core$List$member, conceptNode.id, queryResult),
-						conceptNode.concept);
-					_v0$2:
-					while (true) {
-						if (_v0.a) {
-							if (_v0.b.$ === 'Node') {
-								var _v1 = _v0.b;
-								var a = _v1.a;
-								var list = _v1.b;
-								return A2(
-									$author$project$Main$Node,
-									a,
-									A2(
-										$elm$core$List$map,
-										$author$project$Main$reverse(queryResult),
-										$elm$core$List$reverse(list)));
-							} else {
-								break _v0$2;
-							}
-						} else {
-							if (_v0.b.$ === 'Node') {
-								var _v2 = _v0.b;
-								var name = _v2.a;
-								var children = _v2.b;
-								return A2(
-									$author$project$Main$Node,
-									name,
-									A2(
-										$elm$core$List$map,
-										$author$project$Main$reverse(queryResult),
-										children));
-							} else {
-								break _v0$2;
-							}
-						}
-					}
-					var otherwise = _v0.b;
-					return otherwise;
-				}()
-			});
-	});
+var $elm$core$String$reverse = _String_reverse;
+var $author$project$Main$reverse = function (concept) {
+	_v0$3:
+	while (true) {
+		switch (concept.$) {
+			case 'Node':
+				if ((concept.a.$ === 'Case') && concept.b.b) {
+					var _v1 = concept.a;
+					var _v2 = concept.b;
+					var e = _v2.a;
+					var bs = _v2.b;
+					return A2(
+						$author$project$Main$Node,
+						$author$project$Main$Case,
+						A2(
+							$elm$core$List$cons,
+							e,
+							$elm$core$List$reverse(bs)));
+				} else {
+					var name = concept.a;
+					var children = concept.b;
+					return A2(
+						$author$project$Main$Node,
+						name,
+						$elm$core$List$reverse(children));
+				}
+			case 'Leaf':
+				if (concept.a.$ === 'String') {
+					var _v3 = concept.a;
+					var string = concept.b;
+					return A2(
+						$author$project$Main$Leaf,
+						$author$project$Main$String,
+						$elm$core$String$reverse(string));
+				} else {
+					break _v0$3;
+				}
+			default:
+				break _v0$3;
+		}
+	}
+	var a = concept;
+	return a;
+};
 var $elm$parser$Parser$DeadEnd = F3(
 	function (row, col, problem) {
 		return {col: col, problem: problem, row: row};
@@ -6476,42 +6590,6 @@ var $author$project$Main$getChildren = function (node) {
 		return _List_Nil;
 	}
 };
-var $author$project$Main$match = F2(
-	function (name, node) {
-		var _v0 = _Utils_Tuple2(name, node.concept);
-		_v0$3:
-		while (true) {
-			switch (_v0.a.$) {
-				case 'LeafName':
-					if (_v0.b.$ === 'Leaf') {
-						var n1 = _v0.a.a;
-						var _v1 = _v0.b;
-						var n2 = _v1.a;
-						return _Utils_eq(n1, n2);
-					} else {
-						break _v0$3;
-					}
-				case 'NodeName':
-					if (_v0.b.$ === 'Node') {
-						var n1 = _v0.a.a;
-						var _v2 = _v0.b;
-						var n2 = _v2.a;
-						return _Utils_eq(n1, n2);
-					} else {
-						break _v0$3;
-					}
-				default:
-					if (_v0.b.$ === 'Hole') {
-						var _v3 = _v0.a;
-						var _v4 = _v0.b;
-						return true;
-					} else {
-						break _v0$3;
-					}
-			}
-		}
-		return false;
-	});
 var $elm$core$Tuple$second = function (_v0) {
 	var y = _v0.b;
 	return y;
@@ -6608,7 +6686,8 @@ var $author$project$Main$update = F2(
 				return _Utils_update(
 					model,
 					{
-						conceptNode: A2(
+						conceptNode: A3(
+							$author$project$Main$change,
 							action_,
 							A2($elm$core$List$map, $elm$core$Tuple$second, queryResult),
 							model.conceptNode),
