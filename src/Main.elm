@@ -1,5 +1,6 @@
 module Main exposing (..)
 
+import Bool.Extra exposing (ifElse)
 import Browser
 import Element exposing (Color, Element, alignLeft, alignTop, column, el, fill, paddingXY, px, rgb255, row, spacing, text, width)
 import Element.Background as Background
@@ -139,6 +140,7 @@ type Action
     = Delete
     | NoAction
     | Reverse
+    | Add
 
 
 type alias ConceptNode =
@@ -234,6 +236,9 @@ update msg model =
 
                     Reverse ->
                         applyAction reverse
+
+                    Add ->
+                        Debug.todo ""
                 , Cmd.none
                 )
 
@@ -256,7 +261,7 @@ view model =
             , Input.text [ focusedOnLoad ]
                 { onChange = TextInput
                 , text = model.inputText
-                , placeholder = Just (placeholder [ alignLeft ] <| text "eg: case1.int")
+                , placeholder = Nothing
                 , label = labelHidden "command input field"
                 }
             ]
@@ -326,10 +331,7 @@ renderConcept queryResult conceptNode =
                     Debug.todo "invalid assignment"
 
                 Hole ->
-                    [ el
-                        [ Background.color (rgb255 255 110 110) ]
-                      <|
-                        text (String.fromInt conceptNode.id)
+                    [ el [ Background.color (rgb255 255 110 110) ] (text <| String.fromInt conceptNode.id)
                     ]
 
                 Node Branch _ ->
@@ -484,10 +486,7 @@ change : (Concept -> Concept) -> QueryResult -> ConceptNode -> ConceptNode
 change f results node =
     { node
         | concept =
-            if List.member node.id results then
-                f node.concept
-
-            else
+            ifElse f identity (List.member node.id results) <|
                 case node.concept of
                     Node name children ->
                         List.map (change f results) children
@@ -565,8 +564,8 @@ command =
 action : Parser Action
 action =
     oneOf
-        [ Parser.map (always Delete) <| oneOf [ keyword "delete", keyword "d" ]
-        , Parser.map (always Reverse) <| oneOf [ keyword "reverse", keyword "r" ]
+        [ succeed Delete |. oneOf [ keyword "delete", keyword "d" ]
+        , succeed Reverse |. oneOf [ keyword "reverse", keyword "r" ]
         ]
 
 

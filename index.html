@@ -5475,6 +5475,10 @@ var $author$project$Main$init = function () {
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Main$NoAction = {$: 'NoAction'};
+var $Chadtech$elm_bool_extra$Bool$Extra$ifElse = F3(
+	function (ifTrue, ifFalse, predicate) {
+		return predicate ? ifTrue : ifFalse;
+	});
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
 		any:
@@ -5679,10 +5683,12 @@ var $author$project$Main$change = F3(
 		return _Utils_update(
 			node,
 			{
-				concept: function () {
-					if (A2($elm$core$List$member, node.id, results)) {
-						return f(node.concept);
-					} else {
+				concept: A4(
+					$Chadtech$elm_bool_extra$Bool$Extra$ifElse,
+					f,
+					$elm$core$Basics$identity,
+					A2($elm$core$List$member, node.id, results),
+					function () {
 						var _v0 = node.concept;
 						if (_v0.$ === 'Node') {
 							var name = _v0.a;
@@ -5701,19 +5707,11 @@ var $author$project$Main$change = F3(
 							var a = _v0;
 							return a;
 						}
-					}
-				}()
+					}())
 			});
 	});
 var $author$project$Main$Delete = {$: 'Delete'};
 var $author$project$Main$Reverse = {$: 'Reverse'};
-var $elm$parser$Parser$ExpectingKeyword = function (a) {
-	return {$: 'ExpectingKeyword', a: a};
-};
-var $elm$parser$Parser$Advanced$Token = F2(
-	function (a, b) {
-		return {$: 'Token', a: a, b: b};
-	});
 var $elm$parser$Parser$Advanced$Bad = F2(
 	function (a, b) {
 		return {$: 'Bad', a: a, b: b};
@@ -5725,6 +5723,51 @@ var $elm$parser$Parser$Advanced$Good = F3(
 var $elm$parser$Parser$Advanced$Parser = function (a) {
 	return {$: 'Parser', a: a};
 };
+var $elm$parser$Parser$Advanced$map2 = F3(
+	function (func, _v0, _v1) {
+		var parseA = _v0.a;
+		var parseB = _v1.a;
+		return $elm$parser$Parser$Advanced$Parser(
+			function (s0) {
+				var _v2 = parseA(s0);
+				if (_v2.$ === 'Bad') {
+					var p = _v2.a;
+					var x = _v2.b;
+					return A2($elm$parser$Parser$Advanced$Bad, p, x);
+				} else {
+					var p1 = _v2.a;
+					var a = _v2.b;
+					var s1 = _v2.c;
+					var _v3 = parseB(s1);
+					if (_v3.$ === 'Bad') {
+						var p2 = _v3.a;
+						var x = _v3.b;
+						return A2($elm$parser$Parser$Advanced$Bad, p1 || p2, x);
+					} else {
+						var p2 = _v3.a;
+						var b = _v3.b;
+						var s2 = _v3.c;
+						return A3(
+							$elm$parser$Parser$Advanced$Good,
+							p1 || p2,
+							A2(func, a, b),
+							s2);
+					}
+				}
+			});
+	});
+var $elm$parser$Parser$Advanced$ignorer = F2(
+	function (keepParser, ignoreParser) {
+		return A3($elm$parser$Parser$Advanced$map2, $elm$core$Basics$always, keepParser, ignoreParser);
+	});
+var $elm$parser$Parser$ignorer = $elm$parser$Parser$Advanced$ignorer;
+var $elm$parser$Parser$ExpectingKeyword = function (a) {
+	return {$: 'ExpectingKeyword', a: a};
+};
+var $elm$parser$Parser$Advanced$Token = F2(
+	function (a, b) {
+		return {$: 'Token', a: a, b: b};
+	});
 var $elm$parser$Parser$Advanced$AddRight = F2(
 	function (a, b) {
 		return {$: 'AddRight', a: a, b: b};
@@ -5781,29 +5824,6 @@ var $elm$parser$Parser$keyword = function (kwd) {
 			kwd,
 			$elm$parser$Parser$ExpectingKeyword(kwd)));
 };
-var $elm$parser$Parser$Advanced$map = F2(
-	function (func, _v0) {
-		var parse = _v0.a;
-		return $elm$parser$Parser$Advanced$Parser(
-			function (s0) {
-				var _v1 = parse(s0);
-				if (_v1.$ === 'Good') {
-					var p = _v1.a;
-					var a = _v1.b;
-					var s1 = _v1.c;
-					return A3(
-						$elm$parser$Parser$Advanced$Good,
-						p,
-						func(a),
-						s1);
-				} else {
-					var p = _v1.a;
-					var x = _v1.b;
-					return A2($elm$parser$Parser$Advanced$Bad, p, x);
-				}
-			});
-	});
-var $elm$parser$Parser$map = $elm$parser$Parser$Advanced$map;
 var $elm$parser$Parser$Advanced$Append = F2(
 	function (a, b) {
 		return {$: 'Append', a: a, b: b};
@@ -5847,12 +5867,19 @@ var $elm$parser$Parser$Advanced$oneOf = function (parsers) {
 		});
 };
 var $elm$parser$Parser$oneOf = $elm$parser$Parser$Advanced$oneOf;
+var $elm$parser$Parser$Advanced$succeed = function (a) {
+	return $elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return A3($elm$parser$Parser$Advanced$Good, false, a, s);
+		});
+};
+var $elm$parser$Parser$succeed = $elm$parser$Parser$Advanced$succeed;
 var $author$project$Main$action = $elm$parser$Parser$oneOf(
 	_List_fromArray(
 		[
 			A2(
-			$elm$parser$Parser$map,
-			$elm$core$Basics$always($author$project$Main$Delete),
+			$elm$parser$Parser$ignorer,
+			$elm$parser$Parser$succeed($author$project$Main$Delete),
 			$elm$parser$Parser$oneOf(
 				_List_fromArray(
 					[
@@ -5860,8 +5887,8 @@ var $author$project$Main$action = $elm$parser$Parser$oneOf(
 						$elm$parser$Parser$keyword('d')
 					]))),
 			A2(
-			$elm$parser$Parser$map,
-			$elm$core$Basics$always($author$project$Main$Reverse),
+			$elm$parser$Parser$ignorer,
+			$elm$parser$Parser$succeed($author$project$Main$Reverse),
 			$elm$parser$Parser$oneOf(
 				_List_fromArray(
 					[
@@ -5885,44 +5912,6 @@ var $elm$parser$Parser$Advanced$backtrackable = function (_v0) {
 		});
 };
 var $elm$parser$Parser$backtrackable = $elm$parser$Parser$Advanced$backtrackable;
-var $elm$parser$Parser$Advanced$map2 = F3(
-	function (func, _v0, _v1) {
-		var parseA = _v0.a;
-		var parseB = _v1.a;
-		return $elm$parser$Parser$Advanced$Parser(
-			function (s0) {
-				var _v2 = parseA(s0);
-				if (_v2.$ === 'Bad') {
-					var p = _v2.a;
-					var x = _v2.b;
-					return A2($elm$parser$Parser$Advanced$Bad, p, x);
-				} else {
-					var p1 = _v2.a;
-					var a = _v2.b;
-					var s1 = _v2.c;
-					var _v3 = parseB(s1);
-					if (_v3.$ === 'Bad') {
-						var p2 = _v3.a;
-						var x = _v3.b;
-						return A2($elm$parser$Parser$Advanced$Bad, p1 || p2, x);
-					} else {
-						var p2 = _v3.a;
-						var b = _v3.b;
-						var s2 = _v3.c;
-						return A3(
-							$elm$parser$Parser$Advanced$Good,
-							p1 || p2,
-							A2(func, a, b),
-							s2);
-					}
-				}
-			});
-	});
-var $elm$parser$Parser$Advanced$ignorer = F2(
-	function (keepParser, ignoreParser) {
-		return A3($elm$parser$Parser$Advanced$map2, $elm$core$Basics$always, keepParser, ignoreParser);
-	});
-var $elm$parser$Parser$ignorer = $elm$parser$Parser$Advanced$ignorer;
 var $elm$parser$Parser$Advanced$keeper = F2(
 	function (parseFunc, parseArg) {
 		return A3($elm$parser$Parser$Advanced$map2, $elm$core$Basics$apL, parseFunc, parseArg);
@@ -5932,6 +5921,29 @@ var $elm$core$Tuple$pair = F2(
 	function (a, b) {
 		return _Utils_Tuple2(a, b);
 	});
+var $elm$parser$Parser$Advanced$map = F2(
+	function (func, _v0) {
+		var parse = _v0.a;
+		return $elm$parser$Parser$Advanced$Parser(
+			function (s0) {
+				var _v1 = parse(s0);
+				if (_v1.$ === 'Good') {
+					var p = _v1.a;
+					var a = _v1.b;
+					var s1 = _v1.c;
+					return A3(
+						$elm$parser$Parser$Advanced$Good,
+						p,
+						func(a),
+						s1);
+				} else {
+					var p = _v1.a;
+					var x = _v1.b;
+					return A2($elm$parser$Parser$Advanced$Bad, p, x);
+				}
+			});
+	});
+var $elm$parser$Parser$map = $elm$parser$Parser$Advanced$map;
 var $author$project$Main$ChildQuery = {$: 'ChildQuery'};
 var $author$project$Main$NameQuery = function (a) {
 	return {$: 'NameQuery', a: a};
@@ -6183,13 +6195,6 @@ var $elm$parser$Parser$Advanced$spaces = $elm$parser$Parser$Advanced$chompWhile(
 			_Utils_chr('\r')));
 	});
 var $elm$parser$Parser$spaces = $elm$parser$Parser$Advanced$spaces;
-var $elm$parser$Parser$Advanced$succeed = function (a) {
-	return $elm$parser$Parser$Advanced$Parser(
-		function (s) {
-			return A3($elm$parser$Parser$Advanced$Good, false, a, s);
-		});
-};
-var $elm$parser$Parser$succeed = $elm$parser$Parser$Advanced$succeed;
 var $Punie$elm_parser_extras$Parser$Extras$manyHelp = F2(
 	function (p, vs) {
 		return $elm$parser$Parser$oneOf(
@@ -6649,6 +6654,7 @@ var $author$project$Main$runQuery = F2(
 						[root]),
 					query)));
 	});
+var $elm$core$Debug$todo = _Debug_todo;
 var $elm$core$Result$withDefault = F2(
 	function (def, result) {
 		if (result.$ === 'Ok') {
@@ -6707,8 +6713,15 @@ var $author$project$Main$update = F2(
 									{inputText: string, queryResult: queryResult});
 							case 'Delete':
 								return applyAction($author$project$Main$delete);
-							default:
+							case 'Reverse':
 								return applyAction($author$project$Main$reverse);
+							default:
+								return _Debug_todo(
+									'Main',
+									{
+										start: {line: 241, column: 25},
+										end: {line: 241, column: 35}
+									})('');
 						}
 					}(),
 					$elm$core$Platform$Cmd$none));
@@ -6717,11 +6730,6 @@ var $author$project$Main$update = F2(
 var $author$project$Main$TextInput = function (a) {
 	return {$: 'TextInput', a: a};
 };
-var $mdgriffith$elm_ui$Internal$Model$AlignX = function (a) {
-	return {$: 'AlignX', a: a};
-};
-var $mdgriffith$elm_ui$Internal$Model$Left = {$: 'Left'};
-var $mdgriffith$elm_ui$Element$alignLeft = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Left);
 var $mdgriffith$elm_ui$Internal$Model$Colored = F3(
 	function (a, b, c) {
 		return {$: 'Colored', a: a, b: b, c: c};
@@ -12505,11 +12513,6 @@ var $mdgriffith$elm_ui$Element$paddingXY = F2(
 				y,
 				x));
 	});
-var $mdgriffith$elm_ui$Element$Input$Placeholder = F2(
-	function (a, b) {
-		return {$: 'Placeholder', a: a, b: b};
-	});
-var $mdgriffith$elm_ui$Element$Input$placeholder = $mdgriffith$elm_ui$Element$Input$Placeholder;
 var $mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
 	return {$: 'AlignY', a: a};
 };
@@ -12731,7 +12734,6 @@ var $author$project$Main$isMultiline = function (conceptNode2) {
 };
 var $mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
 var $mdgriffith$elm_ui$Element$none = $mdgriffith$elm_ui$Internal$Model$Empty;
-var $elm$core$Debug$todo = _Debug_todo;
 var $author$project$Main$renderConcept = F2(
 	function (queryResult, conceptNode) {
 		var tokenEl = function (string) {
@@ -12918,8 +12920,8 @@ var $author$project$Main$renderConcept = F2(
 											return _Debug_todo(
 												'Main',
 												{
-													start: {line: 326, column: 21},
-													end: {line: 326, column: 31}
+													start: {line: 331, column: 21},
+													end: {line: 331, column: 31}
 												})('invalid assignment');
 										}
 									case 'Branch':
@@ -12952,8 +12954,8 @@ var $author$project$Main$renderConcept = F2(
 											return _Debug_todo(
 												'Main',
 												{
-													start: {line: 336, column: 21},
-													end: {line: 336, column: 31}
+													start: {line: 338, column: 21},
+													end: {line: 338, column: 31}
 												})('invalid branch');
 										}
 									default:
@@ -12995,8 +12997,8 @@ var $author$project$Main$renderConcept = F2(
 											return _Debug_todo(
 												'Main',
 												{
-													start: {line: 339, column: 21},
-													end: {line: 339, column: 31}
+													start: {line: 341, column: 21},
+													end: {line: 341, column: 31}
 												})('invalid case expression');
 										}
 								}
@@ -13930,12 +13932,7 @@ var $author$project$Main$view = function (model) {
 					{
 						label: $mdgriffith$elm_ui$Element$Input$labelHidden('command input field'),
 						onChange: $author$project$Main$TextInput,
-						placeholder: $elm$core$Maybe$Just(
-							A2(
-								$mdgriffith$elm_ui$Element$Input$placeholder,
-								_List_fromArray(
-									[$mdgriffith$elm_ui$Element$alignLeft]),
-								$mdgriffith$elm_ui$Element$text('eg: case1.int'))),
+						placeholder: $elm$core$Maybe$Nothing,
 						text: model.inputText
 					})
 				])));
