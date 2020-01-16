@@ -2,16 +2,19 @@ module Main exposing (..)
 
 import Bool.Extra exposing (ifElse)
 import Browser
+import Browser.Events exposing (onKeyDown)
 import Element exposing (Color, Element, alignLeft, alignTop, column, el, fill, paddingXY, px, rgb255, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (Font)
 import Element.Input as Input exposing (focusedOnLoad, labelHidden, placeholder)
 import Html exposing (Html)
+import Json.Decode
+import Keyboard.Event exposing (KeyboardEvent, decodeKeyboardEvent)
 import List.Extra as List
 import List.Nonempty as Nonempty exposing (Nonempty)
-import Parser exposing ((|.), (|=), Parser, Trailing(..), andThen, backtrackable, end, keyword, map, oneOf, problem, run, sequence, spaces, succeed, symbol, token, variable)
-import Parser.Extras exposing (many, some)
+import Parser exposing ((|.), (|=), Parser, Trailing(..), andThen, backtrackable, chompUntil, end, getChompedString, keyword, lazy, map, oneOf, problem, run, sequence, spaces, succeed, symbol, token, variable)
+import Parser.Extras exposing (between, many, parens, some)
 import Set
 
 
@@ -28,10 +31,15 @@ debug =
 
 type alias Model =
     { maxId : Int
-    , conceptNode : ConceptNode
-    , queryResult : QueryResultIndexed
-    , inputText : String
+    , root : ConceptNode
+    , selectedNodes : List ConceptNode
+    , mode : Mode
     }
+
+
+type Mode
+    = Normal
+    | Select String
 
 
 example =
@@ -98,9 +106,9 @@ init =
             example
     in
     ( { maxId = id
-      , conceptNode = node
-      , queryResult = []
-      , inputText = ""
+      , root = node
+      , selectedNodes = []
+      , mode = Select ""
       }
     , Cmd.none
     )
@@ -140,7 +148,7 @@ type Action
     = Delete
     | NoAction
     | Reverse
-    | Add
+    | Add ConceptNode
 
 
 type alias ConceptNode =
@@ -200,6 +208,7 @@ type NodeName
 type Msg
     = NoOp
     | TextInput String
+    | HandleKeyboardEvent KeyboardEvent
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -210,37 +219,55 @@ update msg model =
 
         TextInput string ->
             let
-                ( act, queryResult ) =
-                    run command string
-                        |> Result.map (\( q, a ) -> ( a, runQuery q model.conceptNode ))
-                        |> Result.withDefault ( NoAction, [] )
-                        |> Debug.log ""
-
-                applyAction action_ =
-                    { model
-                        | queryResult = []
-                        , inputText = ""
-                        , conceptNode = change action_ (List.map Tuple.second queryResult) model.conceptNode
-                    }
+                result =
+                    run parseQuery string
+                        |> Result.map (\q -> runQuery q [ model.root ])
+                        |> Result.withDefault model.selectedNodes
             in
-            Debug.log "" <|
-                ( case act of
-                    NoAction ->
-                        { model
-                            | queryResult = queryResult
-                            , inputText = string
-                        }
+            ( { model | selectedNodes = result, mode = Select string }, Cmd.none )
 
-                    Delete ->
-                        applyAction delete
+        HandleKeyboardEvent keyboardEvent ->
+            let
+                x =
+                    Debug.log "keyboard event" keyboardEvent
+            in
+            case ( keyboardEvent.ctrlKey, keyboardEvent.key ) of
+                ( True, Just "r" ) ->
+                    ( doAction Reverse model, Cmd.none )
 
-                    Reverse ->
-                        applyAction reverse
+                ( True, Just "d" ) ->
+                    ( doAction Delete model, Cmd.none )
 
-                    Add ->
-                        Debug.todo ""
-                , Cmd.none
-                )
+                _ ->
+                    ( model, Cmd.none )
+
+
+doAction : Action -> Model -> Model
+doAction action model =
+    let
+        go f clear =
+            { model
+                | root = change f (List.map .id model.selectedNodes) model.root
+                , mode =
+                    if clear then
+                        Select ""
+
+                    else
+                        model.mode
+            }
+    in
+    case action of
+        Delete ->
+            go delete True
+
+        NoAction ->
+            model
+
+        Reverse ->
+            go reverse False
+
+        Add conceptNode ->
+            Debug.todo ""
 
 
 
@@ -257,13 +284,18 @@ view model =
     <|
         column
             [ spacing 50 ]
-            [ renderConcept model.queryResult model.conceptNode
-            , Input.text [ focusedOnLoad ]
-                { onChange = TextInput
-                , text = model.inputText
-                , placeholder = Nothing
-                , label = labelHidden "command input field"
-                }
+            [ renderConcept (model.selectedNodes |> List.map .id |> List.indexedMap Tuple.pair) model.root
+            , case model.mode of
+                Select string ->
+                    Input.text [ focusedOnLoad ]
+                        { onChange = TextInput
+                        , text = string
+                        , placeholder = Nothing
+                        , label = labelHidden "command input field"
+                        }
+
+                _ ->
+                    Element.none
             ]
 
 
@@ -410,8 +442,8 @@ getChildren node =
             []
 
 
-runQuery : Query -> ConceptNode -> QueryResultIndexed
-runQuery query root =
+runQuery : Query -> List ConceptNode -> List ConceptNode
+runQuery query ns =
     let
         findMatches : Name -> ConceptNode -> List ConceptNode
         findMatches name node =
@@ -436,9 +468,7 @@ runQuery query root =
                 ChildQuery ->
                     List.concatMap getChildren nodes
     in
-    List.foldl executeSubQuery [ root ] query
-        |> List.map .id
-        |> List.indexedMap Tuple.pair
+    List.foldl executeSubQuery ns query
 
 
 match : Name -> ConceptNode -> Bool
@@ -519,6 +549,19 @@ reverse concept =
             a
 
 
+add : Concept -> Concept -> Concept
+add arg concept =
+    case concept of
+        Node name list ->
+            Node name <| list ++ [ ConceptNode -1 arg ]
+
+        Hole ->
+            arg
+
+        a ->
+            a
+
+
 assignIds : Int -> ConceptNode -> ( Int, ConceptNode )
 assignIds count conceptNode =
     case conceptNode.concept of
@@ -543,7 +586,7 @@ main =
         { view = view
         , init = \_ -> init
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions = \x -> onKeyDown (Json.Decode.map HandleKeyboardEvent decodeKeyboardEvent)
         }
 
 
@@ -556,16 +599,28 @@ command =
     succeed Tuple.pair
         |= parseQuery
         |= oneOf
-            [ backtrackable <| succeed identity |. spaces |= action |. symbol " "
+            [ backtrackable <| succeed identity |. spaces |= parseAction |. symbol " "
             , succeed NoAction
             ]
 
 
-action : Parser Action
-action =
+parseAction : Parser Action
+parseAction =
     oneOf
-        [ succeed Delete |. oneOf [ keyword "delete", keyword "d" ]
-        , succeed Reverse |. oneOf [ keyword "reverse", keyword "r" ]
+        [ succeed Delete |. keyword "d"
+        , succeed Reverse |. keyword "r"
+        , succeed Add |. token "a" |= parseConcept
+        ]
+
+
+parseConcept : Parser ConceptNode
+parseConcept =
+    oneOf
+        [ succeed (\s -> ConceptNode 0 <| Leaf Integer (String.fromInt s)) |= parseInt
+        , succeed (ConceptNode 0 << Leaf String) |. symbol "\"" |= getChompedString (chompUntil "\"") |. symbol "\""
+        , succeed (\name children -> ConceptNode 0 <| Node name children)
+            |= nodeName
+            |= parens (many <| lazy (\x -> parseConcept))
         ]
 
 
@@ -612,16 +667,16 @@ parseName =
     oneOf
         [ leafName |> Parser.map LeafName
         , nodeName |> Parser.map NodeName
-        , symbol "ho" |> map (always HoleName)
+        , symbol "h" |> map (always HoleName)
         ]
 
 
 leafName : Parser LeafName
 leafName =
     oneOf
-        [ fromToken "str" String
-        , fromToken "int" Integer
+        [ fromToken "s" String
         , fromToken "id" Identifier
+        , fromToken "i" Integer
         , fromToken "ch" Character
         ]
 
@@ -629,7 +684,7 @@ leafName =
 nodeName : Parser NodeName
 nodeName =
     oneOf
-        [ fromToken "li" List
+        [ fromToken "l" List
         , fromToken "br" Branch
         , fromToken "ca" Case
         , fromToken "as" Assignment

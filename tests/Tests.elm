@@ -26,9 +26,11 @@ parsers =
             int =
                 LeafName Integer
         in
-        [ testParser "name sub-query" parseSubQuery "int" <| Ok (NameQuery <| LeafName Integer)
-        , testParser "name query" parseQuery "int" <| Ok [ NameQuery <| LeafName Integer ]
+        [ testParser "name sub-query" parseSubQuery "i" <| Ok (NameQuery <| LeafName Integer)
+        , testParser "name query" parseQuery "i" <| Ok [ NameQuery <| LeafName Integer ]
         , testParser "empty query" (many parseSubQuery) "" <| Ok []
+        , testParser "concept" parseConcept "\"hello\"" <| Ok (ConceptNode 0 <| Leaf String "hello")
+        , testParser "nested concept" parseConcept "l(1)" <| Ok (ConceptNode 0 <| Node List [ ConceptNode 0 <| Leaf Integer "1" ])
         ]
 
 
