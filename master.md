@@ -26,6 +26,7 @@
 - Examples
     - Scratch
     - Paredit (Cursive, fireplace.vim, etc)
+- Language theory (mostly parsing)
 
 ## Mouse free selection
 - Tabbing around
@@ -44,7 +45,8 @@ Editing the structure of complex languages efficiently without the mouse.
 
 ## Solution
 - Searching through an abstract syntax tree
-- Lenses?
+- Action based architecture
+- Lenses? (formal editing semantics)
 
 ## Literature
 Really unsure about this point so far.
@@ -54,6 +56,7 @@ How would i evaluate the results?
 User tests are difficult due to the expected high learning curve.
 Also the target demographic is relatively small.
 If i were to do user tests, i would probably have to reach out to online communities (talon slack, caster chat).
+
 
 Possibility for static analysis?
 It would be interesting if i could formally prove some accessibility features.
