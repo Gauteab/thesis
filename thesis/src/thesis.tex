@@ -13,86 +13,136 @@
 \author{Gaute Berge}
 
 \begin{document}
-\duoforside[dept={Department of Informatics},
-program={Informatics: Programming and System Architecture},
-long]
+
+% \duoforside[dept={Department of Informatics},
+% program={Informatics: Programming and System Architecture},
+% long]
 
 \frontmatter{}
-\chapter*{Abstract}
+% \chapter*{Abstract}
 
-\tableofcontents{}
-\listoffigures{}
-\listoftables{}
+% \tableofcontents{}
+% \listoffigures{}
+% \listoftables{}
 
-\chapter*{Preface}
+% \chapter*{Preface}
 
 \mainmatter{}
-\part{Introduction}
+% \part{Introduction}
 
-Donald Knuth often says smart stuff ~\parencite{Knuth:2007:CPA:1283920.1283929}.
+% Donald Knuth often says smart stuff ~\parencite{Knuth:2007:CPA:1283920.1283929}.
 
-\chapter{Motivation}
-\begin{itemize}
-    \item{Injuries}
-    \item{Try to find statistics}
-\end{itemize}
+% % \chapter{Motivation}
+% \begin{itemize}
+%     \item{Injuries}
+%     \item{Try to find statistics}
+% \end{itemize}
 
-\chapter{Background}
+% \chapter{Background}
 
-\section{Assistive Technologies}
+% \section{Assistive Technologies}
 
-\begin{itemize}
-    \item{What are assistive technologies?}
-    \item{Who uses them?}
-\end{itemize}
+% \begin{itemize}
+%     \item{What are assistive technologies?}
+%     \item{Who uses them?}
+% \end{itemize}
 
-\subsection{Eye Trackers}
-\begin{itemize}
-    \item{tobii}
-    \item{issues (instability, neck strain)}
-\end{itemize}
+% \subsection{Eye Trackers}
+% \begin{itemize}
+%     \item{tobii}
+%     \item{issues (instability, neck strain)}
+% \end{itemize}
 
-\subsection{Screen Readers}
-Another major part of this project, but should probably be considered.
+% \subsection{Screen Readers}
+% Probably not a major part of this project, but should probably be considered.
 
-\subsection{Speech Recognition}
-\begin{itemize}
-    \item{Signal processing}
-    \item{Natural language processing}
-\end{itemize}
-
-
-
-\section{Programming By Voice}
-\begin{itemize}
-    \item{How is this achieved?}
-    \item{How does programming differ from normal dictation?}
-    \item{NLP vs command based}
-    \item{Different solutions}
-    \item{Programming with talon.}
-\end{itemize}
+% \subsection{Speech Recognition}
+% \begin{itemize}
+%     \item{Signal processing}
+%     \item{Natural language processing}
+% \end{itemize}
 
 
 
-\section{Code Editors}
-\begin{itemize}
-    \item{Difference between text editor and code editor}
-    \item{Plain and rich text formats}
-    \item{IDEs}
-    \item{Modal Editors}
-\end{itemize}
+% \section{Programming By Voice}
+% \begin{itemize}
+%     \item{How is this achieved?}
+%     \item{How does programming differ from normal dictation?}
+%     \item{NLP vs command based}
+%     \item{Different solutions}
+%     \item{Programming with talon.}
+% \end{itemize}
+
+\section{TalonVoice}
+Talon is a system that enables users to use a computer with alternative, hands-free input methods.
+It supports controls using voice commands, noise input, and eye tracking.
+The features of Talon are customizable and extendable through a python scripting api.
+Through this api users can define custom actions that responds to certain noises, voice commands, or where the user is looking.
+These actions can be very simple, such as emulating a sequence of keystrokes, but can also be arbitrary python functions
+that can send commands to the operating system, or make network requests.
+This section should serve as an overview of Talon and how it is used to make different features of a computer accessible to people with disabilities.
+
+\subsection{Current state of the project}
+There are two versions of Talon available; a public release and a private beta.
+The public release (version 0.0.8.42) is only fully supported on macOS versions 10.11 through 10.14.
+This distribution also works on newer versions of macOS, but you cannot use the built-in speech recognition engine.
+In the private beta there is support for both newer version of mac os, as well as Windows and Linux.
+This version also comes with improvements to the built-in speech recognition engine, and a rework of the current scripting api, including a domain specific scripting language that can be used in conjunction with python.
+
+\subsection{Distribution and monetization}
+
+\newpage
+\section{Mouseless Code Editing}
+Most programs where the user is to interact with text provides a similar editing scheme.
+The text is laid out on screen with a thin cursor that indicates where the next character you type will be inserted.
+The mouse can be used for navigating, selecting and reordering text.
+Selecting single words, lines, and larger blocks of text can be done with double-click, triple-click, and holding and dragging the cursor respectively.
+When a block of text is selected it can be moved by dragging it with the mouse.
+Most of these actions can also be performed using just the keyboard.
+By using a combination of keyboard modifiers and arrow/navigation keys, the user can jump, select and delete whole text objects such as words, lines and paragraphs.
+This editing scheme has the advantage of being intuitive and easy to understand.
+For many use cases however, this editing scheme leaves a lot to be desired in terms of efficiency.
+This is especially true for code editing.
+
+\textbf{Explain why this is the case?}
+
+In the following section I will discuss a radically different editing scheme and how this affects users of assistive technologies.
+
+\subsection{Vim}
+Vim is an originaly terminal based text editor available on most platforms.
+It is the successor of the "vi" editor and the name stands for "vi-improved".
+Vim is a modal editor which means that the editing scheme is centered around different modes.
+
+\begin{center}
+\begin{tabular}{|c|c|}
+    Normal mode&a\\
+    Visual mode&\\
+    Select mode&\\
+    Insert mode&\\
+    Cmdline mode&\\
+    Ex mode&\\
+\end{tabular}
+\end{center}
 
 
-\part{The project}
+% \section{Code Editors}
+% \begin{itemize}
+%     \item{Difference between text editor and code editor}
+%     \item{Plain and rich text formats}
+%     \item{IDEs}
+%     \item{Modal Editors}
+% \end{itemize}
 
-\chapter{Planning the project}
 
-\part{Conclusion}
+% \part{The project}
 
-\chapter{Results}
+% \chapter{Planning the project}
 
-\backmatter{}
+% \part{Conclusion}
 
-\printbibliography
+% \chapter{Results}
+
+% \backmatter{}
+% \printbibliography
 
 \end{document}
