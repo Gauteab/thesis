@@ -62,3 +62,68 @@ Possibility for static analysis?
 It would be interesting if i could formally prove some accessibility features.
 This might work due to how elm works. Could be just using the type system, or peripheral tool.
 Not sure if this is feasible though.
+
+
+# Moved from thesis.tex
+
+
+\chapter{Motivation}
+\begin{itemize}
+    \item{Injuries}
+    \item{Try to find statistics}
+\end{itemize}
+
+\chapter{Background}
+
+\section{Assistive Technologies}
+
+\begin{itemize}
+    \item{What are assistive technologies?}
+    \item{Who uses them?}
+\end{itemize}
+
+\subsection{Eye Trackers}
+\begin{itemize}
+    \item{tobii}
+    \item{issues (instability, neck strain)}
+\end{itemize}
+
+\subsection{Screen Readers}
+Probably not a major part of this project, but should probably be considered.
+
+\subsection{Speech Recognition}
+\begin{itemize}
+    \item{Signal processing}
+    \item{Natural language processing}
+\end{itemize}
+
+
+
+\section{Programming By Voice}
+\begin{itemize}
+    \item{How is this achieved?}
+    \item{How does programming differ from normal dictation?}
+    \item{NLP vs command based}
+    \item{Different solutions}
+    \item{Programming with talon.}
+\end{itemize}
+
+\begin{center}
+\begin{tabular}{|c|c|}
+    Normal mode&a\\
+    Visual mode&\\
+    Select mode&\\
+    Insert mode&\\
+    Cmdline mode&\\
+    Ex mode&\\
+\end{tabular}
+\end{center}
+
+
+% \section{Code Editors}
+% \begin{itemize}
+%     \item{Difference between text editor and code editor}
+%     \item{Plain and rich text formats}
+%     \item{IDEs}
+%     \item{Modal Editors}
+% \end{itemize}
