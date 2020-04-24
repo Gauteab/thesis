@@ -8,3 +8,9 @@
 [Talon](talonvoice.com)
 [voicecode](http://voicecode.io/)
 [Vocola](http://vocola.net/)
+
+## Talon
+[Official Docs](https://talonvoice.com/docs/)
+[Unofficial Docs](https://github.com/dwighthouse/unofficial-talonvoice-docs)
+[knausj_talon](https://github.com/knausj85/knausj_talon)
+[Patreon](https://www.patreon.com/lunixbochs)

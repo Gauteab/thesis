@@ -5,6 +5,8 @@
 \usepackage{hyperref}
 
 \usepackage[backend=biber,style=authoryear]{biblatex}
+\usepackage{minted}
+
 
 \addbibresource{citations.bib}
 
@@ -32,7 +34,7 @@
 % Donald Knuth often says smart stuff ~\parencite{Knuth:2007:CPA:1283920.1283929}.
 
 \section{TalonVoice}
-Talon is a system that enables users to use a computer with alternative, hands-free input methods.
+Talon is a system that enables people to use a computer with alternative, hands-free input methods.
 It supports controls using voice commands, noise input, and eye tracking.
 The features of Talon are customizable and extendable through a python scripting api.
 Through this api users can define custom actions that responds to certain noises, voice commands, or where the user is looking.
@@ -41,13 +43,64 @@ that can send commands to the operating system, or make network requests.
 This section should serve as an overview of Talon and how it is used to make different features of a computer accessible to people with disabilities.
 
 \subsection{Current state of the project}
-There are two versions of Talon available; a public release and a private beta.
+There are two versions of Talon available: a public release and a private beta.
 The public release (version 0.0.8.42) is only fully supported on macOS versions 10.11 through 10.14.
 This distribution also works on newer versions of macOS, but you cannot use the built-in speech recognition engine.
 In the private beta there is support for both newer version of mac os, as well as Windows and Linux.
 This version also comes with improvements to the built-in speech recognition engine, and a rework of the current scripting api, including a domain specific scripting language that can be used in conjunction with python.
 
-\subsection{Distribution and monetization}
+
+\subsection{Distribution and Monetization}
+Talon is freely distributed, but closed source.
+Its creator, Ryan Hileman, works full-time on the project and is solely funded through Patreon which is a site that allows people to make monthly donations.
+There are currently 225 users donating on Patreon, pledging a combined \$3,526 per month[24.04.20].
+
+\subsection{Community}
+The community is organized through a Slack channel where users can discuss topics related to using Talon such as equipment, health, etc.
+This is also where users go to seek help and discuss issues with the project.
+Hileman is usually available to answer question and help users.
+
+\subsection{Learning Resources and Documentation}
+New users will face a quite steep learning curve.
+The official documentation is largely incomplete, so users are encouraged to learn the api primarily through looking at examples.
+Most new users we learn the basics off using Talon by reading Emily Shea's guide "Getting Started with Voice Driven Development".
+This guide covers the most essential concepts you need to learn to use Talon such as inputting basic keyboard combinations, dictating with formatters, bringing up the command reference, as well as some general tips for becoming proficient with Talon.
+The official documentation also refers to the official examples repository which provides a handful of examples that users can download directly, or use as reference for writing their own scripts.
+A common way to get started to download a larger command set such as talon\_community which comes with a lot of functionality out-of-the-box.
+There is also an unofficial documentation repository.
+While this covers more than the official documentation, and is very useful, it is also incomplete, and is not guaranteed to be immediately updated if the api is changed.
+
+\section{Writing Voice Commands with Talon}
+Talon does not come with any voice commands built-in.
+In the directory where Talon is installed, there is a folder called \textbf{user}.
+When scripts are added to this folder, they are immediately loaded, and the system we listen for any voice commands defined in the scripts.
+Because of this I find it appropriate to start with how voice commands are defined before explaining how they are used in practice.
+Here is a basic example of how to define a voice command set:
+
+\begin{minted}{python}
+from talon.voice import Context
+context = Context("example")
+context.keymap({
+	# say "is equal", output is " == "
+	"is equal": " == ",
+
+	# press keys using Key
+	"select all": Key("cmd-a"),
+})
+\end{minted}
+The above code defines a context with the name "example", and attaches is a keymap.
+The keymap is a dictionary that maps rules, represented as strings, to actions which can be strings, Keys, functions, or lists of actions.
+
+\subsection{Contexts}
+Voice commands are organized into contexts.
+
+\subsection{Keymaps}
+
+
+\section{Using Talon}
+\subsection{Text Editing}
+\subsection{Web Browsing}
+\subsection{Using The Terminal}
 
 \newpage
 \section{Mouseless Code Editing}
