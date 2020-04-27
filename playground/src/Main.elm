@@ -2,8 +2,9 @@ module Main exposing (..)
 
 import Browser
 import Browser.Events
-import Element exposing (Element, alignBottom, alignTop, column, el, rgb, rgb255, row, spacing, text)
+import Element exposing (Element, alignBottom, alignTop, column, el, px, rgb, rgb255, row, spacing, text)
 import Element.Background as Background
+import Element.Font as Font exposing (Font)
 import Html exposing (Html)
 import Json.Decode
 import Keyboard.Event exposing (KeyboardEvent, decodeKeyboardEvent)
@@ -54,19 +55,23 @@ update msg model =
             ( newModel, Cmd.none )
 
 
-type Action
+type Direction
     = Down
     | Up
     | Right
     | Left
 
 
-doAction : Model -> Action -> Model
-doAction model action =
+type Action
+    = Move Direction
+
+
+doMove : Zipper Label -> Direction -> Zipper Label
+doMove zipper direction =
     let
         moveZipper : Zipper label -> Maybe (Zipper label)
         moveZipper =
-            case action of
+            case direction of
                 Down ->
                     Zipper.forward
 
@@ -79,28 +84,34 @@ doAction model action =
                 Left ->
                     Zipper.previousSibling
     in
-    model.zipper
+    zipper
         |> setSelected False
         |> moveZipper
         |> Maybe.map (setSelected True)
-        |> Maybe.withDefault model.zipper
-        |> Model
+        |> Maybe.withDefault zipper
+
+
+doAction : Model -> Action -> Model
+doAction model action =
+    case action of
+        Move direction ->
+            doMove model.zipper direction |> Model
 
 
 keyToAction : String -> Maybe Action
 keyToAction key =
     case key of
         "l" ->
-            Just Right
+            Just <| Move Right
 
         "h" ->
-            Just Left
+            Just <| Move Left
 
         "k" ->
-            Just Up
+            Just <| Move Up
 
         "j" ->
-            Just Down
+            Just <| Move Down
 
         _ ->
             Nothing
@@ -124,36 +135,61 @@ subscriptions model =
 -- VIEW
 
 
-elementFromLabel : Label -> Element.Element msg
-elementFromLabel label =
-    if label.selected then
-        el [ Background.color (rgb255 55 210 185), alignTop ] <| text (String.fromInt label.value)
+render : Tree Label -> Element msg
+render tree =
+    let
+        label =
+            Tree.label tree
 
-    else
-        el [ alignTop ] <| text (String.fromInt label.value)
+        children =
+            Tree.children tree
+
+        tab =
+            --text "  "
+            el [ Element.width (px 15) ] Element.none
+
+        keyword string =
+            el [ Font.color (rgb255 137 89 168) ] (text string)
+
+        grid columnStyle rowStyle elements =
+            column columnStyle <| List.map (row rowStyle) elements
+
+        style =
+            if label.selected then
+                [ Background.color (rgb255 55 210 185), alignTop ]
+
+            else
+                [ alignTop ]
+    in
+    el style <|
+        case ( label.value, children ) of
+            ( If, [ p, x, y ] ) ->
+                grid []
+                    [ spacing 4 ]
+                    [ [ keyword "if", render p, keyword "then" ]
+                    , [ tab, render x ]
+                    , [ keyword "else" ]
+                    , [ tab, render y ]
+                    ]
+
+            ( Identifier s, _ ) ->
+                text s
+
+            _ ->
+                Debug.todo ""
 
 
-render_ : Element msg -> List (Element msg) -> Element msg
-render_ label children =
-    case children of
-        [] ->
-            label
-
-        _ ->
-            row []
-                [ row [ alignTop, Element.paddingXY 5 0 ] <| [ text "(", label ]
-                , column [] <| mapLast (\e -> row [] [ e, text ")" ]) children
-                ]
-
-
-render tree_ =
-    restructure elementFromLabel render_ tree_
-
-
-view : Model -> Html msg
 view model =
-    Element.layout [] <|
-        render (Zipper.root model.zipper |> Zipper.tree)
+    Element.layout
+        [ Font.family [ Font.monospace ]
+        , Font.color (rgb255 0 0 0)
+        , Element.paddingXY 5 5
+        ]
+    <|
+        (Zipper.root model.zipper
+            |> Zipper.tree
+            |> render
+        )
 
 
 
@@ -165,51 +201,41 @@ type alias Model =
 
 
 type alias Label =
-    { value : Int, selected : Bool }
+    { value : Node, selected : Bool }
+
+
+type Node
+    = If
+    | Identifier String
+
+
+t =
+    Tree.tree (Label If False) <| List.map (Tree.singleton << (\x -> Label x False)) [ Identifier "x", Identifier "y", Identifier "z" ]
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model z
+    ( Model <| Zipper.fromTree t
     , Cmd.none
     )
 
 
-node_ v c =
-    Tree.tree (Label v True) c
 
-
-node v c =
-    Tree.tree (Label v False) c
-
-
-testTree =
-    node 1
-        [ node 2
-            [ node 7 []
-            , node 6 []
-            ]
-        , node 3 []
-        , node 4 []
-        ]
-
-
-z =
-    Zipper.fromTree testTree
-
-
-
---|> Zipper.mapLabel (\l -> { l | selected = True })
---|> Zipper.forward
---|> Maybe.map (Zipper.mapLabel (\l -> { l | selected = True }))
---|> Maybe.andThen Zipper.nextSibling
---|> (Maybe.map << Zipper.mapLabel) (\l -> { l | selected = True })
---|> Maybe.withDefault (Zipper.fromTree testTree)
---main_ =
---    z
---        |> Zipper.findNext ((==) 0 << modBy 2)
---        |> Maybe.andThen (Zipper.findNext ((==) 0 << modBy 2))
---        |> Maybe.andThen (Zipper.findNext ((==) 0 << modBy 2))
+--node_ v c =
+--    Tree.tree (Label v True) c
+--
+--
+--node v c =
+--    Tree.tree (Label v False) c
+--testTree =
+--    node 1
+--        [ node 2
+--            [ node 7 []
+--            , node 6 []
+--            ]
+--        , node 3 []
+--        , node 4 []
+--        ]
 -- Utility
 
 
