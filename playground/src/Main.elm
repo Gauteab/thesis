@@ -64,6 +64,7 @@ type Direction
 
 type Action
     = Move Direction
+    | Delete
 
 
 doMove : Zipper Label -> Direction -> Zipper Label
@@ -97,6 +98,9 @@ doAction model action =
         Move direction ->
             doMove model.zipper direction |> Model
 
+        Delete ->
+            model.zipper |> Zipper.replaceTree (node Hole []) |> Model
+
 
 keyToAction : String -> Maybe Action
 keyToAction key =
@@ -112,6 +116,9 @@ keyToAction key =
 
         "j" ->
             Just <| Move Down
+
+        "d" ->
+            Just <| Delete
 
         _ ->
             Nothing
@@ -161,22 +168,28 @@ render tree =
             else
                 [ alignTop ]
     in
-    el style <|
+    grid style [ spacing 4 ] <|
         case ( label.value, children ) of
             ( If, [ p, x, y ] ) ->
-                grid []
-                    [ spacing 4 ]
-                    [ [ keyword "if", render p, keyword "then" ]
-                    , [ tab, render x ]
-                    , [ keyword "else" ]
-                    , [ tab, render y ]
-                    ]
+                [ [ keyword "if", render p, keyword "then" ]
+                , [ tab, render x ]
+                , [ keyword "else" ]
+                , [ tab, render y ]
+                ]
 
-            ( Identifier s, _ ) ->
-                text s
+            ( Assignment, [ name, expression ] ) ->
+                [ [ render name, text "=" ]
+                , [ tab, render expression ]
+                ]
+
+            ( Id s, _ ) ->
+                [ [ text s ] ]
+
+            ( Hole, _ ) ->
+                [ [ el [ Background.color (rgb255 255 110 110) ] (text "_") ] ]
 
             _ ->
-                Debug.todo ""
+                Debug.todo <| "Missing branch in render function: " ++ Debug.toString ( label.value, children )
 
 
 view model =
@@ -206,11 +219,17 @@ type alias Label =
 
 type Node
     = If
-    | Identifier String
+    | Id String
+    | Assignment
+    | Hole
 
 
 t =
-    Tree.tree (Label If False) <| List.map (Tree.singleton << (\x -> Label x False)) [ Identifier "x", Identifier "y", Identifier "z" ]
+    node Assignment [ leaf <| Id "foo", node If [ leaf <| Id "x", leaf <| Id "y", leaf <| Id "z" ] ]
+
+
+
+--Tree.tree (Label If False) <| List.map (Tree.singleton << (\x -> Label x False)) [ Id "x", Id "y", Id "z" ]
 
 
 init : () -> ( Model, Cmd Msg )
@@ -225,8 +244,17 @@ init _ =
 --    Tree.tree (Label v True) c
 --
 --
---node v c =
---    Tree.tree (Label v False) c
+
+
+node v =
+    Tree.tree (Label v False)
+
+
+leaf v =
+    node v []
+
+
+
 --testTree =
 --    node 1
 --        [ node 2
