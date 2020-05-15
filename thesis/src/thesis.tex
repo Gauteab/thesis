@@ -7,7 +7,7 @@
 \usepackage[backend=biber,style=authoryear]{biblatex}
 \usepackage{minted}
 
-
+\nonstopmode
 \addbibresource{citations.bib}
 
 \title{Master Thesis}
@@ -16,22 +16,73 @@
 
 \begin{document}
 
-% \duoforside[dept={Department of Informatics},
-% program={Informatics: Programming and System Architecture},
-% long]
+\duoforside[dept={Department of Informatics},
+program={Informatics: Programming and System Architecture},
+long]
 
 \frontmatter{}
 % \chapter*{Abstract}
 
-% \tableofcontents{}
+\tableofcontents{}
 % \listoffigures{}
 % \listoftables{}
 
 % \chapter*{Preface}
 
 \mainmatter{}
-% \part{Introduction}
+\chapter{Background and Motivation}
 % Donald Knuth often says smart stuff ~\parencite{Knuth:2007:CPA:1283920.1283929}.
+
+\section{Introduction}
+Software developers spend a very large portion of their day in front of a computer.
+While this is necessary for them to do their jobs, it also puts them at higher risk of acquiring certain injuries.
+Many of the actions associated with using computer are also associated with risk of injury.
+Symptoms of these injuries commonly affect wrists, shoulders and the neck, but can also extend to other parts of the body.
+Prolonged use of the mouse can famously lead to carpal tunnel syndrome, commonly known as "mouse arm".
+Injuries caused by prolonged static stress are collectively known as Repetitive Strain Injuries, or RSIs for short.
+
+% injured programmers might lose their jobs
+When an RSI is first acquired, for many people, there are limited alternatives to taking a leave of absence.
+The recovery period ranges from a few months to a few years, and because of the nature of the injury
+it is very difficult to keep working while recovering.
+
+% there is a solution - Talon
+Lately, however, there have been an emergence of solutions that allow for the control of computers
+with alternative input methods such as voice and eye control.
+Advancements in Machine Learning over the past decade have made speech recognition extremely accurate,
+allowing for both accurate prose dictation and voice command recognition.
+This has enabled the popularization of digital assistants such as Google Assistant and Amazon Alexa.
+While these systems work well, they are very specialized to answer certain queries and controlling smart devices.
+There are however other much less well-known systems that are designed to solve the more general problem
+of controlling a computer without any help from keyboard or mouse.
+One such system is Talon, which i will be using throughout this work.
+
+% this is new, not researched
+
+% different way of editing code - (no mouse)
+Perhaps not so surprisingly, changing the fundamental input method also changes the requirements and preferences of the user.
+Some actions such as holding the arrow key until the cursor is at the desired position does not translate well to voice input.
+For this reason, many users prefer to use nonstandard editing schemes, such as that of Emacs and Vim.
+These editors have a more command-based approach to navigating files, which are less reliant on the mouse
+and more efficient for users who prefer to primarily use the keyboard.
+
+% structural editing might be useful
+Structural code editors are a type of editor that is radically different from the textbased editors that most programmers use.
+These editors provide interfaces that allows the user to more directly interact with the underlying tree structure of the program,
+rather than the textual representation.
+By interacting with the tree directly, some action such as selecting whole expressions can be simplified.
+This also make it possible to ensure that the user cannot create syntactically invalid programs.
+Because of the different advantages and disadvantages of using alternative input methods strengths of such editors 
+might be amplified.
+
+% structural editors are not designed for use without mouse
+Structural editors are not usually approach with coding speed as the main design goal.
+Often the interface heavily relies on using the mouse, which can make them hard or impossible to use.
+In this research I will investigate the needs and requirements of users of alternative input methods
+and explore the possibility of using structural editing to improve the efficiency of coding.
+More generally the goal of this project is to discover patterns in software engineering and design
+that will improve usability for programmers with disabilities.
+% i will try to find out structural editing can be useful for disabled programmers.
 
 \section{TalonVoice}
 Talon is a system that enables people to use a computer with alternative, hands-free input methods.
@@ -85,24 +136,115 @@ context.keymap({
 	"is equal": " == ",
 
 	# press keys using Key
-	"select all": Key("cmd-a"),
+	"select all": Key("cmd-a")
 })
 \end{minted}
 The above code defines a context with the name "example", and attaches is a keymap.
-The keymap is a dictionary that maps rules, represented as strings, to actions which can be strings, Keys, functions, or lists of actions.
+The keymap is where voice commands are defined.
+It is a dictionary that maps rules, represented as strings, to actions which can be strings, Keys, functions, or lists of actions.
+In the rest of this section I will explain how voice commands are defined in the keymap
+and organized into contexts.
+
+\subsection{Rules}
+Rules describe sets of phrases that will trigger a certain action.
+They can be simple phrases such as the ones seen above, in which case the action is triggered when that exact phrase is recognized.
+It is also possible to define complex rules using a syntax very similar to regular expressions with a few extensions for
+capturing dictation input and selecting words from a predefined list.
+The following table shows be available syntactic constructs that are used to make rules.
+\begin{center}
+\begin{tabular}{ c | c }
+    () & grouping   \\
+    $[]$ & optional   \\
+    $\mid$ & alternation  \\
+    $*$ & zero or more   \\
+    $+$ & one or more     \\
+    $<dgndictation>$&arbitrary phrase \\
+    $<dgndictation>++$&arbitrary phrase (greedy) \\
+    $<dgnwords>$&arbitrary word \\
+\end{tabular}
+\end{center}
+Here are some examples of usage along with an explanation:
+\begin{minted}{python}
+context = Context("example")
+context.keymap({
+    # Recognizes "func" and "function"
+    "(func | function)": ...
+
+    # Recognizes "class" and "new class"
+    "[new] class": ...
+
+    # Recognizes "good", "very good", "very very good", etc...
+    "very* good": ...
+
+    # Recognizes "very good", "very very good", etc... (not "good")
+    "very+ good": ...
+
+    # Recognizes "say <FREE DICTATION>"
+    "say <dgndictation>": ...
+})
+\end{minted}
+dgndictation lets the user capture normal dictation and use that as input to the action.
+It's variants dgndictation++ and dgnwords does the same but vary in how other rules are triggered
+during dictation.
+
+\subsection{Actions}
+Actions describe what will happen once the corresponding rule has been recognized.
+They can be described using one of the following python constructs:
+\begin{center}
+\begin{tabular}{ c | c }
+    string & insert text   \\
+    Key & press keys   \\
+    function & function invocation  \\
+    list & sequence of actions   
+\end{tabular}
+\end{center}
+Inserting text corresponds to pressing the keys in sequence.
+Key objects allows you to press any key with modifiers.
+When a function is provided as an action the function will be invoked with an object
+containing information about the captured dictation as an argument.
+The function can then do processing on the dictation input and use that to carry out the desired action.
+List are used to to perform multiple actions in sequence and are often used when programming macros with Talon.
 
 \subsection{Contexts}
-Voice commands are organized into contexts.
+Voice comman organized into contexts.
+When defining a context you can specify a predicate function that is used to 
+decide whnr not the context should be active based on the currently active
+application or window.
+This is a very important feature for two major reasons.
+Firstly, it makes sure that commands intended for a certain context is not
+accidentally triggered in another.
+Commands defined in an inactive context will not be recognized by the speech engine.
+Secondly, it allows for commands to be overloaded between different contexts.
+For example, when programming in different languages there are actions
+that are conceptually identical, but are syntactically different.
+One might have a command \textbf{function} that will insert the keyword associated with
+defining a function for the given programming language, followed by a space.
+Such a command can be defined as such:
+\begin{minted}{python}
+# javascript.py
+context = Context("javascript", func=is_filetype(("js", )))
+context.keymap({
+    "function": "function "
+})
+\end{minted}
+\begin{minted}{python}
+# python.py
+context = Context("python", func=is_filetype(("py", )))
+context.keymap({
+    "function": "def "
+})
+\end{minted}
+The function \textbf{is\_filetype} is defined in the \textbf{utils} module provided by \textbf{talon\_community}.
 
-\subsection{Keymaps}
 
 
-\section{Using Talon}
-\subsection{Text Editing}
-\subsection{Web Browsing}
-\subsection{Using The Terminal}
 
-\newpage
+% \section{Using Talon}
+% \subsection{Text Editing}
+% \subsection{Web Browsing}
+% \subsection{Using The Terminal}
+
+
 \section{Mouseless Code Editing}
 Most programs where the user is to interact with text provides a similar editing scheme.
 The text is laid out on screen with a thin cursor that indicates where the next character you type will be inserted.
@@ -113,18 +255,85 @@ Most of these actions can also be performed using just the keyboard.
 By using a combination of keyboard modifiers and arrow/navigation keys, the user can jump, select and delete whole text objects such as words, lines and paragraphs.
 This editing scheme has the advantage of being intuitive and easy to understand.
 For many use cases however, this editing scheme leaves a lot to be desired in terms of efficiency.
-This is especially true for code editing.
-
-\textbf{Explain why this is the case?}
-
+This is especially true for code editing.  % \textbf{Explain why this is the case?}
 In the following section I will discuss a radically different editing scheme and how this affects users of assistive technologies.
 
 \subsection{Vim}
 Vim is an originaly terminal based text editor available on most platforms.
 It is the successor of the "vi" editor and the name stands for "vi-improved".
 Vim is a modal editor which means that the editing scheme is centered around different modes.
+Vim supports twelve different modes, six of which are considered main modes, while the other six
+are variations of the main modes.
+The two most important modes are Normal and Insert.
+Insert mode works like a standard text editor.
+When in normal mode, which is the mode you are in when opening the editor, keystrokes will not enter text, but rather execute commands.
+In normal mode the keys h,j,k,l will move the cursor left, down, up and right respectively.
+Vim is aware of text objects such as words, lines and paragraphs and supports many commands for moving between and operating on these objects.
+\textbf{w} moves the cursor to the start of the next word, \textbf{e} moves to this end of the current word et cetera.
+By composing verbs (such as \textbf{d} for delete) with movements and descriptions of objects you gain access to a large
+set of commands to make complex transformations on text.
+For example \textbf{dw} will delete a word, \textbf{dip} (delete inner paragraph) will delete a paragraph and so on.
+With the huge amount of much more complicated commands available Vim allows for extremely efficient and ergonomic text editing.
+This editing scheme has become very influential and is integrated in other kinds of applications such as browser plug-ins
+that allows for mouse-less browsing.
 
 
+
+\section{Structural Editing}
+Structural editing is a technique used by some code editors to allow users to directly manipulate the underlying structure of the program.
+Computer programs typically have a textual representation that is reasonable both by humans and compilers.
+When a compiler reads a program the program text is converted to the district are known as the Abstract Syntax Tree (AST), during the parsing phase.
+The AST contains all the information about the program necessary to produce the executable output program.
+When modifying a program the desired outcome is always the correct change in the underlying AST, however it is not always
+trivial to map of single text transformation to a AST transformation.
+One of the goals of structural editing is to reduce the amount of invalid states the program needs to go through
+before the desired modification is completed.
+For this reason it is a popular technique in editors designed specifically for beginners.
+One very well-known example is "Scratch" which is an educational tool for teaching children to code.
+It provides a drag-and-drop interface enriched with visual cues that makes it easy to
+put together structurally valid programs.
+Scratch is an example of a purely structure oriented code editor.
+It does not provide enter text based interface to the language.
+There are also hybrid approaches that adds a structural layer on top of a normal textbased editor.
+These editors are sometimes referred to as structure-aware editors.
+
+Despite having some clear advantages over traditional textbased editors, structural editors are not used among professional developers.
+One reason for this is that the editors that are popular today have many years of engineering behind them.
+There are no structural editors that come close in the amount of features or polish to that of IntelliJ, VSCode or Vim.
+Structural editor still have unresolved issues in their design that needs to be addressed before they will see commercial use.
+Deuce is a structure-aware editor developed as part of a research project at the University of Chicago ~\parencite{deuce}.
+It suggests a hybrid approach that addresses some of the problems with current textbased work-flows.
+I will be using this as a reference for what the modern structural editor might look like.
+
+\chapter{The project}
+During this thesis I will try to innovate on the current design of structural editors
+and apply design principles used by editors like Vim and Emacs to develop an interface
+that allows for efficient editing by users of alternative input methods.
+A proof of concept prototype has already been developed, but I expect several iterations
+to be needed before I am ready to work on the final prototype that will be used for testing.
+
+\section{Methodology And Evaluation}
+I foresee a few challenges when evaluating the results of the project.
+The group of people that use systems like Talon is not very big, then it might be difficult define subjects
+for user tests.
+Therefore I plan to first show the correlation between usability for users of keyboards and users of voice control.
+Once that has been established I can conduct user test and try to generalize that two voice control users.
+This will hopefully not be too difficult, as most of the issues with current editing schemes are related to reliance on the mouse.
+
+However testing on keyboard users also poses challenges.
+When testing an application that is supposed to improve productivity, you can get quantitative data
+by measuring the time of completion on a few representative tasks with both the new and the old solution, and comparing the results.
+Editors like Vim have a notoriously high learning curve and it takes a long period of time using it before productivity increases significantly.
+I suspected my solution will have a similar issue as it will likely be very different from both traditional editors
+and the existing structural editors.
+For user test I will have to rely on feedback provided by the users three there surveys or interviews.
+
+One useful measurement for performance in this kind of application besides time to completion is number of actions required to perform a task.
+For keyboard users an action is typically a keystroke, while for voice control users an action might be a single syllable.
+To use this kind of measurements I will have to find a sensible way to weight certain actions differently from each other.
+This involves answering questions like what is the cost of holding a modifying key compared to pressing a normal key.
+
+Additionally when evaluating I will have to validate that all actions required to work in this environment are possible.
 
 % \part{The project}
 
@@ -134,7 +343,7 @@ Vim is a modal editor which means that the editing scheme is centered around dif
 
 % \chapter{Results}
 
-% \backmatter{}
-% \printbibliography
+\backmatter{}
+\printbibliography
 
 \end{document}

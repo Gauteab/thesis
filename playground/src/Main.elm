@@ -99,7 +99,35 @@ doAction model action =
             doMove model.zipper direction |> Model
 
         Delete ->
-            model.zipper |> Zipper.replaceTree (node Hole []) |> Model
+            model.zipper |> doDelete |> Model
+
+
+doDelete : Zipper Label -> Zipper Label
+doDelete zipper =
+    let
+        newZipper =
+            Zipper.replaceTree (node Hole []) zipper
+
+        parent =
+            Zipper.parent newZipper |> Maybe.map Zipper.label |> Maybe.map .value
+
+        zipperFilterChildren : (Tree a -> Bool) -> Zipper a -> Zipper a
+        zipperFilterChildren =
+            Zipper.mapTree << Tree.mapChildren << List.filter
+
+        isHole : Tree Label -> Bool
+        isHole =
+            Tree.label >> .value >> (/=) Hole
+    in
+    case parent of
+        Just List ->
+            Zipper.parent newZipper
+                |> Maybe.map (zipperFilterChildren isHole)
+                |> Maybe.map (setSelected True)
+                |> Maybe.withDefault newZipper
+
+        _ ->
+            newZipper
 
 
 keyToAction : String -> Maybe Action
@@ -168,30 +196,43 @@ render tree =
             else
                 [ alignTop ]
     in
-    grid style [ spacing 4 ] <|
+    el style <|
         case ( label.value, children ) of
             ( If, [ p, x, y ] ) ->
-                [ [ keyword "if", render p, keyword "then" ]
-                , [ tab, render x ]
-                , [ keyword "else" ]
-                , [ tab, render y ]
-                ]
+                grid [] [ spacing 4 ] <|
+                    [ [ keyword "if", render p, keyword "then" ]
+                    , [ tab, render x ]
+                    , [ keyword "else" ]
+                    , [ tab, render y ]
+                    ]
 
             ( Assignment, [ name, expression ] ) ->
-                [ [ render name, text "=" ]
-                , [ tab, render expression ]
-                ]
+                grid [] [ spacing 4 ] <|
+                    [ [ render name, text "=" ]
+                    , [ tab, render expression ]
+                    ]
 
             ( Id s, _ ) ->
-                [ [ text s ] ]
+                text s
+
+            ( List, [] ) ->
+                text "[]"
+
+            ( List, e :: es ) ->
+                row [] <|
+                    [ row [] [ text "[", render e ]
+                    , row [] <| List.map (\x -> row [] [ text ",", render x ]) es
+                    , text "]"
+                    ]
 
             ( Hole, _ ) ->
-                [ [ el [ Background.color (rgb255 255 110 110) ] (text "_") ] ]
+                el [ Background.color (rgb255 255 110 110) ] (text "_")
 
             _ ->
                 Debug.todo <| "Missing branch in render function: " ++ Debug.toString ( label.value, children )
 
 
+view : Model -> Html msg
 view model =
     Element.layout
         [ Font.family [ Font.monospace ]
@@ -199,7 +240,8 @@ view model =
         , Element.paddingXY 5 5
         ]
     <|
-        (Zipper.root model.zipper
+        (model.zipper
+            |> Zipper.root
             |> Zipper.tree
             |> render
         )
@@ -221,11 +263,21 @@ type Node
     = If
     | Id String
     | Assignment
+    | List
     | Hole
 
 
 t =
-    node Assignment [ leaf <| Id "foo", node If [ leaf <| Id "x", leaf <| Id "y", leaf <| Id "z" ] ]
+    node Assignment
+        [ leaf <| Id "foo"
+        , node If
+            [ leaf <| Id "x"
+            , leaf <| Id "y"
+            , node List [ leaf <| Id "z", leaf <| Id "l" ]
+
+            --, node List []
+            ]
+        ]
 
 
 

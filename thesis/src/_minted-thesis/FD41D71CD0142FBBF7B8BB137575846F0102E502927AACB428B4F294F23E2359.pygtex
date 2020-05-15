@@ -1,0 +1,19 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{context} \PYG{o}{=} \PYG{n}{Context}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}example\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{context}\PYG{o}{.}\PYG{n}{keymap}\PYG{p}{(\PYGZob{}}
+    \PYG{c+c1}{\PYGZsh{} Recognizes \PYGZdq{}func\PYGZdq{} and \PYGZdq{}function\PYGZdq{}}
+    \PYG{l+s+s2}{\PYGZdq{}(func | function)\PYGZdq{}}\PYG{p}{:} \PYG{o}{...}
+
+    \PYG{c+c1}{\PYGZsh{} Recognizes \PYGZdq{}class\PYGZdq{} and \PYGZdq{}new class\PYGZdq{}}
+    \PYG{l+s+s2}{\PYGZdq{}[new] class\PYGZdq{}}\PYG{p}{:} \PYG{o}{...}
+
+    \PYG{c+c1}{\PYGZsh{} Recognizes \PYGZdq{}good\PYGZdq{}, \PYGZdq{}very good\PYGZdq{}, \PYGZdq{}very very good\PYGZdq{}, etc...}
+    \PYG{l+s+s2}{\PYGZdq{}very* good\PYGZdq{}}\PYG{p}{:} \PYG{o}{...}
+
+    \PYG{c+c1}{\PYGZsh{} Recognizes \PYGZdq{}very good\PYGZdq{}, \PYGZdq{}very very good\PYGZdq{}, etc... (not \PYGZdq{}good\PYGZdq{})}
+    \PYG{l+s+s2}{\PYGZdq{}very+ good\PYGZdq{}}\PYG{p}{:} \PYG{o}{...}
+
+    \PYG{c+c1}{\PYGZsh{} Recognizes \PYGZdq{}say \PYGZlt{}FREE DICTATION\PYGZgt{}\PYGZdq{}}
+    \PYG{l+s+s2}{\PYGZdq{}say \PYGZlt{}dgndictation\PYGZgt{}\PYGZdq{}}\PYG{p}{:} \PYG{o}{...}
+\PYG{p}{\PYGZcb{})}
+\end{Verbatim}

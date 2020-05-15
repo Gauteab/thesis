@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} python.py}
+\PYG{n}{context} \PYG{o}{=} \PYG{n}{Context}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}python\PYGZdq{}}\PYG{p}{,} \PYG{n}{func}\PYG{o}{=}\PYG{n}{is\PYGZus{}filetype}\PYG{p}{((}\PYG{l+s+s2}{\PYGZdq{}py\PYGZdq{}}\PYG{p}{,} \PYG{p}{)))}
+\PYG{n}{context}\PYG{o}{.}\PYG{n}{keymap}\PYG{p}{(\PYGZob{}}
+    \PYG{l+s+s2}{\PYGZdq{}function\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}def \PYGZdq{}}
+\PYG{p}{\PYGZcb{})}
+\end{Verbatim}
