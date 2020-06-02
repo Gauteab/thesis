@@ -54,9 +54,16 @@ iff render p x y =
         ]
 
 
-assignment render name expression =
+assignment render name arguments expression =
     grid [] [ spacing 4 ] <|
-        [ [ render name, text "=" ]
+        [ [ text name, row [ spacing 4 ] (List.map text arguments), text "=" ]
+        , [ tab, render expression ]
+        ]
+
+
+assignment_ render name expression =
+    grid [] [ spacing 4 ] <|
+        [ [ text name, text "=" ]
         , [ tab, render expression ]
         ]
 

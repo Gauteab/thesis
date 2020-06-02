@@ -151,42 +151,18 @@ update msg model =
 
         HandleKeyboardEvent keyboardEvent ->
             let
-                keyToActionMap =
-                    Dict.fromList
-                        [ ( "j", Move Down )
-                        , ( "k", Move Up )
-                        , ( "h", Move Left )
-                        , ( "l", Move Right )
-                        , ( "d", Delete )
-                        , ( "ri", Replace If )
-                        , ( "Escape", ClearInputBuffer )
-                        ]
-
-                newInput : String
-                newInput =
-                    case Debug.log "key" keyboardEvent.key of
-                        Nothing ->
-                            model.inputBuffer
-
-                        Just "Escape" ->
-                            ""
-
-                        Just s ->
-                            if String.length s == 1 then
-                                model.inputBuffer ++ s
-
-                            else
-                                model.inputBuffer
+                newInput_ =
+                    newInput model.inputBuffer keyboardEvent.key
 
                 newModel : Model
                 newModel =
-                    case Dict.get newInput keyToActionMap of
+                    case Dict.get newInput_ keyToActionMap of
                         Just a ->
                             doAction model a
                                 |> (\r -> { r | inputBuffer = "" })
 
                         Nothing ->
-                            { model | inputBuffer = newInput }
+                            { model | inputBuffer = newInput_ }
             in
             ( newModel, Cmd.none )
 
@@ -203,6 +179,35 @@ type Action
     | ClearInputBuffer
     | Delete
     | Replace Node
+
+
+keyToActionMap =
+    Dict.fromList
+        [ ( "j", Move Down )
+        , ( "k", Move Up )
+        , ( "h", Move Left )
+        , ( "l", Move Right )
+        , ( "d", Delete )
+        , ( "ri", Replace If )
+        , ( "Escape", ClearInputBuffer )
+        ]
+
+
+newInput : String -> Maybe String -> String
+newInput currentInput key =
+    case Debug.log "key" key of
+        Nothing ->
+            currentInput
+
+        Just "Escape" ->
+            ""
+
+        Just s ->
+            if String.length s == 1 then
+                currentInput ++ s
+
+            else
+                currentInput
 
 
 doMove : Direction -> Zipper Label -> Zipper Label
@@ -317,7 +322,7 @@ render tree =
                 Debug.todo <| "Invalid if: " ++ Debug.toString label.value
 
             ( Assignment, [ name, expression ] ) ->
-                View.assignment render name expression
+                View.assignment_ render (Debug.toString name) expression
 
             ( Assignment, _ ) ->
                 Debug.todo <| "Invalid assignment: " ++ Debug.toString label.value
