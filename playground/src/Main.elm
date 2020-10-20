@@ -45,7 +45,9 @@ type alias Model =
 
 
 type alias Label =
-    { value : Node, selected : Bool }
+    { value : Node
+    , selected : Bool
+    }
 
 
 type Node

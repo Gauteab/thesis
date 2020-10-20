@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Zip</title>
+  <title>V4</title>
   <style>body { padding: 0; margin: 0; }</style>
 </head>
 
@@ -5195,67 +5195,131 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Zip$Model = F2(
-	function (zipper, inputBuffer) {
-		return {inputBuffer: inputBuffer, zipper: zipper};
-	});
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Zip$A = function (a) {
-	return {$: 'A', a: a};
-};
-var $author$project$Zip$Assignment = F3(
-	function (a, b, c) {
-		return {$: 'Assignment', a: a, b: b, c: c};
-	});
-var $author$project$Zip$If = F3(
+var $author$project$V4$If = F3(
 	function (a, b, c) {
 		return {$: 'If', a: a, b: b, c: c};
 	});
-var $author$project$Zip$Int = function (a) {
+var $author$project$V4$Int = function (a) {
 	return {$: 'Int', a: a};
 };
-var $author$project$Zip$List = function (a) {
+var $author$project$V4$List = function (a) {
 	return {$: 'List', a: a};
 };
-var $author$project$Zip$I = F2(
+var $author$project$V4$I = F2(
 	function (a, b) {
 		return {$: 'I', a: a, b: b};
 	});
-var $author$project$Zip$info = $author$project$Zip$I(false);
-var $author$project$Zip$z = $author$project$Zip$A(
-	$author$project$Zip$info(
-		A3(
-			$author$project$Zip$Assignment,
-			$author$project$Zip$info('foo'),
-			$author$project$Zip$info(
+var $author$project$V4$n = F2(
+	function (i, e) {
+		return A2(
+			$author$project$V4$I,
+			i,
+			$elm$core$Maybe$Just(e));
+	});
+var $author$project$V4$ast = A2(
+	$author$project$V4$n,
+	0,
+	A3(
+		$author$project$V4$If,
+		A2(
+			$author$project$V4$n,
+			1,
+			$author$project$V4$List(
 				_List_fromArray(
 					[
-						$author$project$Zip$info('x'),
-						$author$project$Zip$info('y')
-					])),
-			$author$project$Zip$info(
-				A3(
-					$author$project$Zip$If,
-					$author$project$Zip$info(
-						$author$project$Zip$List(
-							_List_fromArray(
-								[
-									$author$project$Zip$info(
-									$author$project$Zip$Int(7)),
-									$author$project$Zip$info(
-									$author$project$Zip$Int(8))
-								]))),
-					$author$project$Zip$info(
-						$author$project$Zip$Int(5)),
-					$author$project$Zip$info(
-						$author$project$Zip$Int(3)))))));
-var $author$project$Zip$init = function (_v0) {
+						A2(
+						$author$project$V4$n,
+						2,
+						$author$project$V4$Int(7)),
+						A2(
+						$author$project$V4$n,
+						3,
+						$author$project$V4$Int(8))
+					]))),
+		A2(
+			$author$project$V4$n,
+			4,
+			$author$project$V4$Int(5)),
+		A2(
+			$author$project$V4$n,
+			5,
+			$author$project$V4$Int(3))));
+var $zwilias$elm_rosetree$Tree$Zipper$Zipper = function (a) {
+	return {$: 'Zipper', a: a};
+};
+var $zwilias$elm_rosetree$Tree$Zipper$fromTree = function (t) {
+	return $zwilias$elm_rosetree$Tree$Zipper$Zipper(
+		{after: _List_Nil, before: _List_Nil, crumbs: _List_Nil, focus: t});
+};
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$V4$Hole = {$: 'Hole'};
+var $author$project$V4$If_ = {$: 'If_'};
+var $author$project$V4$Int_ = function (a) {
+	return {$: 'Int_', a: a};
+};
+var $author$project$V4$List_ = {$: 'List_'};
+var $author$project$V4$N = F2(
+	function (id, kind) {
+		return {id: id, kind: kind};
+	});
+var $zwilias$elm_rosetree$Tree$Tree = F2(
+	function (a, b) {
+		return {$: 'Tree', a: a, b: b};
+	});
+var $zwilias$elm_rosetree$Tree$tree = $zwilias$elm_rosetree$Tree$Tree;
+var $author$project$V4$toRose = function (_v0) {
+	var id = _v0.a;
+	var expression = _v0.b;
+	if (expression.$ === 'Just') {
+		switch (expression.a.$) {
+			case 'Int':
+				var _int = expression.a.a;
+				return A2(
+					$zwilias$elm_rosetree$Tree$tree,
+					A2(
+						$author$project$V4$N,
+						id,
+						$author$project$V4$Int_(_int)),
+					_List_Nil);
+			case 'If':
+				var _v2 = expression.a;
+				var p = _v2.a;
+				var x = _v2.b;
+				var y = _v2.c;
+				return A2(
+					$zwilias$elm_rosetree$Tree$tree,
+					A2($author$project$V4$N, id, $author$project$V4$If_),
+					A2(
+						$elm$core$List$map,
+						$author$project$V4$toRose,
+						_List_fromArray(
+							[p, x, y])));
+			default:
+				var nodes = expression.a.a;
+				return A2(
+					$zwilias$elm_rosetree$Tree$tree,
+					A2($author$project$V4$N, id, $author$project$V4$List_),
+					A2($elm$core$List$map, $author$project$V4$toRose, nodes));
+		}
+	} else {
+		return A2(
+			$zwilias$elm_rosetree$Tree$tree,
+			A2($author$project$V4$N, id, $author$project$V4$Hole),
+			_List_Nil);
+	}
+};
+var $author$project$V4$init = function (_v0) {
 	return _Utils_Tuple2(
-		A2($author$project$Zip$Model, $author$project$Zip$z, ''),
+		{
+			inputBuffer: '',
+			selected: _List_Nil,
+			zipper: $zwilias$elm_rosetree$Tree$Zipper$fromTree(
+				$author$project$V4$toRose($author$project$V4$ast))
+		},
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Zip$HandleKeyboardEvent = function (a) {
+var $author$project$V4$HandleKeyboardEvent = function (a) {
 	return {$: 'HandleKeyboardEvent', a: a};
 };
 var $Gizra$elm_keyboard_event$Keyboard$Event$KeyboardEvent = F7(
@@ -5991,320 +6055,26 @@ var $elm$browser$Browser$Events$on = F3(
 			A3($elm$browser$Browser$Events$MySub, node, name, decoder));
 	});
 var $elm$browser$Browser$Events$onKeyDown = A2($elm$browser$Browser$Events$on, $elm$browser$Browser$Events$Document, 'keydown');
-var $author$project$Zip$subscriptions = function (model) {
+var $author$project$V4$subscriptions = function (model) {
 	return $elm$browser$Browser$Events$onKeyDown(
-		A2($elm$json$Json$Decode$map, $author$project$Zip$HandleKeyboardEvent, $Gizra$elm_keyboard_event$Keyboard$Event$decodeKeyboardEvent));
+		A2($elm$json$Json$Decode$map, $author$project$V4$HandleKeyboardEvent, $Gizra$elm_keyboard_event$Keyboard$Event$decodeKeyboardEvent));
 };
-var $elm$core$Basics$always = F2(
-	function (a, _v0) {
-		return a;
+var $elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
 	});
-var $elm$core$Debug$todo = _Debug_todo;
-var $author$project$Zip$doDelete = function (zipper) {
-	return _Debug_todo(
-		'Zip',
-		{
-			start: {line: 537, column: 5},
-			end: {line: 537, column: 15}
-		})('');
+var $zwilias$elm_rosetree$Tree$label = function (_v0) {
+	var v = _v0.a;
+	return v;
 };
-var $author$project$Zip$Arguments = F2(
-	function (a, b) {
-		return {$: 'Arguments', a: a, b: b};
-	});
-var $author$project$Zip$Assignment1 = F2(
-	function (a, b) {
-		return {$: 'Assignment1', a: a, b: b};
-	});
-var $author$project$Zip$E = F2(
-	function (a, b) {
-		return {$: 'E', a: a, b: b};
-	});
-var $author$project$Zip$If1 = F3(
-	function (a, b, c) {
-		return {$: 'If1', a: a, b: b, c: c};
-	});
-var $author$project$Zip$ListContext = F2(
-	function (a, b) {
-		return {$: 'ListContext', a: a, b: b};
-	});
-var $author$project$Zip$Plus1 = F2(
-	function (a, b) {
-		return {$: 'Plus1', a: a, b: b};
-	});
-var $author$project$Zip$S = F2(
-	function (a, b) {
-		return {$: 'S', a: a, b: b};
-	});
-var $author$project$Zip$Zip = F2(
-	function (before, after) {
-		return {after: after, before: before};
-	});
-var $author$project$Zip$down = function (zipper) {
-	switch (zipper.$) {
-		case 'E':
-			switch (zipper.a.b.$) {
-				case 'Int':
-					var _v1 = zipper.a;
-					var i = _v1.a;
-					return $elm$core$Maybe$Nothing;
-				case 'Plus':
-					var _v2 = zipper.a;
-					var i = _v2.a;
-					var _v3 = _v2.b;
-					var e1 = _v3.a;
-					var e2 = _v3.b;
-					var c = zipper.b;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$E,
-							e1,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A2($author$project$Zip$Plus1, c, e2))));
-				case 'If':
-					var _v4 = zipper.a;
-					var i = _v4.a;
-					var _v5 = _v4.b;
-					var e1 = _v5.a;
-					var e2 = _v5.b;
-					var e3 = _v5.c;
-					var c = zipper.b;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$E,
-							e1,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A3($author$project$Zip$If1, c, e2, e3))));
-				default:
-					var _v6 = zipper.a;
-					var i = _v6.a;
-					var es = _v6.b.a;
-					var c = zipper.b;
-					if (!es.b) {
-						return $elm$core$Maybe$Nothing;
-					} else {
-						var x = es.a;
-						var xs = es.b;
-						return $elm$core$Maybe$Just(
-							A2(
-								$author$project$Zip$E,
-								x,
-								A2(
-									$author$project$Zip$I,
-									i,
-									A2(
-										$author$project$Zip$ListContext,
-										A2($author$project$Zip$Zip, _List_Nil, xs),
-										c))));
-					}
-			}
-		case 'A':
-			var _v8 = zipper.a;
-			var i = _v8.a;
-			var _v9 = _v8.b;
-			var s = _v9.a;
-			var a = _v9.b;
-			var e2 = _v9.c;
-			return $elm$core$Maybe$Just(
-				A2(
-					$author$project$Zip$S,
-					s,
-					A2(
-						$author$project$Zip$I,
-						i,
-						A2($author$project$Zip$Assignment1, a, e2))));
-		case 'L':
-			var _v10 = zipper.a;
-			var i = _v10.a;
-			var a = _v10.b;
-			var c = zipper.b;
-			if (!a.b) {
-				return $elm$core$Maybe$Nothing;
-			} else {
-				var x = a.a;
-				var xs = a.b;
-				return $elm$core$Maybe$Just(
-					A2(
-						$author$project$Zip$S,
-						x,
-						A2(
-							$author$project$Zip$I,
-							i,
-							A2(
-								$author$project$Zip$Arguments,
-								{after: xs, before: _List_Nil},
-								c))));
-			}
-		default:
-			return $elm$core$Maybe$Nothing;
-	}
+var $zwilias$elm_rosetree$Tree$Zipper$tree = function (_v0) {
+	var focus = _v0.a.focus;
+	return focus;
 };
-var $author$project$Zip$If2 = F3(
-	function (a, b, c) {
-		return {$: 'If2', a: a, b: b, c: c};
-	});
-var $author$project$Zip$left = function (zipper) {
-	switch (zipper.$) {
-		case 'E':
-			switch (zipper.b.b.$) {
-				case 'Plus1':
-					var _v1 = zipper.b;
-					var i = _v1.a;
-					var _v2 = _v1.b;
-					return $elm$core$Maybe$Nothing;
-				case 'Plus2':
-					var e2 = zipper.a;
-					var _v3 = zipper.b;
-					var i = _v3.a;
-					var _v4 = _v3.b;
-					var e1 = _v4.a;
-					var c = _v4.b;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$E,
-							e1,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A2($author$project$Zip$Plus1, c, e2))));
-				case 'If1':
-					var _v5 = zipper.b;
-					var i = _v5.a;
-					var _v6 = _v5.b;
-					return $elm$core$Maybe$Nothing;
-				case 'If2':
-					var e2 = zipper.a;
-					var _v7 = zipper.b;
-					var i = _v7.a;
-					var _v8 = _v7.b;
-					var e1 = _v8.a;
-					var c = _v8.b;
-					var e3 = _v8.c;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$E,
-							e1,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A3($author$project$Zip$If1, c, e2, e3))));
-				case 'If3':
-					var e3 = zipper.a;
-					var _v9 = zipper.b;
-					var i = _v9.a;
-					var _v10 = _v9.b;
-					var e1 = _v10.a;
-					var e2 = _v10.b;
-					var c = _v10.c;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$E,
-							e2,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A3($author$project$Zip$If2, e1, c, e3))));
-				case 'Assignment3':
-					var e2 = zipper.a;
-					var _v11 = zipper.b;
-					var i = _v11.a;
-					var _v12 = _v11.b;
-					var s1 = _v12.a;
-					var a = _v12.b;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$S,
-							s1,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A2($author$project$Zip$Assignment1, a, e2))));
-				default:
-					var e1 = zipper.a;
-					var _v13 = zipper.b;
-					var i = _v13.a;
-					var _v14 = _v13.b;
-					var before = _v14.a.before;
-					var after = _v14.a.after;
-					var c = _v14.b;
-					if (!before.b) {
-						return $elm$core$Maybe$Nothing;
-					} else {
-						var x = before.a;
-						var xs = before.b;
-						return $elm$core$Maybe$Just(
-							A2(
-								$author$project$Zip$E,
-								x,
-								A2(
-									$author$project$Zip$I,
-									i,
-									A2(
-										$author$project$Zip$ListContext,
-										{
-											after: A2($elm$core$List$cons, e1, after),
-											before: xs
-										},
-										c))));
-					}
-			}
-		case 'S':
-			if (zipper.b.b.$ === 'Arguments') {
-				var s1 = zipper.a;
-				var _v16 = zipper.b;
-				var i = _v16.a;
-				var _v17 = _v16.b;
-				var before = _v17.a.before;
-				var after = _v17.a.after;
-				var c = _v17.b;
-				if (!before.b) {
-					return $elm$core$Maybe$Nothing;
-				} else {
-					var x = before.a;
-					var xs = before.b;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$S,
-							x,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A2(
-									$author$project$Zip$Arguments,
-									{
-										after: A2($elm$core$List$cons, s1, after),
-										before: xs
-									},
-									c))));
-				}
-			} else {
-				var _v19 = zipper.b;
-				var i = _v19.a;
-				var _v20 = _v19.b;
-				return $elm$core$Maybe$Nothing;
-			}
-		case 'A':
-			return $elm$core$Maybe$Nothing;
-		default:
-			var a = zipper.a;
-			var _v21 = zipper.b;
-			var i = _v21.a;
-			var _v22 = _v21.b;
-			var s = _v22.a;
-			var e = _v22.b;
-			return $elm$core$Maybe$Just(
-				A2(
-					$author$project$Zip$S,
-					s,
-					A2(
-						$author$project$Zip$I,
-						i,
-						A2($author$project$Zip$Assignment1, a, e))));
-	}
+var $zwilias$elm_rosetree$Tree$Zipper$label = function (zipper) {
+	return $zwilias$elm_rosetree$Tree$label(
+		$zwilias$elm_rosetree$Tree$Zipper$tree(zipper));
 };
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
@@ -6316,406 +6086,113 @@ var $elm$core$Maybe$map = F2(
 			return $elm$core$Maybe$Nothing;
 		}
 	});
-var $author$project$Zip$Assignment2 = F2(
-	function (a, b) {
-		return {$: 'Assignment2', a: a, b: b};
+var $zwilias$elm_rosetree$Tree$Zipper$reconstruct = F4(
+	function (focus, before, after, l) {
+		return A2(
+			$zwilias$elm_rosetree$Tree$tree,
+			l,
+			_Utils_ap(
+				$elm$core$List$reverse(before),
+				_Utils_ap(
+					_List_fromArray(
+						[focus]),
+					after)));
 	});
-var $author$project$Zip$Assignment3 = F2(
-	function (a, b) {
-		return {$: 'Assignment3', a: a, b: b};
-	});
-var $author$project$Zip$If3 = F3(
-	function (a, b, c) {
-		return {$: 'If3', a: a, b: b, c: c};
-	});
-var $author$project$Zip$L = F2(
-	function (a, b) {
-		return {$: 'L', a: a, b: b};
-	});
-var $author$project$Zip$Plus2 = F2(
-	function (a, b) {
-		return {$: 'Plus2', a: a, b: b};
-	});
-var $author$project$Zip$right = function (zipper) {
-	switch (zipper.$) {
-		case 'E':
-			switch (zipper.b.b.$) {
-				case 'Plus1':
-					var e1 = zipper.a;
-					var _v1 = zipper.b;
-					var i = _v1.a;
-					var _v2 = _v1.b;
-					var c = _v2.a;
-					var e2 = _v2.b;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$E,
-							e2,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A2($author$project$Zip$Plus2, e1, c))));
-				case 'Plus2':
-					var _v3 = zipper.b;
-					var i = _v3.a;
-					var _v4 = _v3.b;
-					return $elm$core$Maybe$Nothing;
-				case 'If1':
-					var e1 = zipper.a;
-					var _v5 = zipper.b;
-					var i = _v5.a;
-					var _v6 = _v5.b;
-					var c = _v6.a;
-					var e2 = _v6.b;
-					var e3 = _v6.c;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$E,
-							e2,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A3($author$project$Zip$If2, e1, c, e3))));
-				case 'If2':
-					var e2 = zipper.a;
-					var _v7 = zipper.b;
-					var i = _v7.a;
-					var _v8 = _v7.b;
-					var e1 = _v8.a;
-					var c = _v8.b;
-					var e3 = _v8.c;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$E,
-							e3,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A3($author$project$Zip$If3, e1, e2, c))));
-				case 'If3':
-					var _v9 = zipper.b;
-					var i = _v9.a;
-					var _v10 = _v9.b;
-					return $elm$core$Maybe$Nothing;
-				case 'Assignment3':
-					var _v11 = zipper.b;
-					var i = _v11.a;
-					var _v12 = _v11.b;
-					return $elm$core$Maybe$Nothing;
-				default:
-					var e1 = zipper.a;
-					var _v13 = zipper.b;
-					var i = _v13.a;
-					var _v14 = _v13.b;
-					var before = _v14.a.before;
-					var after = _v14.a.after;
-					var c = _v14.b;
-					if (!after.b) {
-						return $elm$core$Maybe$Nothing;
-					} else {
-						var x = after.a;
-						var xs = after.b;
-						return $elm$core$Maybe$Just(
-							A2(
-								$author$project$Zip$E,
-								x,
-								A2(
-									$author$project$Zip$I,
-									i,
-									A2(
-										$author$project$Zip$ListContext,
-										{
-											after: xs,
-											before: A2($elm$core$List$cons, e1, before)
-										},
-										c))));
-					}
-			}
-		case 'L':
-			var a = zipper.a;
-			var _v16 = zipper.b;
-			var i = _v16.a;
-			var _v17 = _v16.b;
-			var s1 = _v17.a;
-			var e1 = _v17.b;
-			return $elm$core$Maybe$Just(
-				A2(
-					$author$project$Zip$E,
-					e1,
-					$author$project$Zip$info(
-						A2($author$project$Zip$Assignment3, s1, a))));
-		case 'S':
-			if (zipper.b.b.$ === 'Arguments') {
-				var s1 = zipper.a;
-				var _v18 = zipper.b;
-				var i = _v18.a;
-				var _v19 = _v18.b;
-				var before = _v19.a.before;
-				var after = _v19.a.after;
-				var c = _v19.b;
-				if (!after.b) {
-					return $elm$core$Maybe$Nothing;
-				} else {
-					var x = after.a;
-					var xs = after.b;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$S,
-							x,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A2(
-									$author$project$Zip$Arguments,
-									{
-										after: xs,
-										before: A2($elm$core$List$cons, s1, before)
-									},
-									c))));
-				}
-			} else {
-				var s = zipper.a;
-				var _v21 = zipper.b;
-				var i = _v21.a;
-				var _v22 = _v21.b;
-				var ar = _v22.a;
-				var e = _v22.b;
-				return $elm$core$Maybe$Just(
-					A2(
-						$author$project$Zip$L,
-						ar,
-						A2(
-							$author$project$Zip$I,
-							i,
-							A2($author$project$Zip$Assignment2, s, e))));
-			}
-		default:
-			return $elm$core$Maybe$Nothing;
+var $zwilias$elm_rosetree$Tree$Zipper$parent = function (_v0) {
+	var zipper = _v0.a;
+	var _v1 = zipper.crumbs;
+	if (!_v1.b) {
+		return $elm$core$Maybe$Nothing;
+	} else {
+		var crumb = _v1.a;
+		var rest = _v1.b;
+		return $elm$core$Maybe$Just(
+			$zwilias$elm_rosetree$Tree$Zipper$Zipper(
+				{
+					after: crumb.after,
+					before: crumb.before,
+					crumbs: rest,
+					focus: A4($zwilias$elm_rosetree$Tree$Zipper$reconstruct, zipper.focus, zipper.before, zipper.after, crumb.label)
+				}));
 	}
 };
-var $author$project$Zip$modifyInfo = F2(
-	function (f, zipper) {
-		switch (zipper.$) {
-			case 'E':
-				var _v1 = zipper.a;
-				var i = _v1.a;
-				var e = _v1.b;
-				var c = zipper.b;
-				return A2(
-					$author$project$Zip$E,
-					A2(
-						$author$project$Zip$I,
-						f(i),
-						e),
-					c);
-			case 'S':
-				var _v2 = zipper.a;
-				var i = _v2.a;
-				var name = _v2.b;
-				var c = zipper.b;
-				return A2(
-					$author$project$Zip$S,
-					A2(
-						$author$project$Zip$I,
-						f(i),
-						name),
-					c);
-			case 'A':
-				var _v3 = zipper.a;
-				var i = _v3.a;
-				var e = _v3.b;
-				return $author$project$Zip$A(
-					A2(
-						$author$project$Zip$I,
-						f(i),
-						e));
-			default:
-				var _v4 = zipper.a;
-				var i = _v4.a;
-				var a = _v4.b;
-				var c = zipper.b;
-				return A2(
-					$author$project$Zip$L,
-					A2(
-						$author$project$Zip$I,
-						f(i),
-						a),
-					c);
+var $author$project$V4$parentKind = function (zipper) {
+	return A2(
+		$elm$core$Maybe$map,
+		A2(
+			$elm$core$Basics$composeR,
+			$zwilias$elm_rosetree$Tree$Zipper$label,
+			function ($) {
+				return $.kind;
+			}),
+		$zwilias$elm_rosetree$Tree$Zipper$parent(zipper));
+};
+var $author$project$V4$deletable = function (zipper) {
+	var _v0 = $author$project$V4$parentKind(zipper);
+	if ((_v0.$ === 'Just') && (_v0.a.$ === 'List_')) {
+		var _v1 = _v0.a;
+		return true;
+	} else {
+		return false;
+	}
+};
+var $zwilias$elm_rosetree$Tree$Zipper$reconstructWithoutFocus = F3(
+	function (l, before, after) {
+		return A2(
+			$zwilias$elm_rosetree$Tree$tree,
+			l,
+			_Utils_ap(
+				$elm$core$List$reverse(before),
+				after));
+	});
+var $zwilias$elm_rosetree$Tree$Zipper$removeTree = function (_v0) {
+	var zipper = _v0.a;
+	var _v1 = _Utils_Tuple3(zipper.crumbs, zipper.before, zipper.after);
+	if (_v1.a.b) {
+		var _v2 = _v1.a;
+		var crumb = _v2.a;
+		var rest = _v2.b;
+		var before = _v1.b;
+		var after = _v1.c;
+		return $elm$core$Maybe$Just(
+			$zwilias$elm_rosetree$Tree$Zipper$Zipper(
+				{
+					after: crumb.after,
+					before: crumb.before,
+					crumbs: rest,
+					focus: A3($zwilias$elm_rosetree$Tree$Zipper$reconstructWithoutFocus, crumb.label, before, after)
+				}));
+	} else {
+		if (_v1.b.b) {
+			var _v3 = _v1.b;
+			var b = _v3.a;
+			var bs = _v3.b;
+			var after = _v1.c;
+			return $elm$core$Maybe$Just(
+				$zwilias$elm_rosetree$Tree$Zipper$Zipper(
+					{after: after, before: bs, crumbs: _List_Nil, focus: b}));
+		} else {
+			if (!_v1.c.b) {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var _v4 = _v1.c;
+				var a = _v4.a;
+				var as_ = _v4.b;
+				return $elm$core$Maybe$Just(
+					$zwilias$elm_rosetree$Tree$Zipper$Zipper(
+						{after: as_, before: _List_Nil, crumbs: _List_Nil, focus: a}));
+			}
 		}
-	});
-var $author$project$Zip$setSelected = function (bool) {
-	return $author$project$Zip$modifyInfo(
-		$elm$core$Basics$always(bool));
-};
-var $author$project$Zip$Plus = F2(
-	function (a, b) {
-		return {$: 'Plus', a: a, b: b};
-	});
-var $author$project$Zip$up = function (zipper) {
-	switch (zipper.$) {
-		case 'E':
-			switch (zipper.b.b.$) {
-				case 'Assignment3':
-					var e1 = zipper.a;
-					var _v1 = zipper.b;
-					var i = _v1.a;
-					var _v2 = _v1.b;
-					var s1 = _v2.a;
-					var a = _v2.b;
-					return $elm$core$Maybe$Just(
-						$author$project$Zip$A(
-							A2(
-								$author$project$Zip$I,
-								i,
-								A3($author$project$Zip$Assignment, s1, a, e1))));
-				case 'Plus1':
-					var e1 = zipper.a;
-					var _v3 = zipper.b;
-					var i = _v3.a;
-					var _v4 = _v3.b;
-					var c = _v4.a;
-					var e2 = _v4.b;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$E,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A2($author$project$Zip$Plus, e1, e2)),
-							c));
-				case 'Plus2':
-					var e2 = zipper.a;
-					var _v5 = zipper.b;
-					var i = _v5.a;
-					var _v6 = _v5.b;
-					var e1 = _v6.a;
-					var c = _v6.b;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$E,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A2($author$project$Zip$Plus, e1, e2)),
-							c));
-				case 'If1':
-					var e1 = zipper.a;
-					var _v7 = zipper.b;
-					var i = _v7.a;
-					var _v8 = _v7.b;
-					var c = _v8.a;
-					var e2 = _v8.b;
-					var e3 = _v8.c;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$E,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A3($author$project$Zip$If, e1, e2, e3)),
-							c));
-				case 'If2':
-					var e2 = zipper.a;
-					var _v9 = zipper.b;
-					var i = _v9.a;
-					var _v10 = _v9.b;
-					var e1 = _v10.a;
-					var c = _v10.b;
-					var e3 = _v10.c;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$E,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A3($author$project$Zip$If, e1, e2, e3)),
-							c));
-				case 'If3':
-					var e3 = zipper.a;
-					var _v11 = zipper.b;
-					var i = _v11.a;
-					var _v12 = _v11.b;
-					var e1 = _v12.a;
-					var e2 = _v12.b;
-					var c = _v12.c;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$E,
-							A2(
-								$author$project$Zip$I,
-								i,
-								A3($author$project$Zip$If, e1, e2, e3)),
-							c));
-				default:
-					var e1 = zipper.a;
-					var _v13 = zipper.b;
-					var i = _v13.a;
-					var _v14 = _v13.b;
-					var before = _v14.a.before;
-					var after = _v14.a.after;
-					var c = _v14.b;
-					return $elm$core$Maybe$Just(
-						A2(
-							$author$project$Zip$E,
-							A2(
-								$author$project$Zip$I,
-								i,
-								$author$project$Zip$List(
-									_Utils_ap(
-										$elm$core$List$reverse(before),
-										A2($elm$core$List$cons, e1, after)))),
-							c));
-			}
-		case 'S':
-			if (zipper.b.b.$ === 'Assignment1') {
-				var s1 = zipper.a;
-				var _v15 = zipper.b;
-				var i = _v15.a;
-				var _v16 = _v15.b;
-				var _arguments = _v16.a;
-				var e2 = _v16.b;
-				return $elm$core$Maybe$Just(
-					$author$project$Zip$A(
-						A2(
-							$author$project$Zip$I,
-							i,
-							A3($author$project$Zip$Assignment, s1, _arguments, e2))));
-			} else {
-				var s1 = zipper.a;
-				var _v17 = zipper.b;
-				var i = _v17.a;
-				var _v18 = _v17.b;
-				var before = _v18.a.before;
-				var after = _v18.a.after;
-				var c = _v18.b;
-				return $elm$core$Maybe$Just(
-					A2(
-						$author$project$Zip$L,
-						A2(
-							$author$project$Zip$I,
-							i,
-							_Utils_ap(
-								$elm$core$List$reverse(before),
-								A2($elm$core$List$cons, s1, after))),
-						c));
-			}
-		case 'L':
-			var a = zipper.a;
-			var _v19 = zipper.b;
-			var i = _v19.a;
-			var _v20 = _v19.b;
-			var s1 = _v20.a;
-			var e1 = _v20.b;
-			return $elm$core$Maybe$Just(
-				$author$project$Zip$A(
-					A2(
-						$author$project$Zip$I,
-						i,
-						A3($author$project$Zip$Assignment, s1, a, e1))));
-		default:
-			return $elm$core$Maybe$Nothing;
 	}
 };
+var $zwilias$elm_rosetree$Tree$Zipper$replaceTree = F2(
+	function (t, _v0) {
+		var zipper = _v0.a;
+		return $zwilias$elm_rosetree$Tree$Zipper$Zipper(
+			_Utils_update(
+				zipper,
+				{focus: t}));
+	});
 var $elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
 		if (maybe.$ === 'Just') {
@@ -6725,66 +6202,121 @@ var $elm$core$Maybe$withDefault = F2(
 			return _default;
 		}
 	});
-var $author$project$Zip$doMove = F2(
-	function (direction, zipper) {
+var $author$project$V4$doDelete = function (model) {
+	var newZipper = $author$project$V4$deletable(model.zipper) ? A2(
+		$elm$core$Maybe$withDefault,
+		model.zipper,
+		$zwilias$elm_rosetree$Tree$Zipper$removeTree(model.zipper)) : A2(
+		$zwilias$elm_rosetree$Tree$Zipper$replaceTree,
+		A2(
+			$zwilias$elm_rosetree$Tree$tree,
+			A2($author$project$V4$N, 9, $author$project$V4$Hole),
+			_List_Nil),
+		model.zipper);
+	return _Utils_update(
+		model,
+		{zipper: newZipper});
+};
+var $zwilias$elm_rosetree$Tree$children = function (_v0) {
+	var c = _v0.b;
+	return c;
+};
+var $zwilias$elm_rosetree$Tree$Zipper$firstChild = function (_v0) {
+	var zipper = _v0.a;
+	var _v1 = $zwilias$elm_rosetree$Tree$children(zipper.focus);
+	if (!_v1.b) {
+		return $elm$core$Maybe$Nothing;
+	} else {
+		var c = _v1.a;
+		var cs = _v1.b;
+		return $elm$core$Maybe$Just(
+			$zwilias$elm_rosetree$Tree$Zipper$Zipper(
+				{
+					after: cs,
+					before: _List_Nil,
+					crumbs: A2(
+						$elm$core$List$cons,
+						{
+							after: zipper.after,
+							before: zipper.before,
+							label: $zwilias$elm_rosetree$Tree$label(zipper.focus)
+						},
+						zipper.crumbs),
+					focus: c
+				}));
+	}
+};
+var $zwilias$elm_rosetree$Tree$Zipper$nextSibling = function (_v0) {
+	var zipper = _v0.a;
+	var _v1 = zipper.after;
+	if (!_v1.b) {
+		return $elm$core$Maybe$Nothing;
+	} else {
+		var next = _v1.a;
+		var rest = _v1.b;
+		return $elm$core$Maybe$Just(
+			$zwilias$elm_rosetree$Tree$Zipper$Zipper(
+				{
+					after: rest,
+					before: A2($elm$core$List$cons, zipper.focus, zipper.before),
+					crumbs: zipper.crumbs,
+					focus: next
+				}));
+	}
+};
+var $zwilias$elm_rosetree$Tree$Zipper$previousSibling = function (_v0) {
+	var zipper = _v0.a;
+	var _v1 = zipper.before;
+	if (!_v1.b) {
+		return $elm$core$Maybe$Nothing;
+	} else {
+		var previous = _v1.a;
+		var rest = _v1.b;
+		return $elm$core$Maybe$Just(
+			$zwilias$elm_rosetree$Tree$Zipper$Zipper(
+				{
+					after: A2($elm$core$List$cons, zipper.focus, zipper.after),
+					before: rest,
+					crumbs: zipper.crumbs,
+					focus: previous
+				}));
+	}
+};
+var $author$project$V4$doMove = F2(
+	function (direction, model) {
 		var moveZipper = function () {
 			switch (direction.$) {
 				case 'Down':
-					return $author$project$Zip$down;
+					return $zwilias$elm_rosetree$Tree$Zipper$firstChild;
 				case 'Up':
-					return $author$project$Zip$up;
+					return $zwilias$elm_rosetree$Tree$Zipper$parent;
 				case 'Right':
-					return $author$project$Zip$right;
+					return $zwilias$elm_rosetree$Tree$Zipper$nextSibling;
 				default:
-					return $author$project$Zip$left;
+					return $zwilias$elm_rosetree$Tree$Zipper$previousSibling;
 			}
 		}();
-		return A2(
+		var newZipper = A2(
 			$elm$core$Maybe$withDefault,
-			zipper,
-			A2(
-				$elm$core$Maybe$map,
-				$author$project$Zip$setSelected(true),
-				moveZipper(
-					A2($author$project$Zip$setSelected, false, zipper))));
-	});
-var $author$project$Zip$mapZipper = F2(
-	function (f, model) {
+			model.zipper,
+			moveZipper(model.zipper));
+		var selected = _List_fromArray(
+			[
+				$zwilias$elm_rosetree$Tree$Zipper$label(newZipper).id
+			]);
 		return _Utils_update(
 			model,
-			{
-				zipper: f(model.zipper)
-			});
+			{selected: selected, zipper: newZipper});
 	});
-var $author$project$Zip$modifyE = F2(
-	function (_function, zipper) {
-		if (zipper.$ === 'E') {
-			var e = zipper.a;
-			var c = zipper.b;
-			return A2(
-				$author$project$Zip$E,
-				_function(e),
-				c);
-		} else {
-			return _Debug_todo(
-				'Zip',
-				{
-					start: {line: 129, column: 13},
-					end: {line: 129, column: 23}
-				})('');
-		}
-	});
-var $author$project$Zip$doAction = F2(
+var $elm$core$Debug$todo = _Debug_todo;
+var $author$project$V4$doAction = F2(
 	function (model, action) {
 		switch (action.$) {
 			case 'Move':
 				var direction = action.a;
-				return A2(
-					$author$project$Zip$mapZipper,
-					$author$project$Zip$doMove(direction),
-					model);
+				return A2($author$project$V4$doMove, direction, model);
 			case 'Delete':
-				return A2($author$project$Zip$mapZipper, $author$project$Zip$doDelete, model);
+				return $author$project$V4$doDelete(model);
 			case 'ClearInputBuffer':
 				return _Utils_update(
 					model,
@@ -6793,22 +6325,23 @@ var $author$project$Zip$doAction = F2(
 				if (action.a.$ === 'TargetIf') {
 					var _v1 = action.a;
 					var _new = _Debug_todo(
-						'Zip',
+						'V4',
 						{
-							start: {line: 475, column: 21},
-							end: {line: 475, column: 31}
+							start: {line: 239, column: 21},
+							end: {line: 239, column: 31}
 						})('');
-					return A2(
-						$author$project$Zip$mapZipper,
-						$author$project$Zip$modifyE(
-							$elm$core$Basics$always(_new)),
-						model);
+					return _Debug_todo(
+						'V4',
+						{
+							start: {line: 242, column: 13},
+							end: {line: 242, column: 23}
+						})('');
 				} else {
 					return _Debug_todo(
-						'Zip',
+						'V4',
 						{
-							start: {line: 480, column: 13},
-							end: {line: 480, column: 23}
+							start: {line: 245, column: 13},
+							end: {line: 245, column: 23}
 						})('');
 				}
 		}
@@ -6844,42 +6377,42 @@ var $elm$core$Dict$get = F2(
 			}
 		}
 	});
-var $author$project$Zip$ClearInputBuffer = {$: 'ClearInputBuffer'};
-var $author$project$Zip$Delete = {$: 'Delete'};
-var $author$project$Zip$Down = {$: 'Down'};
-var $author$project$Zip$Left = {$: 'Left'};
-var $author$project$Zip$Move = function (a) {
+var $author$project$V4$ClearInputBuffer = {$: 'ClearInputBuffer'};
+var $author$project$V4$Delete = {$: 'Delete'};
+var $author$project$V4$Down = {$: 'Down'};
+var $author$project$V4$Left = {$: 'Left'};
+var $author$project$V4$Move = function (a) {
 	return {$: 'Move', a: a};
 };
-var $author$project$Zip$Replace = function (a) {
+var $author$project$V4$Replace = function (a) {
 	return {$: 'Replace', a: a};
 };
-var $author$project$Zip$Right = {$: 'Right'};
-var $author$project$Zip$TargetIf = {$: 'TargetIf'};
-var $author$project$Zip$Up = {$: 'Up'};
-var $author$project$Zip$keyToActionMap = $elm$core$Dict$fromList(
+var $author$project$V4$Right = {$: 'Right'};
+var $author$project$V4$TargetIf = {$: 'TargetIf'};
+var $author$project$V4$Up = {$: 'Up'};
+var $author$project$V4$keyToActionMap = $elm$core$Dict$fromList(
 	_List_fromArray(
 		[
 			_Utils_Tuple2(
 			'j',
-			$author$project$Zip$Move($author$project$Zip$Down)),
+			$author$project$V4$Move($author$project$V4$Down)),
 			_Utils_Tuple2(
 			'k',
-			$author$project$Zip$Move($author$project$Zip$Up)),
+			$author$project$V4$Move($author$project$V4$Up)),
 			_Utils_Tuple2(
 			'h',
-			$author$project$Zip$Move($author$project$Zip$Left)),
+			$author$project$V4$Move($author$project$V4$Left)),
 			_Utils_Tuple2(
 			'l',
-			$author$project$Zip$Move($author$project$Zip$Right)),
-			_Utils_Tuple2('d', $author$project$Zip$Delete),
+			$author$project$V4$Move($author$project$V4$Right)),
+			_Utils_Tuple2('d', $author$project$V4$Delete),
 			_Utils_Tuple2(
 			'ri',
-			$author$project$Zip$Replace($author$project$Zip$TargetIf)),
-			_Utils_Tuple2('Escape', $author$project$Zip$ClearInputBuffer)
+			$author$project$V4$Replace($author$project$V4$TargetIf)),
+			_Utils_Tuple2('Escape', $author$project$V4$ClearInputBuffer)
 		]));
 var $elm$core$Debug$log = _Debug_log;
-var $author$project$Zip$newInput = F2(
+var $author$project$V4$newInput = F2(
 	function (currentInput, key) {
 		var _v0 = A2($elm$core$Debug$log, 'key', key);
 		if (_v0.$ === 'Nothing') {
@@ -6893,15 +6426,15 @@ var $author$project$Zip$newInput = F2(
 			}
 		}
 	});
-var $author$project$Zip$update = F2(
+var $author$project$V4$update = F2(
 	function (msg, model) {
 		if (msg.$ === 'NoOp') {
 			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		} else {
 			var keyboardEvent = msg.a;
-			var newInput_ = A2($author$project$Zip$newInput, model.inputBuffer, keyboardEvent.key);
+			var newInput_ = A2($author$project$V4$newInput, model.inputBuffer, keyboardEvent.key);
 			var newModel = function () {
-				var _v1 = A2($elm$core$Dict$get, newInput_, $author$project$Zip$keyToActionMap);
+				var _v1 = A2($elm$core$Dict$get, newInput_, $author$project$V4$keyToActionMap);
 				if (_v1.$ === 'Just') {
 					var a = _v1.a;
 					return function (r) {
@@ -6909,7 +6442,7 @@ var $author$project$Zip$update = F2(
 							r,
 							{inputBuffer: ''});
 					}(
-						A2($author$project$Zip$doAction, model, a));
+						A2($author$project$V4$doAction, model, a));
 				} else {
 					return _Utils_update(
 						model,
@@ -12683,6 +12216,106 @@ var $mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
 	return {$: 'Fill', a: a};
 };
 var $mdgriffith$elm_ui$Element$fill = $mdgriffith$elm_ui$Internal$Model$Fill(1);
+var $author$project$V4$fromRose = function (t) {
+	var children = $zwilias$elm_rosetree$Tree$children(t);
+	var _v0 = $zwilias$elm_rosetree$Tree$label(t);
+	var id = _v0.id;
+	var kind = _v0.kind;
+	var _v1 = _Utils_Tuple2(kind, children);
+	_v1$4:
+	while (true) {
+		switch (_v1.a.$) {
+			case 'Int_':
+				if (!_v1.b.b) {
+					var _int = _v1.a.a;
+					return A2(
+						$author$project$V4$n,
+						id,
+						$author$project$V4$Int(_int));
+				} else {
+					break _v1$4;
+				}
+			case 'If_':
+				if (((_v1.b.b && _v1.b.b.b) && _v1.b.b.b.b) && (!_v1.b.b.b.b.b)) {
+					var _v2 = _v1.a;
+					var _v3 = _v1.b;
+					var p = _v3.a;
+					var _v4 = _v3.b;
+					var x = _v4.a;
+					var _v5 = _v4.b;
+					var y = _v5.a;
+					return A2(
+						$author$project$V4$n,
+						id,
+						A3(
+							$author$project$V4$If,
+							$author$project$V4$fromRose(p),
+							$author$project$V4$fromRose(x),
+							$author$project$V4$fromRose(y)));
+				} else {
+					break _v1$4;
+				}
+			case 'List_':
+				var _v6 = _v1.a;
+				var es = _v1.b;
+				return A2(
+					$author$project$V4$n,
+					id,
+					$author$project$V4$List(
+						A2($elm$core$List$map, $author$project$V4$fromRose, es)));
+			default:
+				var _v7 = _v1.a;
+				return A2($author$project$V4$I, id, $elm$core$Maybe$Nothing);
+		}
+	}
+	return _Debug_todo(
+		'V4',
+		{
+			start: {line: 93, column: 13},
+			end: {line: 93, column: 23}
+		})('');
+};
+var $mdgriffith$elm_ui$Internal$Model$Describe = function (a) {
+	return {$: 'Describe', a: a};
+};
+var $mdgriffith$elm_ui$Internal$Model$Paragraph = {$: 'Paragraph'};
+var $mdgriffith$elm_ui$Internal$Model$SpacingStyle = F3(
+	function (a, b, c) {
+		return {$: 'SpacingStyle', a: a, b: b, c: c};
+	});
+var $mdgriffith$elm_ui$Internal$Flag$spacing = $mdgriffith$elm_ui$Internal$Flag$flag(3);
+var $mdgriffith$elm_ui$Internal$Model$spacingName = F2(
+	function (x, y) {
+		return 'spacing-' + ($elm$core$String$fromInt(x) + ('-' + $elm$core$String$fromInt(y)));
+	});
+var $mdgriffith$elm_ui$Element$spacing = function (x) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$spacing,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$SpacingStyle,
+			A2($mdgriffith$elm_ui$Internal$Model$spacingName, x, x),
+			x,
+			x));
+};
+var $mdgriffith$elm_ui$Element$paragraph = F2(
+	function (attrs, children) {
+		return A4(
+			$mdgriffith$elm_ui$Internal$Model$element,
+			$mdgriffith$elm_ui$Internal$Model$asParagraph,
+			$mdgriffith$elm_ui$Internal$Model$div,
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Internal$Model$Describe($mdgriffith$elm_ui$Internal$Model$Paragraph),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					A2(
+						$elm$core$List$cons,
+						$mdgriffith$elm_ui$Element$spacing(5),
+						attrs))),
+			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
+	});
 var $mdgriffith$elm_ui$Internal$Model$AsRow = {$: 'AsRow'};
 var $mdgriffith$elm_ui$Internal$Model$asRow = $mdgriffith$elm_ui$Internal$Model$AsRow;
 var $mdgriffith$elm_ui$Element$row = F2(
@@ -12744,6 +12377,14 @@ var $mdgriffith$elm_ui$Internal$Model$Text = function (a) {
 var $mdgriffith$elm_ui$Element$text = function (content) {
 	return $mdgriffith$elm_ui$Internal$Model$Text(content);
 };
+var $author$project$View$hole = A2(
+	$mdgriffith$elm_ui$Element$el,
+	_List_fromArray(
+		[
+			$mdgriffith$elm_ui$Element$Background$color(
+			A3($mdgriffith$elm_ui$Element$rgb255, 255, 110, 110))
+		]),
+	$mdgriffith$elm_ui$Element$text('_'));
 var $author$project$View$keyword = function (string) {
 	return A2(
 		$mdgriffith$elm_ui$Element$el,
@@ -12754,25 +12395,15 @@ var $author$project$View$keyword = function (string) {
 			]),
 		$mdgriffith$elm_ui$Element$text(string));
 };
-var $mdgriffith$elm_ui$Internal$Model$SpacingStyle = F3(
-	function (a, b, c) {
-		return {$: 'SpacingStyle', a: a, b: b, c: c};
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
 	});
-var $mdgriffith$elm_ui$Internal$Flag$spacing = $mdgriffith$elm_ui$Internal$Flag$flag(3);
-var $mdgriffith$elm_ui$Internal$Model$spacingName = F2(
-	function (x, y) {
-		return 'spacing-' + ($elm$core$String$fromInt(x) + ('-' + $elm$core$String$fromInt(y)));
-	});
-var $mdgriffith$elm_ui$Element$spacing = function (x) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$spacing,
-		A3(
-			$mdgriffith$elm_ui$Internal$Model$SpacingStyle,
-			A2($mdgriffith$elm_ui$Internal$Model$spacingName, x, x),
-			x,
-			x));
-};
 var $mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
 var $mdgriffith$elm_ui$Element$none = $mdgriffith$elm_ui$Internal$Model$Empty;
 var $mdgriffith$elm_ui$Internal$Model$Px = function (a) {
@@ -12787,194 +12418,131 @@ var $author$project$View$tab = A2(
 			$mdgriffith$elm_ui$Element$px(15))
 		]),
 	$mdgriffith$elm_ui$Element$none);
-var $author$project$View$iff = F4(
-	function (render, p, x, y) {
-		return A3(
-			$author$project$View$grid,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$spacing(4)
-				]),
-			_List_fromArray(
-				[
-					_List_fromArray(
-					[
-						$author$project$View$keyword('if'),
-						render(p),
-						$author$project$View$keyword('then')
-					]),
-					_List_fromArray(
-					[
-						$author$project$View$tab,
-						render(x)
-					]),
-					_List_fromArray(
-					[
-						$author$project$View$keyword('else')
-					]),
-					_List_fromArray(
-					[
-						$author$project$View$tab,
-						render(y)
-					])
-				]));
-	});
-var $author$project$View$list = F2(
-	function (render, children) {
-		if (!children.b) {
-			return $mdgriffith$elm_ui$Element$text('[]');
-		} else {
-			var e = children.a;
-			var es = children.b;
-			return A2(
-				$mdgriffith$elm_ui$Element$row,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$row,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$text('['),
-								render(e)
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$row,
-						_List_Nil,
-						A2(
-							$elm$core$List$map,
-							function (x) {
+var $author$project$V4$renderExpression = F2(
+	function (selected, _v0) {
+		var i = _v0.a;
+		var ex = _v0.b;
+		var highlighted = $author$project$View$highlighted(
+			A2($elm$core$List$member, i, selected));
+		var go = $author$project$V4$renderExpression(selected);
+		return highlighted(
+			function () {
+				if (ex.$ === 'Nothing') {
+					return $author$project$View$hole;
+				} else {
+					var a = ex.a;
+					switch (a.$) {
+						case 'Int':
+							var _int = a.a;
+							return $mdgriffith$elm_ui$Element$text(
+								$elm$core$String$fromInt(_int));
+						case 'If':
+							var p = a.a;
+							var x = a.b;
+							var y = a.c;
+							return A3(
+								$author$project$View$grid,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$mdgriffith$elm_ui$Element$spacing(4)
+									]),
+								_List_fromArray(
+									[
+										_List_fromArray(
+										[
+											$author$project$View$keyword('if'),
+											go(p),
+											$author$project$View$keyword('then')
+										]),
+										_List_fromArray(
+										[
+											$author$project$View$tab,
+											go(x)
+										]),
+										_List_fromArray(
+										[
+											$author$project$View$keyword('else')
+										]),
+										_List_fromArray(
+										[
+											$author$project$View$tab,
+											go(y)
+										])
+									]));
+						default:
+							var children = a.a;
+							if (!children.b) {
+								return $mdgriffith$elm_ui$Element$text('[]');
+							} else {
+								var e = children.a;
+								var es = children.b;
 								return A2(
 									$mdgriffith$elm_ui$Element$row,
 									_List_Nil,
 									_List_fromArray(
 										[
-											$mdgriffith$elm_ui$Element$text(','),
-											render(x)
+											A2(
+											$mdgriffith$elm_ui$Element$row,
+											_List_Nil,
+											_List_fromArray(
+												[
+													$mdgriffith$elm_ui$Element$text('['),
+													go(e)
+												])),
+											A2(
+											$mdgriffith$elm_ui$Element$row,
+											_List_Nil,
+											A2(
+												$elm$core$List$map,
+												function (x) {
+													return A2(
+														$mdgriffith$elm_ui$Element$row,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$mdgriffith$elm_ui$Element$text(','),
+																go(x)
+															]));
+												},
+												es)),
+											$mdgriffith$elm_ui$Element$text(']')
 										]));
-							},
-							es)),
-						$mdgriffith$elm_ui$Element$text(']')
-					]));
-		}
-	});
-var $author$project$Zip$renderAssignment = function (_v0) {
-	var selected = _v0.a;
-	var _v1 = _v0.b;
-	var name = _v1.a;
-	var args = _v1.b;
-	var expression = _v1.c;
-	var renderName = function (_v5) {
-		var i = _v5.a;
-		var s = _v5.b;
-		return A2(
-			$author$project$View$highlighted,
-			i,
-			$mdgriffith$elm_ui$Element$text(s));
-	};
-	var renderExpression = function (_v2) {
-		var i = _v2.a;
-		var e = _v2.b;
-		return A2(
-			$author$project$View$highlighted,
-			i,
-			function () {
-				switch (e.$) {
-					case 'Int':
-						var _int = e.a;
-						return $mdgriffith$elm_ui$Element$text(
-							$elm$core$String$fromInt(_int));
-					case 'Plus':
-						var e1 = e.a;
-						var e2 = e.b;
-						return _Debug_todo(
-							'Zip',
-							{
-								start: {line: 605, column: 25},
-								end: {line: 605, column: 35}
-							})('');
-					case 'If':
-						var p = e.a;
-						var x = e.b;
-						var y = e.c;
-						return A4($author$project$View$iff, renderExpression, p, x, y);
-					default:
-						var es = e.a;
-						return A2($author$project$View$list, renderExpression, es);
+							}
+					}
 				}
 			}());
-	};
-	var renderArguments = function (_v4) {
-		var i = _v4.a;
-		var _arguments = _v4.b;
-		return A2(
-			$author$project$View$highlighted,
-			i,
-			A2(
-				$mdgriffith$elm_ui$Element$row,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$spacing(4)
-					]),
-				A2($elm$core$List$map, renderName, _arguments)));
-	};
-	return A2(
-		$author$project$View$highlighted,
-		selected,
-		A3(
-			$author$project$View$grid,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$spacing(4)
-				]),
-			_List_fromArray(
-				[
-					_List_fromArray(
-					[
-						renderName(name),
-						renderArguments(args),
-						$mdgriffith$elm_ui$Element$text('=')
-					]),
-					_List_fromArray(
-					[
-						$author$project$View$tab,
-						renderExpression(expression)
-					])
-				])));
+	});
+var $zwilias$elm_rosetree$Tree$Zipper$firstSibling = function (zipper) {
+	firstSibling:
+	while (true) {
+		var _v0 = $zwilias$elm_rosetree$Tree$Zipper$previousSibling(zipper);
+		if (_v0.$ === 'Nothing') {
+			return zipper;
+		} else {
+			var z = _v0.a;
+			var $temp$zipper = z;
+			zipper = $temp$zipper;
+			continue firstSibling;
+		}
+	}
 };
-var $author$project$Zip$root = function (zipper) {
+var $zwilias$elm_rosetree$Tree$Zipper$root = function (zipper) {
 	root:
 	while (true) {
-		var _v0 = $author$project$Zip$up(zipper);
-		if (_v0.$ === 'Just') {
-			var a = _v0.a;
-			var $temp$zipper = a;
+		var _v0 = $zwilias$elm_rosetree$Tree$Zipper$parent(zipper);
+		if (_v0.$ === 'Nothing') {
+			return $zwilias$elm_rosetree$Tree$Zipper$firstSibling(zipper);
+		} else {
+			var z = _v0.a;
+			var $temp$zipper = z;
 			zipper = $temp$zipper;
 			continue root;
-		} else {
-			return zipper;
 		}
 	}
 };
 var $elm$core$Debug$toString = _Debug_toString;
-var $author$project$Zip$tree = function (zipper) {
-	if (zipper.$ === 'A') {
-		var assignment = zipper.a;
-		return assignment;
-	} else {
-		return _Debug_todo(
-			'Zip',
-			{
-				start: {line: 149, column: 13},
-				end: {line: 149, column: 23}
-			})(
-			$elm$core$Debug$toString(zipper));
-	}
-};
-var $author$project$Zip$view = function (model) {
+var $author$project$V4$view = function (model) {
 	return $author$project$View$editorLayout(
 		A2(
 			$mdgriffith$elm_ui$Element$column,
@@ -12984,11 +12552,20 @@ var $author$project$Zip$view = function (model) {
 				]),
 			_List_fromArray(
 				[
-					$author$project$Zip$renderAssignment(
-					$author$project$Zip$tree(
-						$author$project$Zip$root(model.zipper))),
-					$mdgriffith$elm_ui$Element$text(
-					$elm$core$Debug$toString(model.zipper)),
+					A2(
+					$author$project$V4$renderExpression,
+					model.selected,
+					$author$project$V4$fromRose(
+						$zwilias$elm_rosetree$Tree$Zipper$tree(
+							$zwilias$elm_rosetree$Tree$Zipper$root(model.zipper)))),
+					A2(
+					$mdgriffith$elm_ui$Element$paragraph,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$text(
+							$elm$core$Debug$toString(model.zipper))
+						])),
 					A2(
 					$mdgriffith$elm_ui$Element$el,
 					_List_fromArray(
@@ -12996,12 +12573,12 @@ var $author$project$Zip$view = function (model) {
 					$mdgriffith$elm_ui$Element$text(model.inputBuffer))
 				])));
 };
-var $author$project$Zip$main = $elm$browser$Browser$element(
-	{init: $author$project$Zip$init, subscriptions: $author$project$Zip$subscriptions, update: $author$project$Zip$update, view: $author$project$Zip$view});
-_Platform_export({'Zip':{'init':$author$project$Zip$main(
+var $author$project$V4$main = $elm$browser$Browser$element(
+	{init: $author$project$V4$init, subscriptions: $author$project$V4$subscriptions, update: $author$project$V4$update, view: $author$project$V4$view});
+_Platform_export({'V4':{'init':$author$project$V4$main(
 	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
 
-  var app = Elm.Zip.init({ node: document.getElementById("elm") });
+  var app = Elm.V4.init({ node: document.getElementById("elm") });
 }
 catch (e)
 {
