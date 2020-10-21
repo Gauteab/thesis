@@ -14,4 +14,16 @@ After removing the completion of the documentation, i got it installed, but the 
 Furthermore, inotifywait is not supported on mac. 
 
 Currently looking at the essay to see if i can keep using that.
+I'm not sure if there's anything wrong with my current set up.
+At some point i should figure out how to have multiple source files.
 
+Goal for today is just to set up a thesis project and begin a rough outline.
+
+## 21.10.20
+
+Starting to work on that outline. Would also be nice if i could hook up some citations today.
+
+Had to detour to rewriting the latex commands from the old api.
+Finally figured out how to use list correctly in the new api.
+There's no need for defining custom captures.
+Guess i should have read the documentation.
