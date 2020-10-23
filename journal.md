@@ -27,3 +27,22 @@ Had to detour to rewriting the latex commands from the old api.
 Finally figured out how to use list correctly in the new api.
 There's no need for defining custom captures.
 Guess i should have read the documentation.
+
+Didn't do much on the outline.
+After group session i read a bit from the NatLink paper.
+
+## 22.10.20
+
+Spent the morning writing the bekk article, followed by workout and study group, so no outline today either.
+
+## 23.10.20
+
+Slow day... gonna try to start on that outline. It's 13 pm already :(
+
+Actually fleshed out the outline a bit. Starred a bunch of papers on google scholar, but haven't figured out how to cite them.
+
+Figured out how to cite. Google scholar has a quotation button which can generate biblatex sources.
+Also installed mendeley extension. Will see how much I end up using tha, but it looks like a nice system.
+Added sections about lsp, tree sitter and elm.
+
+Started looking at the sample paper i got from Yngve. Next step is to work their structure into my paper.
