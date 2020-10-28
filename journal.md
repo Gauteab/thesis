@@ -46,3 +46,9 @@ Also installed mendeley extension. Will see how much I end up using tha, but it 
 Added sections about lsp, tree sitter and elm.
 
 Started looking at the sample paper i got from Yngve. Next step is to work their structure into my paper.
+
+## 27.10.20
+
+Yet another slow day. Group session at 12, spent time on HLS.
+
+Got to writing a bit about methodology. Still a lot I'm unsure about, but covered a few ways of evaluating the system.

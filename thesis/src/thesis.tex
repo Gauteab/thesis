@@ -32,14 +32,12 @@ long]
 \mainmatter{}
 \chapter{Background and Motivation}
 
+\section{Introduction}
 In this section I will cover the history of voice coding (Dragon, NatLink, Dragonfly, Caster etc\ldots)
 as well as the state of the art language tooling. (LSP and TreeSitter).
 I will also cover something about the Elm programming language, as I will be using that in my analysis.
 % Donald Knuth often says smart stuff ~\parencite{Knuth:2007:CPA:1283920.1283929}.
 
-
-
-\section{Introduction}
 
 \section{Injuries}
 Here I will cover research related to injuries such as RSI in the tech industry.
@@ -57,7 +55,7 @@ Dragon does provide a simple scripting language in the pro edition, but it has v
 moden general purpose scripting languages.
 In 1999, NatLink was developed to solve this problem. It is a macro system for dragon which lets the user write macros that can be triggered by voice commands
 in python.~\parencite{gould2001implementation}
-Later on, more high level apis were built on top os natlink such as dragonfly and caster. % Not really precise. Need to look into history here.
+Later on, more high level APIs were built on top on natlink such as dragonfly and caster. % Not really precise. Need to look into history here.
 
 \section{Command First vs Data First}
 Two different dication strategies.
@@ -66,7 +64,7 @@ Data first = The user can speak without keywords. The system should infer capita
 Here i will describe the tradeoff between these two.
 
 \section{VoiceCode}
-Seems like this was a popular dictaion system at some point. There are papers on it, so might be worth dicussing.
+Seems like this was a popular dictation system at some point. There are papers on it, so might be worth discussing.
 
 
 \section{TalonVoice}
@@ -97,26 +95,47 @@ As much of the work is related to analysing programs, I should cover some genera
 Not sure how much detail is appropriate here, but could be a source for a lot of content.
 Possible subjects: Parsing, type checking/inference, scopes, etc.
 
-\section{Language Server Protcol}
+\section{Language Server Protocol}
 Client-server based approach to reuable language IDE features.
 I'll compare this to the traditional IDE approach (Eclipse / Intellij)
 and discuss how this can be used by other tools than editors.
 
 \section{TreeSitter}
 TreeSitter is a system for incremental parsing developed by GitHub.
-It was conceved as a solution to the problem of instant semantic syntax highlighting,
+It was conceived as a solution to the problem of instant semantic syntax highlighting,
 but is also used in the implementation of some language servers.
 
 \section{Elm}
 In this thisis I will be using Elm as the subject of the alysis.
 Elm is a feature rich, but relatively simple language.
 Some knowledge of Elm is useful for the reader, no experience is required.
-Primaraly I will cover the features of Elm that introduces new identefiers into the scope,
+Primarily I will cover the features of Elm that introduces new identifiers into the scope,
 as these will be relevant when generating voice commands later.
 
 \chapter{The project}
 
 \section{Methodology And Evaluation}
+I might use a mix of quantitative and qualitative methods.
+I could hold interviews with users of Talon to gather both types of data.
+
+I can gather qualitative data by having the user program using my system and ask them whether or not they find using it to be an improvement.
+The disadvantage to this approach is that the system might have a learning curve which makes the initial impression
+worse than it would have been over time.
+
+Alternatively I can test the users programming speed with and without my system.
+Here I must consider factors such as performance anxiety.
+The programs they would be asked to dictate would have to be carefully crafted in order to have a consistent difficulty level
+across the test. 
+Should they dictate the same program twice, or two different? How can I be sure they are similarly difficult?
+Should I change the order of the two tests?
+
+One quantitative measure I could use is to analyse larger codebases to see how the predicted time to speak common identifiers change.
+If I can count the number of syllables in a word I can compare the length of normal phrases need to produce a given function in a code base and compare
+it to that of my system. This analysis can be weighted by the frequency of said identifiers.
+The advantage of this approach is simplicity in that I don't depend on external users.
+One interesting point here is to see how the result of this analysis relate to the results gathered from interviews.
+
+
 
 \backmatter{}
 \printbibliography{}
