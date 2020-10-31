@@ -3,9 +3,15 @@
 \usepackage[utf8]{inputenc}
 \usepackage{babel,duomasterforside}
 \usepackage{hyperref}
-
 \usepackage[backend=biber,style=authoryear]{biblatex}
 \usepackage{minted}
+
+% Style Chapters
+\usepackage[T1]{fontenc}
+\usepackage{titlesec, color}
+\definecolor{gray75}{gray}{0.75}
+\newcommand{\hsp}{\hspace{20pt}}
+\titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter\hsp\textcolor{gray75}{|}\hsp}{0pt}{\Huge\bfseries}
 
 \nonstopmode{}
 \addbibresource{citations.bib}
@@ -30,26 +36,39 @@ long]
 % \chapter*{Preface}
 
 \mainmatter{}
-\chapter{Background and Motivation}
 
-\section{Introduction}
+\chapter{Introduction}
+
+\section{Motivation}
+\paragraph{Injuries}
+Here I will cover research related to injuries such as RSI in the tech industry.
+\paragraph{Learning Curve}
+Here I explain breifly some of the difficulties people have when starting out with voice coding.
+Learning curve is the biggers, and is extasterbated by the fact that you need
+to be able to code in order to use the system profeciently, which leads to a 
+chicken-egg situation.
+
+\section{Research Questions}
+\section{Approach}
+\section{Chapter Overview}
+
+\chapter{Background}
 In this section I will cover the history of voice coding (Dragon, NatLink, Dragonfly, Caster etc\ldots)
 as well as the state of the art language tooling. (LSP and TreeSitter).
 I will also cover something about the Elm programming language, as I will be using that in my analysis.
 % Donald Knuth often says smart stuff ~\parencite{Knuth:2007:CPA:1283920.1283929}.
 
 
-\section{Injuries}
-Here I will cover research related to injuries such as RSI in the tech industry.
+\section{History of Voice Coding}
 
-\section{Dragon NaturallySpeaking}
+\paragraph{Dragon NaturallySpeaking}
 The worlds first large-vocabulary general purpose dictation system.
 Dragon is in many ways the foundation for many of tools like Talon.
 Some voice systems use it as just a speach engine, but it also provides other functionality like mouse control.
 Available for mac and windows, but discontinued for mac.% when??
 The mac version is still available on eBay, and still works. % maybe something here about the download stuff.
 
-\section{NatLink}
+\paragraph{NatLink}
 While dragon alone is a very powerful dictation system, it's customization ability is limited.
 Dragon does provide a simple scripting language in the pro edition, but it has very limited capabilities compared to
 moden general purpose scripting languages.
@@ -57,14 +76,23 @@ In 1999, NatLink was developed to solve this problem. It is a macro system for d
 in python.~\parencite{gould2001implementation}
 Later on, more high level APIs were built on top on natlink such as dragonfly and caster. % Not really precise. Need to look into history here.
 
-\section{Command First vs Data First}
+\paragraph{Dragonfly}
+Higher-level scripting api on top of natlink.
+
+\paragraph{Caster}
+Another layer on top of dragonfly. Not totally sure if worth discussing.
+
+\paragraph{VoiceCode}
+Seems like this was a popular dictation system at some point. There are papers on it, so might be worth discussing.
+
+\section{Dictation}
+\paragraph{Command First vs Data First}
 Two different dication strategies.
 Command first = Output only triggered when a command is triggered by speaking a particular phrase.
 Data first = The user can speak without keywords. The system should infer capitalization and punctuation.
 Here i will describe the tradeoff between these two.
-
-\section{VoiceCode}
-Seems like this was a popular dictation system at some point. There are papers on it, so might be worth discussing.
+\paragraph{Homophones}
+Words that sound the same. Big challenge in speach recognition.
 
 
 \section{TalonVoice}
@@ -72,23 +100,35 @@ Here I cover everything I can about how to use Talon and how the project is orga
 I wrote some in the essay, but this should be updated for the new API.
 
 \subsection{Current state of the project}
-\subsection{Distribution and Monetization}
-\subsection{Community}
-\subsection{Learning Resources and Documentation}
+\paragraph{Distribution and Monetization}
+\paragraph{Community}
+\paragraph{Learning Resources and Documentation}
 
-\section{Writing Voice Commands with Talon}
-\subsection{Rules}
-\subsection{Actions}
-\subsection{Contexts}
-\subsection{Dynamic Lists}
-
-\section{Using Talon}
-In this section I will cover my workflow with Talon. This is relevant because the reader needs to see the advantages and disadvantages of using talon compared to using a keboard.
-\subsection{Text Editing}
-Here I will cover how I use Talon can be integrated with Vim and IntelliJ, and also cover how to edit text without editor integration.
-\subsection{Web Browsing}
+\subsection{Using Talon}
+In this section I will cover my workflow with Talon.
+The level of detail I cover here should be reflected in when I cover~\nameref{wvc}
+This is relevant because the reader needs to see the advantages and disadvantages of using talon compared to using a keboard.
+\paragraph{Using The Terminal}
+An essential part of the programming workflow. The terminal is accessible by default due to its text oriented interface.
+\paragraph{Text Editing}
+Here i will cover navigating a text editor with voice commands and eye-tracker.
+\paragraph{Web Browsing}
 Vimium and Surfingkeys. How are these plugins used.
-\subsection{Using The Terminal}
+
+\subsection{Writing Voice Commands with Talon}\label{wvc}
+\paragraph{Rules}
+\paragraph{Actions}
+\paragraph{Contexts}
+\paragraph{Dynamic Lists}
+
+\subsection{Editor Integration}
+Here I will cover how Talon can be integrated with Vim and IntelliJ, and also cover how to edit text without editor integration.
+\paragraph{Shortcut Mappings}
+The simplest integration. 
+\paragraph{Server Client}
+Send commands from talon over http (IntelliJ)
+\paragraph{Vim}
+Cover how vim is integrated in the community package.
 
 \section{PL Theory}
 As much of the work is related to analysing programs, I should cover some general stuff abuut languages.
@@ -112,29 +152,40 @@ Some knowledge of Elm is useful for the reader, no experience is required.
 Primarily I will cover the features of Elm that introduces new identifiers into the scope,
 as these will be relevant when generating voice commands later.
 
-\chapter{The project}
-
-\section{Methodology And Evaluation}
-I might use a mix of quantitative and qualitative methods.
+\chapter{Methodology And Evaluation}
+I might use a mix of quantitative and qualitative methods. (multi- strategy) % read creswell,2018
 I could hold interviews with users of Talon to gather both types of data.
 
-I can gather qualitative data by having the user program using my system and ask them whether or not they find using it to be an improvement.
-The disadvantage to this approach is that the system might have a learning curve which makes the initial impression
-worse than it would have been over time.
-
-Alternatively I can test the users programming speed with and without my system.
+\paragraph{Speed Testing}
+I can test the users programming speed with and without my system.
 Here I must consider factors such as performance anxiety.
 The programs they would be asked to dictate would have to be carefully crafted in order to have a consistent difficulty level
 across the test. 
 Should they dictate the same program twice, or two different? How can I be sure they are similarly difficult?
 Should I change the order of the two tests?
+This might well be a good measurement. I'll discuss why this paragraph.
 
+
+\section{Qualitative}
+I can gather qualitative data by having the user program using my system and ask them whether or not they find using it to be an improvement.
+The disadvantage to this approach is that the system might have a learning curve which makes the initial impression
+worse than it would have been over time.
+
+\section{Quantitative}
 One quantitative measure I could use is to analyse larger codebases to see how the predicted time to speak common identifiers change.
 If I can count the number of syllables in a word I can compare the length of normal phrases need to produce a given function in a code base and compare
 it to that of my system. This analysis can be weighted by the frequency of said identifiers.
 The advantage of this approach is simplicity in that I don't depend on external users.
 One interesting point here is to see how the result of this analysis relate to the results gathered from interviews.
+\subsection{Data Collection}
+Analyze the Elm implementation of real world app (https://github.com/rtfeldman/elm-spa-example)
 
+\chapter{The project}
+
+\chapter{Results}
+\section{Interviews}
+\section{Analysis}
+\section{Comparing Results From Different Methods}
 
 
 \backmatter{}

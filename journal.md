@@ -52,3 +52,32 @@ Started looking at the sample paper i got from Yngve. Next step is to work their
 Yet another slow day. Group session at 12, spent time on HLS.
 
 Got to writing a bit about methodology. Still a lot I'm unsure about, but covered a few ways of evaluating the system.
+
+## 28.10
+
+Before noon: got my herman miller, cleaned the desk and stated working on fitting my structure
+to that of the example thesis. Wrote some notes on what to write in the motivation section.
+Started looking into customizing th chapter header to make it like the one in the example, but
+I have to figure out how to install tex packages.
+
+## 29.10
+
+Bit more structure and thoughts. Didn't do too much today. Send what I have to supervisor for the meeting tomorrow.
+
+## 30.10
+
+Managed to style the chapter headers :) Looks much nicer now.
+
+Meeting notes:
+- research question: can creating of voice commands be automated?
+- figures!
+- illustrate the workflow
+- models?? client server?
+- explain the methods
+- present literature review in methods?
+- project before method, then implementation
+
+priorities:
+problemstilling
+explain the project!
+background can be done later--
