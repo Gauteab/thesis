@@ -81,3 +81,25 @@ priorities:
 problemstilling
 explain the project!
 background can be done later--
+
+## 3.12
+
+It looks like I haven't done anything since the last meeting, but at least I nailed the static analysis exam ;)
+
+Currently working on my Haskell command set.
+The current version of knausj has examples of declaring types and functions etc in dynamic lists for a given programming language.
+I am now able to dictate Haskell types clearly. `either string hint` becomes `Either String Int`.
+Even IO works. Abbreviations works, but each letter has to be capitalized and delimited by spaces: `"I O": "IO"`.
+I implemented `code_insert_function` for Haskell, which is just inserting a space.
+knausj encourages making general voice commands for all languages, but I'm currently not seeing the benefit of this abstraction.
+A lot of the standard implementation for imperative languages does not make sense for ML style languages.
+I might make an issue about this.
+
+To capture multiple types I made a custom capture. The API is still under-documented, so I'm still not sure how to work with the capture value `m`.
+
+Dictating function signatures is very smooth now.
+
+## 6.12
+
+Modules in Haskell commands.
+Commands for importing and invoking function from that module.
