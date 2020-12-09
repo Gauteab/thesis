@@ -103,3 +103,43 @@ Dictating function signatures is very smooth now.
 
 Modules in Haskell commands.
 Commands for importing and invoking function from that module.
+
+## 8.12
+
+Discovered that you don't need the `user.` prefix when referring to a capture in an action.
+`import { user.haskell_module_list }: user.haskell_import_module(haskell_module_list)`
+
+Currently don't know how to referenc the same capture in a rule.
+One workaround is to duplicate the capture and give it a second name 
+```Python
+@mod.capture(rule="{self.haskell_type_list}+")
+def haskell_type_(m) -> str: return str(m)
+
+@mod.capture(rule="{self.haskell_type_list}+")
+def haskell_type(m) -> str: return str(m)
+```
+
+Sent a message to Ryan.
+
+## 9.12
+
+Experimented with data first technique:
+```
+<user.text>:
+    insert(user.formatted_text(text, "PRIVATE_CAMEL_CASE"))
+    " "
+```
+
+This allows for dictating function calls without a command prefix. `map maybe -> mapMaybe `
+This decreases the overall accuracy. 
+When discussing this topic in the thesis I might use `approximation` to refer to how closely the set of phrases the system recognizes
+correspondence with the set of possible program fragments with respect to what identifiers are defined (and how they are classified).
+This would be an over-approximation.
+
+Figured out how to reference a list from a cap tree with a multiplier:
+```
+test <user.haskell_module_alias>+:
+    user.insert_many(haskell_module_alias_list)
+```
+
+
