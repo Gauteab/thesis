@@ -3,7 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{babel,duomasterforside}
 \usepackage{hyperref}
-\usepackage[backend=biber,style=authoryear]{biblatex}
+\usepackage[backend=biber,style=authoryear,bibencoding=utf8]{biblatex}
 \usepackage{minted}
 
 % Style Chapters
@@ -28,7 +28,7 @@ long]
 
 \frontmatter{}
 \chapter*{Abstract}
-Software developers spend a lot of time working on the computer.
+Software developers spend a lot of time working on a computer.
 This makes them particular susceptible to Repetitive Strain Injuries (RSI), which can be detrimental to one's career.
 Recently there have been great advancements in hands-free input systems that allow users to control a computer using their voice and/or an eye-tracker.
 These systems can be customized using one or more scripting languages, which allows users to acquire much higher proficiency than what was previously thought possible for someone without full use of their hands.
@@ -44,6 +44,19 @@ The goal of this thesis is to uncover techniques to automate this process, and i
 \mainmatter{}
 
 \chapter{Introduction}
+Due to the prevalence of RSI in the tech industry, as well as the existence of other conditions that might limit a persons use of their arms/hands, the availability
+of alternative input methods for programmers is extremely important.
+Hands-free input technology enables people who would not otherwise be able to work on the computer to do so.
+Enabling people to use standard applications such as web browsers, text editors, etc.\ is a complex problem in and of itself, and the domain of programming
+introduces its own set of additional complexities.
+Vocal programming, as coined by~\parencite{Arnold}, is the act of writing computer programs by dictating into the microphone as the primary input method as opposed to using a keyboard and mouse.
+Programming differs from normal prose dictation in many subtitle ways such as higher frequency of special characters, and higher emphasis on editing text (and less emphasis on writing text).
+Software developers also use a wider variety of applications and tools in their day-to-day work which all needs to be made accessible for vocal programmers.
+Many of the solutions proposed by researchers involve a specialized environment for programming, such as a structure oriented editor.
+As will be discussed in~\ref{scgp}, this approach comes with some trade-offs.
+Recent advancements in programming language tooling, such as Microsoft's ``Language Server Protocol'', and GitHub's ``TreeSitter'' is bringing the power of IDEs to standard text editors.
+In this paper I will use \textbf{Talon}, a general purpose system for hands-free input, to show how modern programming language
+   tools can be leveraged to improve the workflow of vocal programmers in the programming environments they are already used to.
 
 \section{Motivation}
 \paragraph{Injuries}
@@ -53,12 +66,20 @@ Here I explain breifly some of the difficulties people have when starting out wi
 Learning curve is the biggers, and is extasterbated by the fact that you need
 to be able to code in order to use the system profeciently, which leads to a 
 chicken-egg situation.
+\paragraph{Special Case vs. General Purpose}\label{scgp}
 
 \section{Research Questions}
+\paragraph{Question 1:}
+Can the benefits of structural editors be achieved in text oriented environments for vocal programmers?
+\paragraph{Question 2:}
+
+
 \section{Approach}
+
 \section{Chapter Overview}
 
-\chapter{Background}
+
+\chapter{Background}\label{background}
 In this section I will cover the history of voice coding (Dragon, NatLink, Dragonfly, Caster etc\ldots)
 as well as the state of the art language tooling. (LSP and TreeSitter).
 I will also cover something about the Elm programming language, as I will be using that in my analysis.
@@ -97,44 +118,29 @@ Two different dication strategies.
 Command first = Output only triggered when a command is triggered by speaking a particular phrase.
 Data first = The user can speak without keywords. The system should infer capitalization and punctuation.
 Here i will describe the tradeoff between these two.
+
 \paragraph{Homophones}
-Words that sound the same. Big challenge in speach recognition.
+A homophone is a word that sound the same as another word, but have different meaning.
+These groups of words may be spelled the same or differently.
+For example, ``rose'' may refer to the past tense of rise, or the flower.
+The word ``pair'' is \textit{homophonic} to ``pear'', and ``pare''.
+Homophones that are also spelled the same are also known as homographs, whereas the ones spelled differently are called heterographs.
+In the context of vocal programming, and speech recognition in general, we are only interested in heterographs as we do not consider
+the underlying meaning of a phrase beyond whether or not it was what the user intended to input.
+Although we are only considering this subset, I will be using the more general term homophone as this is more widely used in the documentation
+of the system I will be discussing.
+
+Homophones are a very big challenge for vocal programming.
+Speech recognition engines are not able to reliably distinguish between homophones.
+Often they can still infer the correct word based on the context in which it was used.
+For example, Dragon can reliably recognize the phrase ``I saw that with my eye'' correctly despite the fact that ``I'' and ``eye'' are homophones.
+However, if they are not spoken within a sentence, they cannot be distinguished on the user will likely see only one of the options every time.
+This problem is a bigger challenge for vocal programing than prose dictation because program text is not formed by English sentences, and more words needs to be
+spoken one at a time.
+
+There are however techniques for alleviating this problem, which will be discussed in Section~\ref{dealing_with_homophones}
 
 
-\section{TalonVoice}
-Here I cover everything I can about how to use Talon and how the project is organized.
-I wrote some in the essay, but this should be updated for the new API.
-
-\subsection{Current state of the project}
-\paragraph{Distribution and Monetization}
-\paragraph{Community}
-\paragraph{Learning Resources and Documentation}
-
-\subsection{Using Talon}
-In this section I will cover my workflow with Talon.
-The level of detail I cover here should be reflected in when I cover~\nameref{wvc}
-This is relevant because the reader needs to see the advantages and disadvantages of using talon compared to using a keboard.
-\paragraph{Using The Terminal}
-An essential part of the programming workflow. The terminal is accessible by default due to its text oriented interface.
-\paragraph{Text Editing}
-Here i will cover navigating a text editor with voice commands and eye-tracker.
-\paragraph{Web Browsing}
-Vimium and Surfingkeys. How are these plugins used.
-
-\subsection{Writing Voice Commands with Talon}\label{wvc}
-\paragraph{Rules}
-\paragraph{Actions}
-\paragraph{Contexts}
-\paragraph{Dynamic Lists}
-
-\subsection{Editor Integration}
-Here I will cover how Talon can be integrated with Vim and IntelliJ, and also cover how to edit text without editor integration.
-\paragraph{Shortcut Mappings}
-The simplest integration. 
-\paragraph{Server Client}
-Send commands from talon over http (IntelliJ)
-\paragraph{Vim}
-Cover how vim is integrated in the community package.
 
 \section{PL Theory}
 As much of the work is related to analysing programs, I should cover some general stuff abuut languages.
@@ -158,7 +164,46 @@ Some knowledge of Elm is useful for the reader, no experience is required.
 Primarily I will cover the features of Elm that introduces new identifiers into the scope,
 as these will be relevant when generating voice commands later.
 
-\chapter{Methodology And Evaluation}
+\chapter{Talon}\label{talon}
+Here I cover everything I can about how to use Talon and how the project is organized.
+I wrote some in the essay, but this should be updated for the new API.
+
+\section{Current state of the project}
+\section{Distribution and Monetization}
+\section{Community}
+\section{Learning Resources and Documentation}
+
+\section{Using Talon}
+In this section I will cover my workflow with Talon.
+The level of detail I cover here should be reflected in when I cover~\nameref{wvc}
+This is relevant because the reader needs to see the advantages and disadvantages of using talon compared to using a keboard.
+\subsection{Using The Terminal}
+An essential part of the programming workflow. The terminal is accessible by default due to its text oriented interface.
+\subsection{Text Editing}
+Here i will cover navigating a text editor with voice commands and eye-tracker.
+\subsection{Web Browsing}
+Vimium and Surfingkeys. How are these plugins used.
+
+\section{Dealing With Homophones}\label{dealing_with_homophones}
+Here I will discuss how talon deals with homophones.
+
+\section{Writing Voice Commands with Talon}\label{wvc}
+\subsection{Rules}
+\subsection{Actions}
+\subsection{Contexts}
+\subsection{Dynamic Lists}
+
+
+\section{Editor Integration}
+Here I will cover how Talon can be integrated with Vim and IntelliJ, and also cover how to edit text without editor integration.
+\subsection{Shortcut Mappings}
+The simplest integration. 
+\subsection{Server Client}
+Send commands from talon over http (IntelliJ)
+\subsection{Vim}
+Cover how vim is integrated in the community package.
+
+\chapter{Methodology And Evaluation}\label{methodology_and_evaluation}
 I might use a mix of quantitative and qualitative methods. (multi- strategy) % read creswell,2018
 I could hold interviews with users of Talon to gather both types of data.
 
@@ -186,9 +231,9 @@ One interesting point here is to see how the result of this analysis relate to t
 \subsection{Data Collection}
 Analyze the Elm implementation of real world app (https://github.com/rtfeldman/elm-spa-example)
 
-\chapter{The Project}
+\chapter{The Project}\label{the_project}
 
-\chapter{Results}
+\chapter{Results}\label{results}
 \section{Interviews}
 \section{Analysis}
 \section{Comparing Results From Different Methods}

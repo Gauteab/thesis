@@ -142,4 +142,23 @@ test <user.haskell_module_alias>+:
     user.insert_many(haskell_module_alias_list)
 ```
 
+## 11.12
 
+Finally starting to find some good research.
+Printed out another paper. This one from 2017.
+Read the paper "Vocal Programming" which seems to be a referenced a lot.
+Implemented range commands for Haskell.
+
+Realized that if you want to reference the rule several times, you should just make a custom capture.
+
+## 16.12
+
+I have done some reading since last time, but haven't logged any of it.
+
+A recursive capture will crash the system real bad: (as soon as you save the file)
+```Python
+@mod.capture(rule="stop|test <user.recursive>")
+def recursive(m) -> str:
+    return ""
+```
+apparently, this is a Dragon issue.
