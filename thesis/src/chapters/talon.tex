@@ -1,0 +1,215 @@
+\documentclass[../thesis.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Talon}\label{talon}
+
+Talon is a system that enables people to use a computer with hands-free input methods.
+It supports controls using voice commands, noise input, and eye tracking.
+The features of Talon are customizable and extendable through a scripting api which uses Python in conjunction with
+a simpler, domain specific scripting language called ``TalonScript''.
+Through this api users can define custom actions that responds to certain noises, voice commands, or where the user is looking.
+These actions can be very simple, such as emulating a sequence of keystrokes, but can also be arbitrary python functions
+that can send commands to the operating system, or make network requests.
+This section will serve as an overview of Talon and how it is used to make different features of a computer accessible to people with disabilities.
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.3\linewidth]{talon_logo.png}
+    \caption{Talon Logo}%
+    \label{fig:talon_logo}
+\end{figure}
+
+\section{Current state of the project}
+The project is currently in version 0.1.4 and is available through public release or a private beta.
+Talon was previously only available on macOS with the Dragon engine, but it was recently made available for Windows 10 and Linux.
+It is now also possible to use talon with different speech engines such as ``wav2letter''.
+The project is undergoing very rapid development, and beta users are seeing multiple minor releases each week.
+
+\section{Distribution and Monetization}
+Talon is freely distributed, but closed source.
+Its creator, Ryan Hileman, works full-time on the project and is solely funded through Patreon which is a site that allows people to make monthly donations.
+There are currently 225 users donating on Patreon, pledging a combined \$3,526 per month[24.04.20].
+
+\section{Community}
+The community is organized through a Slack channel where users can discuss topics related to using Talon such as equipment, health, etc.
+This is also where users go to seek help and discuss issues with the project.
+Hileman is usually available to answer question and help users, and is very quick to respond.
+Although the project is closed source, people can still contribute two user-level code and documentation.
+
+\section{Learning Resources and Documentation}
+New users will face a quite steep learning curve.
+The official documentation is largely incomplete, so users are encouraged to learn the api primarily through looking at examples.
+Most new users we learn the basics off using Talon by reading Emily Shea's guide ``Getting Started with Voice Driven Development''.
+This guide covers the most essential concepts you need to learn to use Talon such as inputting basic keyboard combinations, dictating with formatters, bringing up the command reference, as well as some general tips for becoming proficient with Talon.
+The official documentation also refers to the official examples repository which provides a handful of examples that users can download directly, or use as reference for writing their own scripts.
+A common way to get started to download a larger command set such as knausj\_talon which comes with a lot of functionality out-of-the-box.
+There is also an unofficial documentation repository.
+While this covers more than the official documentation, and is very useful, it is also incomplete, and is not guaranteed to be immediately updated if the api is changed.
+
+\section{Using Talon}
+In this section I will explain Talon is used to enable full control of the desktop environment.
+This is relevant because the reader needs to see the advantages and disadvantages of using talon compared to using a keboard.
+Talon does not come with any voice commands built-in.
+In the directory where Talon is installed, there is a folder called \textbf{user}.
+When scripts are added to this folder, they are immediately loaded, and the system will listen for any voice commands defined in the scripts.
+Voice commands are implemented by using TalonScript, in conjunction with Python.
+How this works will be explained in more detail in the section~\nameref{wvc}, but I will also be providing
+a few simple examples in this section to give the reader a better understanding of what is going on.
+
+\paragraph{Example Talon Script:}
+\begin{verbatim}
+# hello world command
+hello world: "Hello World"
+\end{verbatim}
+
+The above example shows a talon script that defines voice command such that uttering the phrase ``hello world''
+results in the text ``Hello World'' being outputted.
+Text being outputted correspondence to
+a sequence of emulated keyboard presses.
+Lines starting with a \textbf{\#} are comments.
+Saving this file in the talon user directory with the file extension \textbf{.talon} will make this command available globally.
+In the rest of this section I will explain how people are able to control their computer and some common applications with Talon.
+% should explain some general concepts such as command mode versus dictation mode
+
+\subsection{The Basics}
+The first step towards being able to use the computer is access basic functionality like switching applications, and pressing keys.
+\textbf{knausj\_talon} provides many such features, and I will be using examples from that command set.
+
+\paragraph{The Alphabet:}
+One of the most basic actions you can perform is to utter a phrase that will emulate a single keystroke.
+The most convenient solution would be to map the spoken form of each letter to the action that input that key.
+So the phrase ``A'' would would press the \textbf{a} key, and so on.
+This is however not practical because many of the English letters are in homophone groups.
+For example, the letter ``I'' is homophonic to the word ``eye'', the letter ``B'' is homophonic to ``be'' and ``bee''.
+Therefore it is necessary to define a separate alphabet for keystrokes.
+One solution is to use a standardized phonetic alphabet, such as \textbf{The International Radiotelephony Spelling Alphabet}
+(also known as \textbf{The NATO Phonetic Alphabet}) which maps easily distinguishable words to the letter the word begins with.
+In this alphabet ``Alpha'' map to ``a'', ``Golf'' map to ``g'', etc.
+As this alphabet was designed for unambiguously spelling words even with poor connections it has very high accuracy.
+This is however not practical solution due to some words being very long. ``November'' is three syllables long, which
+is not ideal for such a basic command that will be used often.
+Therefore the alphabets being used are designed to be as quick and easy to say as possible, sometimes at the cost of
+being less mnemonic. An example can be seen in Table~\ref{alphabet}, but users will often make their own
+modifications. With this alphabet, to press the ``n'' key the user would say ``near''.
+
+\begin{table}[htpb]
+    \centering
+    \label{alphabet}
+    \caption{Alphabet used in knausj\_talon}
+    \begin{tabular}{ c c | c c }
+        air & a & bat & b \\
+        cap & c & drum & d \\
+        each & e & fin & f \\
+        gust & g & harp & h \\
+        sit & s & jail & j \\
+        crunch & c & look & l \\
+        made & m & near & n \\
+        odd & o & peck & p \\
+        quench & q & red & r \\
+        sun & s & trap & t \\
+        urge & u & vest & v \\
+        whale & w & plex & x \\
+        yell & y & zip & z
+    \end{tabular}
+\end{table}
+
+\paragraph{Basic Keys:}
+Special symbols and action keys can be triggered in the expected way.
+To press the space-key, the user would say ``space''.
+To input the symbol \textbf{+}, the user would say ``plus''.
+Some symbols have abbreviated forms, and some have simplified aliases.
+The symbol \textbf{?} can be entered by saying either ``question mark'', or simply ``question'',
+while the asterisk symbol \textbf{*} can be entered using either ``asterix'' or ``star''.
+Numbers can also be entered directly in command mode.
+Since the directions (left, right, down, up) can be hard to recognize, the commands for
+pressing the corresponding arrow key is prefixed by ``go'', e.i ``go left'' will press the left arrow key.
+All of this is fully customizable, but requires basic knowledge of Python.
+Some basic keys are entered very often, so it might be beneficial to
+choose a different word to trigger case with names longer then one syllable.
+Travis Rudd % make sure is a reference before
+uses the phrase ``slap'' to press \textbf{enter}, which is an example of
+choosing non-mnemonic command to achieve higher efficiency.
+% refer to full symbol table/grammar?
+
+\paragraph{Complex Keys:}
+A modifier key, or simply a modifier is a key that when pressed in conjunction with another
+modifies the behavior of the other key. This includes keys like \textbf{control}, \textbf{shift}, \textbf{alt/option}
+, \textbf{super}, and combinations of these. \textbf{super} as a general term to refer to the \textbf{windows-key} (Windows), or \textbf{command} (Mac). Some of these combinations of names, such as (\textbf{shift+control+alt})
+is called \textbf{meh}, and (\textbf{med}+\textbf{super}) is called \textbf{hyper}.
+Complex keys are those that require the use of one or more modifier.
+To enter an uppercase ``A'', one would type ``a'' while holding \textbf{shift}, which we denote \textbf{shift-a}.
+To trigger a complex key with talon the user would utter one or more modifier followed by the basic key.
+An uppercase ``A'' can then be entered using the phrase ``shift air''.
+
+\subsection{Dictation}
+% Should probably explain dictation mode, and Dragon mode at some point
+As previously mentioned, Talon is usually operated in command mode
+which means that if the user starts dictating, nothing will happen
+unless that spoken phrase is recognized as a command by the grammar.
+To circumvent the user having to switch frequently between dictation mode and command mode,
+knausj\_talon comes with commands for entering text with different formatting, as well as
+different properties and how the commands are recognized.
+Table~\ref{tab:formatters} shows how the phrase ``one two three'' will be formatted using a given formatter.
+For example, saying ``speak one two three'' will output ``one two three'', while saying ``snake one two three''
+will output ``one\_two\_three''. The name ``snake'' comes from ``snake case'' which is the name of the formatting
+used for Python variables where words are separated by underscores.
+This is essential for programming because of the frequency of text with different formatting compared to
+normal English.
+
+\begin{table}[htpb]
+   \centering
+   \caption{Formatters in knausj (excerpt)}
+   \label{tab:formatters}
+   \begin{tabular}{|c|c|}
+      \toprule
+      Formatter Name & Example Output \\
+      \midrule
+      camel & oneTwoThree  \\
+      dotted & one.two.three  \\
+      dunder & \_\_one\_\_twothree  \\
+      folder & one/two/three/  \\
+      hammer & OneTwoThree  \\
+      kebab & one-two-three  \\
+      long arg & --one-two-three  \\
+      packed & one::two::three  \\
+      smash & onetwothree  \\
+      snake & one\_two\_three  \\
+      speak & one two three  \\
+      string & "one two three"  \\
+      ticks & 'one two three'  \\
+      title & One Two Three  \\
+      upper & ONE TWO THREE  \\
+      \bottomrule
+   \end{tabular}
+\end{table}
+
+\subsection{Text Editing}
+Here i will cover navigating a text editor with voice commands and eye-tracker.
+
+\subsection{Web Browsing}
+Vimium and Surfingkeys. How are these plugins used.
+
+\subsection{Using The Terminal}
+An essential part of the programming workflow. The terminal is accessible by default due to its text oriented interface.
+
+\section{Dealing With Homophones}\label{dealing_with_homophones}
+Here I will discuss how talon deals with homophones.
+
+\section{Writing Voice Commands with Talon}\label{wvc}
+\subsection{Rules}
+\subsection{Actions}
+\subsection{Contexts}
+\subsection{Dynamic Lists}
+
+\section{Editor Integration}
+Here I will cover how Talon can be integrated with Vim and IntelliJ, and also cover how to edit text without editor integration.
+\subsection{Shortcut Mappings}
+The simplest integration. 
+\subsection{Server Client}
+Send commands from talon over http (IntelliJ)
+\subsection{Vim}
+Cover how vim is integrated in the community package.
+
+
+\end{document}

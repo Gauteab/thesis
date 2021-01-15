@@ -1,0 +1,39 @@
+\documentclass[../thesis.tex]{subfiles}
+
+\begin{document}
+
+\chapter{The Project}\label{the_project}
+The goal of this project is to create a prototype of a system that can generate voice commands
+for talon from a source file in a given program language to the increase accuracy and efficiency of programming.
+The result should take the form of a server that can be easily integrated into any editor as a plug-in
+which handles day generational voice commands and the communication with talon.
+While the final version of the system should be general enough to handle any language, and be integratable with any the editor,
+the prototype only aims to handle the \textit{Elm} programming language in the \textit{Neo-vim} editor.
+This chapter will describe the design and architecture of the system.
+
+\paragraph{Problem Description:}% concise description of the problem. maybe this should, earlier?
+todo
+
+\section{Voice Command Generation}%
+\label{sec:voice_command_generation}
+How to generate voice commands?
+Cover how the spoken form of different identifiers will be.
+Overview of different classes of identifiers (imports, aliases, functions, variables, types etc).
+\subsection{Abbreviations}
+peekCString->``P C S''. How does this relate to normal auto complete?
+
+
+\section{Design Goals}%
+\label{sec:design_goals}
+configurable, accuracy, intuitive/consistent (user should not have to look up the generated commands), 
+shortest commands possible
+
+\section{Architecture}%
+\label{sec:architecture}
+editor<->my system<->talon
+
+\section{Implementation}%
+\label{sec:implementation}
+implementation details such as programming language etc
+
+\end{document}

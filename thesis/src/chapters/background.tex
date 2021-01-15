@@ -1,0 +1,113 @@
+\documentclass[../thesis.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Background}\label{background}
+In this section I will cover the history of voice coding (Dragon, NatLink, Dragonfly, Caster etc\ldots)
+as well as the state of the art language tooling. (LSP and TreeSitter).
+I will also cover something about the Elm programming language, as I will be using that in my analysis.
+
+\section{Accessibility}%
+\label{sec:accessibility}
+
+\section{History of Voice Coding}
+
+\paragraph{Dragon NaturallySpeaking}
+The worlds first large-vocabulary general purpose dictation system.
+Dragon is in many ways the foundation for many of tools like Talon.
+Some voice systems use it as just a speach engine, but it also provides other functionality like mouse control.
+Available for mac and windows, but discontinued for mac.% when??
+The mac version is still available on eBay, and still works. % maybe something here about the download stuff.
+
+\paragraph{NatLink}
+While dragon alone is a very powerful dictation system, it's customization ability is limited.
+Dragon does provide a simple scripting language in the pro edition, but it has very limited capabilities compared to
+moden general purpose scripting languages.
+In 1999, NatLink was developed to solve this problem. It is a macro system for dragon which lets the user write macros that can be triggered by voice commands
+in python.~\parencite{gould2001implementation}
+Later on, more high level APIs were built on top on natlink such as dragonfly and caster. % Not really precise. Need to look into history here.
+
+\paragraph{Dragonfly}
+Higher-level scripting api on top of natlink.
+
+\paragraph{Caster}
+Another layer on top of dragonfly. Not totally sure if worth discussing.
+
+\paragraph{VoiceCode}
+Seems like this was a popular dictation system at some point. There are papers on it, so might be worth discussing.
+
+\section{Dictation}
+Dictation, in this context, is the act of speaking phrases into a microphone and have those phrases translated into text.
+This is made possible by a technique called \textit{Speech Recognition} which combines techniques from natural language processing
+and signal processing. The soundwaves from the user is captured by the microphone, processed, and sent off to a machine learning algorithm
+that will try to fit the input into a sequence of words, or a sentence, in the target language (i.e English). Speech recognition
+has been around for a while, but has just in the past decade seeing huge boosts in accuracy, partly due to the Discovery of deep learning.
+Voice controlled applications are built on top of programs implementing the speech recognition, often referred to as ``Speech Recognition Engines''.
+
+Beyond the technical aspect, efficient dictation also requires a great deal of attention from the user.
+To achieve high accuracy while dictating, it is not sufficient, or at least not optimal, to simply speak as one normally would.
+New users will have to practice things like speaking at a consistent pace and volume, and being aware of their distance to the microphone (to try not to vary too much).
+Some users will also need to enunciate their words much more than they are used to, especially if they are not native speakers of the language in which they are dictating.
+Different users can experience very different results with the same engine simply due to a high degree of variation between peoples voices.
+Users also need to configure and personalize the system by adding words to the vocabulary of the engine, and training the engine on words that they are
+having a hard time getting recognized. This process is often very incremental, and optimal results might not be achieved until the user has
+use the system for a while.
+
+People not used to dictating will also experience a high degree of cognitive load in the beginning, which will slow down their work.
+Dictation works better when the user speaks in full sentences, as opposed to single words, or even short phrases.
+Users will therefore have to learn to plan out their sentences before starting to speak.
+This can feel very different from the experience of typing on a keyboard, but it is a challenge that is surmountable by practice.
+
+\paragraph{Command First vs Data First}
+Two different dication strategies.
+Command first = Output only triggered when a command is triggered by speaking a particular phrase.
+Data first = The user can speak without keywords. The system should infer capitalization and punctuation.
+Here i will describe the tradeoff between these two.
+
+\paragraph{Homophones}
+A homophone is a word that sound the same as another word, but have different meaning.
+These groups of words may be spelled the same or differently.
+For example, ``rose'' may refer to the past tense of rise, or the flower.
+The word ``pair'' is \textit{homophonic} to ``pear'', and ``pare''.
+Homophones that are also spelled the same are also known as homographs, whereas the ones spelled differently are called heterographs.
+In the context of vocal programming, and speech recognition in general, we are only interested in heterographs as we do not consider
+the underlying meaning of a phrase beyond whether or not it was what the user intended to input.
+Although we are only considering this subset, I will be using the more general term homophone as this is more widely used in the documentation
+of the system I will be discussing.
+
+Homophones are a very big challenge for vocal programming.
+Speech recognition engines are not able to reliably distinguish between homophones.
+Often they can still infer the correct word based on the context in which it was used.
+For example, Dragon can reliably recognize the phrase ``I saw that with my eye'' correctly despite the fact that ``I'' and ``eye'' are homophones.
+However, if they are not spoken within a sentence, they cannot be distinguished on the user will likely see only one of the options every time.
+This problem is a bigger challenge for vocal programing than prose dictation because program text is not formed by English sentences, and more words needs to be
+spoken one at a time.
+
+There are however techniques for alleviating this problem, which will be discussed in the section on~\nameref{dealing_with_homophones}
+
+
+
+\section{PL Theory}
+As much of the work is related to analysing programs, I should cover some general stuff abuut languages.
+Not sure how much detail is appropriate here, but could be a source for a lot of content.
+Possible subjects: Parsing, type checking/inference, scopes, etc.
+
+\section{Language Server Protocol}
+Client-server based approach to reuable language IDE features.
+I'll compare this to the traditional IDE approach (Eclipse / Intellij)
+and discuss how this can be used by other tools than editors.
+
+\section{TreeSitter}
+TreeSitter is a system for incremental parsing developed by GitHub.
+It was conceived as a solution to the problem of instant semantic syntax highlighting,
+but is also used in the implementation of some language servers.
+
+\section{Elm}
+In this thisis I will be using Elm as the subject of the alysis.
+Elm is a feature rich, but relatively simple language.
+Some knowledge of Elm is useful for the reader, no experience is required.
+Primarily I will cover the features of Elm that introduces new identifiers into the scope,
+as these will be relevant when generating voice commands later.
+
+
+\end{document}
