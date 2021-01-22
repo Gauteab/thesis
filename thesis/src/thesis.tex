@@ -8,7 +8,21 @@
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
 \usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+\usepackage{minted}
 \usepackage{subfiles}
+
+\usepackage{amsmath}
+\usepackage[thmmarks, amsmath, framed]{ntheorem}%
+\usepackage{cleveref}
+
+\theoremstyle{break}
+\theoremheaderfont{\bfseries}
+\theorembodyfont{\mdseries}
+\theoremseparator{\smallskip }
+
+\newtheorem{example}{Example}[section]
+
 
 % Style Chapters
 \usepackage[T1]{fontenc}
@@ -26,21 +40,21 @@
 
 \begin{document}
 
-\duoforside[dept={Department of Informatics}, program={Informatics: Programming and System Architecture}, long]
-\frontmatter{}
-\subfile{chapters/abstract}
-\tableofcontents{}
-\listoffigures{}
-\listoftables{}
-% \chapter*{Preface}
-\mainmatter{}
+% \duoforside[dept={Department of Informatics}, program={Informatics: Programming and System Architecture}, long]
+% \frontmatter{}
+% \subfile{chapters/abstract}
+% \tableofcontents{}
+% \listoffigures{}
+% \listoftables{}
+% % \chapter*{Preface}
+% \mainmatter{}
 
 \subfile{chapters/introduction}
 \subfile{chapters/background}
 \subfile{chapters/talon}
-\subfile{chapters/methodology}
+% \subfile{chapters/methodology}
 \subfile{chapters/project}
-\subfile{chapters/results}
+% \subfile{chapters/results}
 
 % Donald Knuth often says smart stuff ~\parencite{Knuth:2007:CPA:1283920.1283929}.
 \backmatter{}

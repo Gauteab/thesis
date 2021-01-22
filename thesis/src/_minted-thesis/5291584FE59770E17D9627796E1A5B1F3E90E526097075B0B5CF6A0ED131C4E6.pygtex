@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{type} \PYG{k+kt}{Maybe} \PYG{n+nv}{a}
+    \PYG{n+nf}{=} \PYG{k+kt}{Just} \PYG{n+nv}{a}
+    \PYG{n+nf}{|} \PYG{k+kt}{Nothing}
+\end{Verbatim}

@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{\PYGZob{}}
+  \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}::\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}comment\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{} Add an element to the front of a list. (...)\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}type\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}a \PYGZhy{}\PYGZgt{} List.List a \PYGZhy{}\PYGZgt{} List.List a\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}associativity\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}right\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}precedence\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{5}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

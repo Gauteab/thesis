@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{\PYGZob{}}
+  \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}head\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}comment\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{} Extract the first element of a list. (...)\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}type\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}List.List a \PYGZhy{}\PYGZgt{} Maybe.Maybe a\PYGZdq{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

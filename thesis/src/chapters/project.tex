@@ -1,26 +1,285 @@
 \documentclass[../thesis.tex]{subfiles}
 
+
 \begin{document}
 
 \chapter{The Project}\label{the_project}
 The goal of this project is to create a prototype of a system that can generate voice commands
 for talon from a source file in a given program language to the increase accuracy and efficiency of programming.
 The result should take the form of a server that can be easily integrated into any editor as a plug-in
-which handles day generational voice commands and the communication with talon.
+which handles the generation of voice commands and the communication with talon.
 While the final version of the system should be general enough to handle any language, and be integratable with any the editor,
 the prototype only aims to handle the \textit{Elm} programming language in the \textit{Neo-vim} editor.
 This chapter will describe the design and architecture of the system.
 
-\paragraph{Problem Description:}% concise description of the problem. maybe this should, earlier?
-todo
-
-\section{Voice Command Generation}%
+\section{System Overview}%
 \label{sec:voice_command_generation}
-How to generate voice commands?
-Cover how the spoken form of different identifiers will be.
-Overview of different classes of identifiers (imports, aliases, functions, variables, types etc).
-\subsection{Abbreviations}
+This section will provide an overview of the main functionalities of the system,
+each of which will be discussed in more detail in their own sections.
+
+\paragraph{Classified Identifier Extraction:}%
+\label{par:classified_identifier_extraction}
+The primary feature of the system is to expose information about the code being edited
+to Talon such that the user can dictate high-level commands with a limited vocabulary
+specific to the code being edited with high accuracy.
+Perhaps the most important feature is the ability to keep updated talon lists (see Section~\ref{dynamic_lists})
+of identifiers in different classes. For example, you might have a list \textit{user.functions} which would contain
+all the functions that are in scope in the file being edited.
+Then you could define a voice command such as 
+\begin{verbatim}
+function {user.functions}: insert(functions)
+\end{verbatim} 
+which would provide the user with a way to insert a known function from a limited vocabulary which would increase the accuracy.
+Given the code in Example~\ref{ex:elm_simple_program}, the list \textit{user.functions} might contain ``update'' and ``view''
+(which were defined in this file), as well as ``onClick'', ``button'', ``text'' and ``div'' (from the import statements).
+As we saw in the section on~\nameref{sec:elm}, there are other ways functions can be introduced
+besides explicit declaration and imports, so some extra work is required define all relevant functions.
+Additionally, not all function names are pronounceable, so this must also be handled as discussed in Section~\ref{spoken_identifier_algorithm}.
+
+\paragraph{Code Navigation:}%
+\label{code_navigation}
+How to enable high-level code navigation commands?
+
+\paragraph{Structural Editing:}%
+\label{structural_editing}
+How to enable high-level editing commands?
+
+\section{Classified Identifier Extraction}%
+\label{sec:classified_identifier_extraction}
+This section should cover in detail what identifies should be extracted
+and how this is accomplished. Table~\ref{tab:constructs_of_interest} shows
+what identifiers should be tracked, and which constructs they can be found in.
+For example, a function can be declared directly, imported from another module, are generated
+from type declarations. The notation \textit{Type [Alias] Declaration} is a shorthand
+for writing both \textit{Type Declaration} and \textit{Type Alias Declaration}.
+Tracking these classes of identifiers should be sufficient for Elm, but more
+might be added to how do more programming languages in the future.
+The following section will explain in detail how each of these classes of identifiers
+are extracted, on how they might be used in voice commands.
+As all of the identifer classes may be found in import statements, imports will be covered
+separately in Section~\ref{imports}.
+
+\begin{table}[htpb]
+    \centering
+    \caption{Constructs of Interest}
+    \label{tab:constructs_of_interest}
+    \begin{tabular}{|c|c|}
+        \hline
+        Construct & Found In \\
+        \hline
+        Module & Dependency, Import, Implicit Import \\
+        Function & Function Declaration, Import, Type [Alias] Declaration \\
+        Variable & Function Declaration, Import, Type [Alias] Declaration \\
+        Type & Type [Alias] Declaration, Import \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Identifer Classes}%
+\label{sub:identifer_classes}
+
+\paragraph{Types:}%
+\label{par:types}
+
+
+\paragraph{Modules:}%
+\label{par:modules}
+The two main use cases for keeping a list of modules is to dictate imports, and referencing functions in those modules.
+The full list of modules available to the user can be found by retrieving the packages using the project, as described in Section~\ref{sub:dependencies}.
+% check if core is listed here
+% also user-defined modules
+Given a module \textit{Array} with a function called \textit{append}, the user should be able to
+reference this function with the phrase ``array append'', which would produce the output \textbf{Array.append}.
+Explicitly dictating the \textbf{.} can optionally be done to disambiguate in certain scenarios, but should usually not be necessary.
+
+Voice commands should also be aware of import aliases.
+If the Array module instead was imported as
+\begin{minted}{elm}
+import Array as A
+\end{minted}
+the phrase ``array append'' should instead produce the output \textbf{A.append}.
+It should also be possible to reference the function using the alias (i.e ``A append'').
+
+
+
+
+
+\paragraph{Functions and Variables:}%
+\label{par:functions_and_variables}
+
+\subsection{Dependencies}%
+\label{sub:dependencies}
+The \textit{dependencies} field of the \textit{elm.json} file lists all the packages the authors of this project
+are using directly.
+There is a separate field for indirect dependencies, also known as transitive dependencies, 
+but we are only interested in the direct dependencies because those are the ones the user might want to
+reference in their programs.
+The documentation to all packages in Elm is readily available by making a request to
+\textit{https://package.elm-lang.org/packages/<author>/<name>/<version>/docs.json}.
+Each documentation file is a list of module objects.
+The contents of these module objects along with an explanation can be seen in table~\ref{tab:documentation_fields}.
+
+\begin{table}[htpb]
+    \centering
+    \caption{docs.json Module Structure}
+    \label{tab:documentation_fields}
+    \begin{tabular}{|c|c|}
+        \hline
+        Field & Explanation \\
+        \hline
+        name & The name of the module \\
+        comment & Documentation text for the module \\
+        unions & Type Declarations \\
+        aliases & Type Alias Declarations \\
+        values & Value Declarations (functions/constants) \\
+        binops & User-defined binary operators \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Example~\ref{ex:array_excerpt} shows parts of the first module entry from \textit{elm/core}.
+\begin{example}[docs.json]\label{ex:array_excerpt}
+\begin{minted}{json}
+  {
+    "name": "Array",
+    "comment": " Fast immutable arrays. (...)",
+    "unions": [
+      {
+        "name": "Array",
+        "comment": " Representation of fast immutable arrays. (...)",
+        "args": ["a"],
+        "cases": []
+      }
+    ],
+    "aliases": [],
+    "values": [
+      {
+        "name": "append",
+        "comment": " Append two arrays to a new one. (...)",
+        "type": "Array.Array a -> Array.Array a -> Array.Array a"
+      },
+      ...
+    ],
+    "binops": []
+  }
+\end{minted}
+\end{example}
+The rest of this sections will explain each of these fields in more detail.
+All of the following examples will be from \textit{elm/core}.
+
+\subsubsection{Unions}\label{unions}
+The \textit{unions} field contains the exposed type declarations and their constructors.
+The word \textit{unions} refers to the fact that elm types are \textit{disjoint union types}, or \textit{tagged unions}.
+A type declaration like
+\begin{minted}{elm}
+type Maybe a
+    = Just a
+    | Nothing
+\end{minted}
+would produce a union field like this: 
+\begin{minted}{ json }
+{
+  "name": "Maybe",
+  "comment": " Represent values that may or may not exist. (...)",
+  "args": ["a"],
+  "cases": [
+    ["Just", ["a"]],
+    ["Nothing", []]
+  ]
+}
+\end{minted}
+The \textit{args} field is a list of the names of the type parameters.
+A nonempty args indicates a polymorphic data type.
+There might be something to do with the name of these type arguments, but for now they will be ignored.
+The \textit{cases} field is a list of constructors for the type.
+Each entry is a pair of the name of the constructor and list of the types of the arguments to that constructor.
+Constructors with no arguments are constants, otherwise they are functions.
+
+\subsubsection{Aliases}\label{aliases}
+\textit{Aliases} is a list of type alias declarations.
+This entry is very simple.
+There is a \textit{type} field, which indicates which type is being aliased, and the name.
+We are only interested in the name field.
+A type alias like
+\begin{minted}{elm}
+type alias Id = Platform.ProcessId
+\end{minted}
+would produce an alias field like:
+\begin{minted}{json}
+{
+  "name": "Id",
+  "comment": " A light-weight process that runs concurrently. (...)",
+  "args": [],
+  "type": "Platform.ProcessId"
+}
+\end{minted}
+
+\subsubsection{Values}\label{values}
+The \textit{values} field contains all the functions and constants in the module, and might look like this:
+\begin{minted}{json}
+{
+  "name": "head",
+  "comment": " Extract the first element of a list. (...)",
+  "type": "List.List a -> Maybe.Maybe a"
+}
+\end{minted}
+Since functions are normal values, we need to look at the type to distinguish functions from constants.
+We can see that \textit{head} is a function from the use of the function type constructor (->).
+It is however not as simple as checking whether (->) occurs in the type.
+The type
+\begin{minted}{elm}
+List (a -> a)
+\end{minted}
+denotes a list of functions, but is not a function itself.
+Determining what values are functions therefore requires parsing the type signature.
+% reference: where do I explain this?
+
+\subsubsection{Binary Operators}\label{binary_operators}
+The \textit{binops} field contains the binary operators in that module.
+These entries are similar to \textit{values}, but also contain \textit{precedence} and \textit{associativity}.
+\begin{minted}{json}
+{
+  "name": "::",
+  "comment": " Add an element to the front of a list. (...)",
+  "type": "a -> List.List a -> List.List a",
+  "associativity": "right",
+  "precedence": 5
+}
+\end{minted}
+In some languages, such as PureScript, infix operators are defined as aliases
+for regular functions which ensures that each operator has a canonical way of referencing it vocally.
+Since elm does not have this property, this connection is to be made another way.
+The operator in this example is historically referred to as \textit{cons}, but it could also be called
+\textit{prepend} if you want the name to be more descriptive.
+For the reasons discussed in Section~\ref{}, normal users can not define operators, so this might not be a problem in practice.
+Most operators are defined in \textit{elm/core}, but not all.% |., |=
+A reasonable way to this might be to checked operators found in packages against the talon list
+and warn the user if an operator is found, but is no way to be dictated.
+
+\subsection{Imports}\label{imports}
+Example~\ref{ex:import} shows an complex import statement which imports the \textit{Html.Events} module,
+introduces an alias (\textit{Events}) and also import one of the members of the module (\textit{onClick}).
+After processing this statement, \textit{Events} would be added to the list of active modules, 
+and \textit{onClick} would be added to the list of active functions.
+
+\begin{example}[Complex Import]\label{ex:import}
+\begin{minted}{elm}
+import Html.Events as Events exposing (onClick)
+\end{minted}
+\end{example}
+
+\subsection{Spoken Identifier Algorithm}\label{spoken_identifier_algorithm}
+Describe convert a formatted identifier into a form recognizable by talon.
+
+\subsection{Abbreviations}\label{abbreviations}
 peekCString->``P C S''. How does this relate to normal auto complete?
+
+\subsection{Overrides}\label{overrides}
+todo->to do, init->in it
+
+\subsection{Local Bindings}%
+\label{sub:local_bindings}
+Should local bindings be handled differently from top level bindings?
 
 
 \section{Design Goals}%
@@ -37,3 +296,4 @@ editor<->my system<->talon
 implementation details such as programming language etc
 
 \end{document}
+

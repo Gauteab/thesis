@@ -1,0 +1,46 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{module }\PYG{n+nc}{Main} \PYG{n+nv}{exposing} \PYG{p}{(}\PYG{k+kt}{Model}\PYG{p}{,} \PYG{k+kt}{Msg}\PYG{n+nf}{(..)}\PYG{p}{,} \PYG{n+nv}{init}\PYG{p}{,} \PYG{n+nv}{main}\PYG{p}{,} \PYG{n+nv}{update}\PYG{p}{,} \PYG{n+nv}{view}\PYG{p}{)}
+
+\PYG{k+kn}{import }\PYG{n+nc}{Browser}
+\PYG{k+kn}{import }\PYG{n+nc}{Html} \PYG{n+nv}{exposing} \PYG{p}{(}\PYG{k+kt}{Html}\PYG{p}{,} \PYG{n+nv}{button}\PYG{p}{,} \PYG{n+nv}{div}\PYG{p}{,} \PYG{n+nv}{text}\PYG{p}{)}
+\PYG{k+kn}{import }\PYG{n+nc}{Html.Events} \PYG{k+kr}{as} \PYG{k+kt}{Events} \PYG{n+nv}{exposing} \PYG{p}{(}\PYG{n+nv}{onClick}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} MAIN}
+
+\PYG{k+kr}{main }\PYG{n+nf}{=}
+    \PYG{k+kt}{Browser}\PYG{n+nf}{.}\PYG{n+nv}{sandbox} \PYG{p}{\PYGZob{}} \PYG{n+nv}{init} \PYG{n+nf}{=} \PYG{n+nv}{init}\PYG{p}{,} \PYG{n+nv}{update} \PYG{n+nf}{=} \PYG{n+nv}{update}\PYG{p}{,} \PYG{n+nv}{view} \PYG{n+nf}{=} \PYG{n+nv}{view} \PYG{p}{\PYGZcb{}}
+
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} MODEL}
+
+\PYG{k+kr}{type} \PYG{k+kr}{alias} \PYG{k+kt}{Model} \PYG{n+nf}{=}
+    \PYG{k+kt}{Int}
+
+\PYG{n+nv}{init} \PYG{n+nf}{:} \PYG{k+kt}{Model}
+\PYG{n+nv}{init} \PYG{n+nf}{=}
+    \PYG{l+m+mi}{0}
+
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} UPDATE}
+
+\PYG{k+kr}{type} \PYG{k+kt}{Msg}
+    \PYG{n+nf}{=} \PYG{k+kt}{Increment}
+    \PYG{n+nf}{|} \PYG{k+kt}{Decrement}
+
+\PYG{n+nv}{update} \PYG{n+nf}{:} \PYG{k+kt}{Msg} \PYG{n+nf}{\PYGZhy{}\PYGZgt{}} \PYG{k+kt}{Model} \PYG{n+nf}{\PYGZhy{}\PYGZgt{}} \PYG{k+kt}{Model}
+\PYG{n+nv}{update} \PYG{n+nv}{msg} \PYG{n+nv}{model} \PYG{n+nf}{=}
+    \PYG{k+kr}{case} \PYG{n+nv}{msg} \PYG{k+kr}{of}
+        \PYG{k+kt}{Increment} \PYG{n+nf}{\PYGZhy{}\PYGZgt{}}
+            \PYG{n+nv}{model} \PYG{n+nf}{+} \PYG{l+m+mi}{1}
+
+        \PYG{k+kt}{Decrement} \PYG{n+nf}{\PYGZhy{}\PYGZgt{}}
+            \PYG{n+nv}{model} \PYG{n+nf}{\PYGZhy{}} \PYG{l+m+mi}{1}
+
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} VIEW}
+
+\PYG{n+nv}{view} \PYG{n+nf}{:} \PYG{k+kt}{Model} \PYG{n+nf}{\PYGZhy{}\PYGZgt{}} \PYG{k+kt}{Html} \PYG{k+kt}{Msg}
+\PYG{n+nv}{view} \PYG{n+nv}{model} \PYG{n+nf}{=}
+    \PYG{n+nv}{div} \PYG{p}{[]}
+        \PYG{p}{[} \PYG{n+nv}{button} \PYG{p}{[} \PYG{n+nv}{onClick} \PYG{k+kt}{Decrement} \PYG{p}{]} \PYG{p}{[} \PYG{n+nv}{text} \PYG{l+s}{\PYGZdq{}\PYGZhy{}\PYGZdq{}} \PYG{p}{]}
+        \PYG{p}{,} \PYG{n+nv}{div} \PYG{p}{[]} \PYG{p}{[} \PYG{n+nv}{text} \PYG{p}{(}\PYG{k+kt}{String}\PYG{n+nf}{.}\PYG{n+nv}{fromInt} \PYG{n+nv}{model}\PYG{p}{)} \PYG{p}{]}
+        \PYG{p}{,} \PYG{n+nv}{button} \PYG{p}{[} \PYG{n+nv}{onClick} \PYG{k+kt}{Increment} \PYG{p}{]} \PYG{p}{[} \PYG{n+nv}{text} \PYG{l+s}{\PYGZdq{}+\PYGZdq{}} \PYG{p}{]}
+        \PYG{p}{]}
+\end{Verbatim}

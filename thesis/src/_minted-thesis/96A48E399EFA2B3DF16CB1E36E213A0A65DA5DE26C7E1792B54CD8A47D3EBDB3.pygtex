@@ -1,0 +1,11 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{\PYGZob{}}
+  \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Maybe\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}comment\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{} Represent values that may or may not exist. (...)\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}args\PYGZdq{}}\PYG{p}{:} \PYG{p}{[}\PYG{l+s+s2}{\PYGZdq{}a\PYGZdq{}}\PYG{p}{],}
+  \PYG{n+nt}{\PYGZdq{}cases\PYGZdq{}}\PYG{p}{:} \PYG{p}{[}
+    \PYG{p}{[}\PYG{l+s+s2}{\PYGZdq{}Just\PYGZdq{}}\PYG{p}{,} \PYG{p}{[}\PYG{l+s+s2}{\PYGZdq{}a\PYGZdq{}}\PYG{p}{]],}
+    \PYG{p}{[}\PYG{l+s+s2}{\PYGZdq{}Nothing\PYGZdq{}}\PYG{p}{,} \PYG{p}{[]]}
+  \PYG{p}{]}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}
