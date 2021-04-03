@@ -18,25 +18,90 @@ In this paper I will use \textbf{Talon}, a general purpose system for hands-free
    tools can be leveraged to improve the workflow of vocal programmers in the programming environments they are already used to.
 
 \section{Motivation}
-\paragraph{Injuries}
-Here I will cover research related to injuries such as RSI in the tech industry.
-\paragraph{Learning Curve}
-Here I explain breifly some of the difficulties people have when starting out with voice coding.
-Learning curve is the biggers, and is extasterbated by the fact that you need
-to be able to code in order to use the system profeciently, which leads to a 
-chicken-egg situation.
-\paragraph{Special Case vs. General Purpose}\label{scgp}
 
+\subsubsection{Repetitive Strain Injury}
+% Here I will cover research related to injuries such as RSI in the tech industry.
+% what is RSI?
+Repetitive Strain Injury (RSI) is an umbrella term for a variety of pain syndromes caused by
+performing repetitive tasks such as typing on a keyboard.
+Symptoms can vary in severity, ranging from mild discomfort to complete disability.
+Examples of commonly known RSIs include Carpal Tunnel Syndrome (also known as ``mouse arm'') and tendinitis.
+% many people are afflicted, and need time off work
+Every year, nearly 2 million US workers suffers from different forms of RSI, 600,000 of which
+need time off work to recover from their injury (\textcolor{red}{ref}).
+% http://ergonomictrends.com/rsi-statistics/ (need to find original references)
+% this cost a lot of money
+% treatments are not totally effective
+% risk avoidance techniques such as posture, breaks and ergonomic keyboards
+% why programmers are at high risk?
+\subsubsection{Additional Risk Factors for Programmers}
+In addition to simply being heavily dependent on the computer to do work,
+programmers also use the keyboard somewhat differently from other office workers.
+Most programming languages contain a lot more special symbols compared to what is used
+normal English.
+This fact necessitates more frequent use of a variety of combinations of modifier keys on the keyboard
+which are not used as frequently in normal typing and are therefore less accessible.
+Programmers must therefore move their hands more and differently.
+``Emacs Pinky'' is the colloquial name for an RSI common amongst users of the Emacs editor.
+This is a condition that causes pain from the elbow up to the pinky finger, and is coused
+by a phenomenon called ``Ulnar deviation'' which happens when the hand is frequently rotated
+outward.
+This creates pressure on the ulnar nerve, and is exactly what happens when you reach for the control key on a standard keyboard,
+which is a very frequent operation in Emacs.
+
+\subsubsection{The Case for Hands-free Input Methods}
+Tools for interacting with the computer other than keyboard and mouse
+are known as alternative input methods.
+These include things like digital pens, touchscreens, eye-trackers, foot pedals, et cetera.
+Users with severe RSI or other motor impairments might need tools that do not require any physical motion.
+Voice input, which will be the focus of this thesis, has very high potential for efficiency and can be made accessible to a wide variety of users.
+This can be used both for dictating text as well as issuing commands.
+\paragraph{}
+It is my belief that using voice input for programming (``vocal programming'')
+has extremely high potential not only for people with pre-existing conditions, 
+but also for able-bodied programmers.
+The goal of vocal programming systems should, in my view, go beyond
+accessibility and aim to make programming more efficient and enjoyable for everyone
+in order to create a future with significantly fewer cases of RSI.
+% clearly there is a need for efficient ways of using a computer without the reliance on techniques made impossible by or introducing risk of RSI.
+% motivate the goals voice systems should have. go beyond "accessible" name to become
+% as efficient or more efficient
+
+% \paragraph{Learning Curve}
+% Here I explain breifly some of the difficulties people have when starting out with voice coding.
+% Learning curve is the biggers, and is extasterbated by the fact that you need
+% to be able to code in order to use the system profeciently, which leads to a 
+% chicken-egg situation.
+% \paragraph{Special Case vs. General Purpose}\label{scgp}
+
+\newpage
 \section{Research Questions}
 \paragraph{Question 1:}
-Can the benefits of structural editors be achieved in text oriented environments for vocal programmers?
+How can modern language tooling be leveraged to make vocal programming more efficient?
 \paragraph{Question 2:}
-Can modern language tooling be leveraged to make vocal programming more efficient?
+How can the benefits of structural editors be achieved in text oriented environments for vocal programmers?
 
 \section{Approach}
+The way in which I will be attempting to answer these questions is to
+investigate different tools used by code editors for increasing efficiency
+when programming in a variety of different programming languages.
+The main part of this project is developing a prototype for an extension
+to Talon that will use these tools to make vocal programming more efficient.
+Additionally, I will conduct a study to evaluate the usefulness and potential
+of this prototype.
 
 \section{Chapter Overview}
-\paragraph{Chapter 1:} \nameref{background} 
+\paragraph{Chapter 2: \nameref{background}} gives an introduction to the relevant background for the project presented in this thesis.
+This includes some information on vocal programming as well as technical background on the tools used in the project.
+\paragraph{Chapter 3: \nameref{talon}} presents the vocal programming system chosen for this project
+and serves to set the context for the work presented later on.
+\paragraph{Chapter 4: \nameref{methodology_and_evaluation}} discusses possible research methods and explains
+how data collection for this project will be carried out.
+\paragraph{Chapter 5: \nameref{the_project}} covers the details of the project and explains
+how the prototype will be built while discussing alternative methods, design goals
+and additional features that are out of scope for this project.
+\paragraph{Chapter 6: \nameref{results}} presents the results of the research.
+\paragraph{Chapter 7: \nameref{future_work}} present some ideas for future research in this area.
 
 
 \end{document}

@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{type} \PYG{k+kr}{alias} \PYG{k+kt}{Person} \PYG{n+nf}{=} \PYG{p}{\PYGZob{}} \PYG{n+nv}{name} \PYG{n+nf}{:} \PYG{k+kt}{String} \PYG{p}{\PYGZcb{}}
+
+\PYG{n+nv}{john} \PYG{n+nf}{:} \PYG{k+kt}{Person}
+\PYG{n+nv}{john} \PYG{n+nf}{=} \PYG{n+nf}{...}
+\end{Verbatim}

@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{type} \PYG{k+kr}{alias} \PYG{k+kt}{Person} \PYG{n+nf}{=}
+    \PYG{p}{\PYGZob{}} \PYG{n+nv}{name} \PYG{n+nf}{:} \PYG{k+kt}{String}
+    \PYG{p}{,} \PYG{n+nv}{age} \PYG{n+nf}{:} \PYG{k+kt}{Int}
+    \PYG{p}{\PYGZcb{}}
+
+\PYG{n+nv}{john} \PYG{n+nf}{:} \PYG{k+kt}{Person}
+\PYG{n+nv}{john} \PYG{n+nf}{=} \PYG{k+kt}{Person} \PYG{l+s}{\PYGZdq{}John\PYGZdq{}} \PYG{l+m+mi}{25}
+\end{Verbatim}

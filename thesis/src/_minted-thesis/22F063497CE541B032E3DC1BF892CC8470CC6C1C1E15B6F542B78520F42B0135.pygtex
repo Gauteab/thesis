@@ -1,0 +1,14 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{\PYGZob{}}
+  \PYG{n+nt}{\PYGZdq{}location\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+  \PYG{n+nt}{\PYGZdq{}uri\PYGZdq{}}\PYG{p}{:}
+    \PYG{l+s+s2}{\PYGZdq{}file:///\PYGZlt{}HOME\PYGZgt{}/.elm/0.19.1/packages/elm/json/1.1.3/src/Json/Encode.elm\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}range\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+    \PYG{n+nt}{\PYGZdq{}end\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}} \PYG{n+nt}{\PYGZdq{}character\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{93}\PYG{p}{,} \PYG{n+nt}{\PYGZdq{}line\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{169} \PYG{p}{\PYGZcb{},}
+    \PYG{n+nt}{\PYGZdq{}start\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}} \PYG{n+nt}{\PYGZdq{}character\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n+nt}{\PYGZdq{}line\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{167} \PYG{p}{\PYGZcb{}}
+    \PYG{p}{\PYGZcb{}}
+  \PYG{p}{\PYGZcb{},}
+  \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}array\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}kind\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{12}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{type} \PYG{k+kt}{Box} \PYG{n+nf}{=} \PYG{k+kt}{Box} \PYG{k+kt}{Int}
+
+\PYG{n+nv}{box} \PYG{n+nv}{i} \PYG{n+nf}{=} \PYG{k+kt}{Box} \PYG{p}{(}\PYG{n+nv}{i} \PYG{n+nf}{+} \PYG{l+m+mi}{1}\PYG{p}{)}
+\end{Verbatim}

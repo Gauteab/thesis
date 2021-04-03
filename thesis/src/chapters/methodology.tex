@@ -2,32 +2,69 @@
 
 \begin{document}
 
-\chapter{Methodology And Evaluation}\label{methodology_and_evaluation}
-I might use a mix of quantitative and qualitative methods. (multi- strategy) % read creswell,2018
-I could hold interviews with users of Talon to gather both types of data.
+\chapter{Methodology and Evaluation}\label{methodology_and_evaluation}
+This chapter outlines the research methods used in this project,
+and how the study was designed and executed in order to evaluate effectiveness of the prototype.
+The results of the study will then be presented and analyzed, followed by
+discussion of alternative methods that could have been used.
 
-\paragraph{Speed Testing}
-I can test the users programming speed with and without my system.
-Here I must consider factors such as performance anxiety.
-The programs they would be asked to dictate would have to be carefully crafted in order to have a consistent difficulty level
-across the test. 
-Should they dictate the same program twice, or two different? How can I be sure they are similarly difficult?
-Should I change the order of the two tests?
-This might well be a good measurement. I'll discuss why this paragraph.
+% I might use a mix of quantitative and qualitative methods. (multi- strategy) % read creswell,2018
+% I could hold interviews with users of Talon to gather both types of data.
+
+% \paragraph{Speed Testing}
+% I can test the users programming speed with and without my system.
+% Here I must consider factors such as performance anxiety.
+% The programs they would be asked to dictate would have to be carefully crafted in order to have a consistent difficulty level
+% across the test. 
+% Should they dictate the same program twice, or two different? How can I be sure they are similarly difficult?
+% Should I change the order of the two tests?
+% This might well be a good measurement. I'll discuss why this paragraph.
 
 
-\section{Qualitative}
-I can gather qualitative data by having the user program using my system and ask them whether or not they find using it to be an improvement.
-The disadvantage to this approach is that the system might have a learning curve which makes the initial impression
-worse than it would have been over time.
+\section{Research Methods}
+Quantitative research is an approach for ``testing objective theories by examining the relations between variables'', whereas qualitative research is concerned with ``exploring and understanding the meaning of individuals or groups in the context of a social or human problem''. \parencite{creswell2018}
 
-\section{Quantitative}
-One quantitative measure I could use is to analyse larger codebases to see how the predicted time to speak common identifiers change.
-If I can count the number of syllables in a word I can compare the length of normal phrases need to produce a given function in a code base and compare
-it to that of my system. This analysis can be weighted by the frequency of said identifiers.
-The advantage of this approach is simplicity in that I don't depend on external users.
-One interesting point here is to see how the result of this analysis relate to the results gathered from interviews.
-\subsection{Data Collection}
-Analyze the Elm implementation of real world app (https://github.com/rtfeldman/elm-spa-example)
+When choosing a research approach it is important to keep in mind the goal of the survey.
+The overall goal of the project is to improve the effectiveness of vocal programming by the use of modern programming language tooling.
+The prototype should serve as proof of the effectiveness of the tools chosen to achieve this task.
+In order to validate that this is in fact achieved, the system will have to be tested with actual users.
+As will be discussed in the section on~\nameref{alternative_methods}, there are quantitative measures that could be used which would make a ``Multi-strategy'' approach suitable.
+The challenges with these however lead me to implement a more qualitative approach.
+
+
+% Explain what qualitative research is
+% Explain what quantitative researchers
+% Explain why I chose qualitative, refer to alt methods section
+
+\subsection{Interviews}
+
+\subsection{Usability Testing}
+
+\section{Participants and Recruitment}
+
+\section{The Study}
+
+
+% "focus on discovering and understanding the experiences, perspectives, and
+% thoughts of participants - that is, qualitative research explores the meaning, purpose
+% or reality" (Harwell, 2011).
+
+% I can gather qualitative data by having the user program using my system and ask them whether or not they find using it to be an improvement.
+% The disadvantage to this approach is that the system might have a learning curve which makes the initial impression
+% worse than it would have been over time.
+
+\section{Alternative Methods}\label{alternative_methods}
+This section presents a few alternative methods that could have been used for this project.
+\begin{itemize}
+    \item User test, coding speed
+    \item analyze identifier cost
+\end{itemize}
+% One quantitative measure I could use is to analyse larger codebases to see how the predicted time to speak common identifiers change.
+% If I can count the number of syllables in a word I can compare the length of normal phrases need to produce a given function in a code base and compare
+% it to that of my system. This analysis can be weighted by the frequency of said identifiers.
+% The advantage of this approach is simplicity in that I don't depend on external users.
+% One interesting point here is to see how the result of this analysis relate to the results gathered from interviews.
+% \subsection{Data Collection}
+% Analyze the Elm implementation of real world app (https://github.com/rtfeldman/elm-spa-example)
 
 \end{document}

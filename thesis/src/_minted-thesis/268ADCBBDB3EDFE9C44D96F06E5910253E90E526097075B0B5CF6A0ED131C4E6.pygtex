@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nv}{five} \PYG{n+nf}{:} \PYG{k+kt}{Int}
+\PYG{n+nv}{five} \PYG{n+nf}{=} \PYG{l+m+mi}{5}
+
+\PYG{n+nv}{increment} \PYG{n+nf}{:} \PYG{k+kt}{Int} \PYG{n+nf}{\PYGZhy{}\PYGZgt{}} \PYG{k+kt}{Int}
+\PYG{n+nv}{increment} \PYG{n+nv}{number} \PYG{n+nf}{=} \PYG{n+nv}{number} \PYG{n+nf}{+} \PYG{l+m+mi}{1}
+\end{Verbatim}

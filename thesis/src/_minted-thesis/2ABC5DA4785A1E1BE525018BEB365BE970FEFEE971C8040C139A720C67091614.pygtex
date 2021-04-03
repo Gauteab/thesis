@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{function} SaveWorkspaceSymbols\PYG{p}{()}
+    \PYG{k}{let} symbols \PYG{p}{=} CocAction\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}getWorkspaceSymbols\PYGZsq{}}\PYG{p}{)}
+    \PYG{k}{let} symbols \PYG{p}{=} json\PYGZus{}encode\PYG{p}{(}symbols\PYG{p}{)}
+    \PYG{k}{let} \PYG{k}{file} \PYG{p}{=} \PYG{l+s+s2}{\PYGZdq{}/Users/gauteab/uio/master/thesis/workspaceSymbols.json\PYGZdq{}}
+    \PYG{k}{call} writefile\PYG{p}{(}[symbols]\PYG{p}{,} \PYG{k}{file}\PYG{p}{)}
+\PYG{k}{endfunction}
+\end{Verbatim}

@@ -105,9 +105,205 @@ but is also used in the implementation of some language servers.
 \section{Elm}\label{sec:elm}
 In this thisis I will be using Elm as the subject of the alysis.
 Elm is a feature rich, but relatively simple language.
-Some knowledge of Elm is useful for the reader, no experience is required.
-Primarily I will cover the features of Elm that introduces new identifiers into the scope,
+The reason elm was chosen for this project is that it has a solid implementation of
+the Language Server Protocol, a reliable TreeSitter parser, and its relative simplicity
+makes it more realistic to achieve a high degree of completeness in the prototype.
+Some knowledge of Elm is useful for the reader, but no experience is required.
+This section will primarily cover the features of Elm that introduces new identifiers into the scope,
 as these will be relevant when generating voice commands later.
+
+\subsection{Introduction}
+Elm is a statically typed, purely functional programming language for crating responsive web applications.
+It is a member of the ML (\textit{Meta Language}) family of programming languages
+and therefore resembles languages like Haskell and OCamel the most.
+
+
+\subsection{Functions and Values}
+The syntax for declaring top-level values and functions is very simple.
+Example~\ref{ex:value_and_function} shows two declarations.
+The first simply binds the value 5 to the identifier \textit{five},
+while the second defines a function that takes a number as an argument and increments it.
+Both declarations are preceded by a type signature, both of which are completely optional
+due to the fact that Elm has global type inference.
+\begin{example}[Simple Value and Function Declaration]\label{ex:value_and_function}
+\begin{minted}{elm}
+five : Int
+five = 5
+
+increment : Int -> Int
+increment number = number + 1
+\end{minted}
+\end{example}
+The syntax for functioning invocation is simply adjacency, so the expression
+\textbf{increment five} would evaluate to \textbf{6}.
+
+\textbf{Note:}
+Since elm is a higher order language, functions are also normal values which is reflected
+in how there is no separate syntax for declaring functions and values.
+Also, since Elm does not support mutable variables there is no distinction
+between terms like ``constant'', ``variable'' and ``value'' like there is in many languages.
+% disambiguate this terminology. how will I use these words?
+% This paper I will use the word ``'' to refer to non
+% From a theoretical point of view, non-function values can be considered as
+% functions of arity zero. For this reason, normal values 
+
+
+\subsection{Types}
+As in many ML languages, types are a central concept in Elm.
+This section covers the central aspects of the Elm type system.
+% \subsubsection{Built-in Types}
+The language has a few basic types such as \textit{Int}, \textit{Float}, \textit{Char} and \textit{String}
+which represents integers, floating-point numbers, characters and sequences of characters respectively.
+Additionally there are a few special types.
+\textit{Never} is a type that has no values.
+\textit{()} is the unit type which has exactly one value, also denoted \textit{()}.
+Function types are denoted by an arrow (\textit{->}).
+If A and B are both types, a function that takes in A and returns a B would have the type (\textit{A -> B})
+which is commonly pronounced ``from A to B''.
+The function arrow is right associative, meaning that \textit{A -> B -> C} is the same as \textit{A -> (B -> C)}.
+There is also syntax for tuple types such as \textit{(A, B)} or \textit{(A, B, C)}
+which represents pairs and triples.
+Unlike other ML languages like Haskell, Elm does not support tuples of lengths greater than three.
+
+\subsubsection{Record Types}
+Elm supports record types which are product types with named fields, similar to \textit{structs} in languages like \textit{C}.
+Records can have any number of fields, each of which can have any type.
+A significant difference between Elm records and C structs is that Elm supports anonymous record types
+meaning that they can be used without being given a name as seen in Example~\ref{ex:anonymous}.
+\begin{example}[Anonymous Records]\label{ex:anonymous}
+\begin{minted}{elm}
+john : { name : String, age : Int }
+john = { name = "John", age = 25 }
+\end{minted}
+\end{example}
+Elm records are also extensible which means you can define a lower bound
+for the fields a record needs to have.
+The canonical example is a type that describes records with at least a field \textit{id} with the type \textit{Int}.
+\begin{example}[Extensible Record]
+\begin{minted}{elm}
+{ r | id : Int }
+\end{minted}
+\end{example}
+
+
+
+
+\subsubsection{User-defined Types}
+There are two ways of declaring a new type:
+\begin{enumerate}
+    \item{``Normal'' Type Declarations} 
+    \item{Type Alias Declarations} 
+\end{enumerate}
+Normal type declarations formally corresponds to \textit{Algebraic Datatypes} or \textit{Discriminated Union Types},
+often simply referred to as ``union types'' or ``custom types''.
+Type alias declarations corresponds to transparent type synonyms.
+% Additionally, Elm has anonymous and extensible record types.
+
+\paragraph{Type Aliases} are a way of introducing alternate names for existing types.
+The use of type aliases does not affect how the program type checks, but can help improve readability.
+Example~\ref{position} shows how you can use a type alias to make what the function does more clear.
+\begin{example}[Type Alias]\label{position}
+\begin{minted}{elm}
+type alias Position = (Int, Int) 
+
+moveNorth : Position -> Position
+moveNorth (x, y) = (x, y + 1)
+\end{minted}
+\end{example}
+Type aliases has a special property when interacting with records in Elm.
+If a type alias is credited for a record, a function with the same name as the type
+is automatically created to act as a constructor for this record.
+Given the declaration in Example~\ref{record_alias}, a function \textit{Person}
+would be introduced with the type \textit{String -> Int -> Person}.
+This is often convenient when creating records with higher-order functions.
+\begin{example}[Record Alias]\label{record_alias}
+\begin{minted}{elm}
+type alias Person =
+    { name : String
+    , age : Int
+    }
+
+john : Person
+john = Person "John" 25
+\end{minted}
+\end{example}
+
+\paragraph{Union Types} are the main tool for data modeling in Elm.
+Example~\ref{maybe} shows the definition of an important data type called \textit{Maybe}
+which is used to represent the possibility of absence of a value.
+\textit{Maybe} has two constructors, the first of which has one argument while the second has zero arguments.
+The \textit{a} in this example is a type variable which indicates that \textit{Maybe} it is a polymorphic type.
+When this type has been defined, \textit{Nothing} is a constant value of type \textit{Maybe}, and \textit{Just}
+is a function with the type \textit{a -> Maybe a}, so \textit{Maybe}-values can be created
+with expressions such as \textbf{Nothing}, \textbf{Just 5} or \textbf{Just ``hello''} and so on.
+\begin{example}[The \textit{Maybe} Union Type]\label{maybe}
+\begin{minted}{elm}
+type Maybe a
+    = Just a
+    | Nothing
+\end{minted}
+\end{example}
+
+\textbf{Note:}
+The word ``constructors'' has special meaning in some languages, but in Elm they
+are normal functions and have no special properties in the language
+except that their names start with an uppercase letter which makes them syntactically distinct
+from other functions.
+
+\subsubsection{Polymorphism}
+Elm supports regular \textit{parametric polymorphism} (also known as \textit{generics} in object-oriented programming)
+as seen in Example~\ref{maybe} which defined a polymorphic container, and Example~\ref{ex:polymorphic_function}
+which defines a polymorphic function.
+The language does not support higher ranked types.
+Additionally Elm supports a limited form of ad hoc polymorphism.
+In order to overload operators such as \textit{(+)}, \textit{(<)} and \textit{(++)}
+there are special type variables called \textit{Constrained Type Variables}.
+Table~\ref{tab:ctv} shows the name of these special variables along with the
+concrete types they are compatible with.
+\begin{table}[htpb]
+    \centering
+    \label{tab:ctv}
+    \begin{tabular}{c|c}
+        Name & Permits \\
+        \hline
+        number & Int, Float \\
+        appendable & String, List \textit{a} \\
+        comparable & number, Char, String, (List|Tuple) \textit{comparable} \\
+        compappend & String, List \textit{comparable} \\
+    \end{tabular}
+    \caption{Constrained Type Variables}
+\end{table}
+\begin{example}[Polymorphic Function]\label{ex:polymorphic_function}
+\begin{minted}{elm}
+{-| Swaps the elements of a tuple -}
+swap : (a, b) -> (b, a)
+swap (a, b) = (b, a)
+\end{minted}
+\end{example}
+
+\subsection{Modules and Imports}
+Elm code is organized into modules which are used to organize projects
+and separate code into different name spaces.
+Each file starts with a modeled declaration which contains the name of the module (which must start with an uppercase letter)
+and the list of members to be exposed.
+Elm does not use visibility modifiers such as the \textit{public/private} etc of languages
+like Java, but elements of the exposing list are available to other modules through imports.
+An example of a module declaration and import statements can be seen in the first few lines of Example~\ref{ex:elm_simple_program}.
+When importing a module you can optionally provide an alias with the \textit{as}-keyword
+and/or an exposing list.
+After a module has been imported, exposed members of that module can be accessed
+through its name and a dot (\textbf{.}) as in \textbf{Browser.sandbox}.
+Import aliases provides an alternate name for referring to the module within the current one
+which is convenient for modules with long names.
+Members included in the exposing list of an important statement can be used directly
+without prefixing it with the module name.
+
+\subsubsection{The Exposing List}
+There are four types of items that can occur in the exposing list.
+Lowercase identifiers always refers to variables in the module.
+Uppercase identifiers always refers to a type.
+The double dot token (\textit{..}) means to include everything in the module.
+An uppercase identifier followed by a double dot refers to a type as well as all the constructors on that type.
 
 \subsection{Namespaces}
 Most programming languages store identifiers in different name spaces, which allows a single name

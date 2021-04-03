@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nv}{john} \PYG{n+nf}{:} \PYG{p}{\PYGZob{}} \PYG{n+nv}{name} \PYG{n+nf}{:} \PYG{k+kt}{String}\PYG{p}{,} \PYG{n+nv}{age} \PYG{n+nf}{:} \PYG{k+kt}{Int} \PYG{p}{\PYGZcb{}}
+\PYG{n+nv}{john} \PYG{n+nf}{=} \PYG{p}{\PYGZob{}} \PYG{n+nv}{name} \PYG{n+nf}{=} \PYG{l+s}{\PYGZdq{}John\PYGZdq{}}\PYG{p}{,} \PYG{n+nv}{age} \PYG{n+nf}{=} \PYG{l+m+mi}{25} \PYG{p}{\PYGZcb{}}
+\end{Verbatim}

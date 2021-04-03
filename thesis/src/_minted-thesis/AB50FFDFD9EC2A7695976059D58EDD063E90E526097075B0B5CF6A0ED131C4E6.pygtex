@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{type} \PYG{k+kr}{alias} \PYG{k+kt}{Position} \PYG{n+nf}{=} \PYG{p}{(}\PYG{k+kt}{Int}\PYG{p}{,} \PYG{k+kt}{Int}\PYG{p}{)}
+
+\PYG{n+nv}{moveNorth} \PYG{n+nf}{:} \PYG{k+kt}{Position} \PYG{n+nf}{\PYGZhy{}\PYGZgt{}} \PYG{k+kt}{Position}
+\PYG{n+nv}{moveNorth} \PYG{p}{(}\PYG{n+nv}{x}\PYG{p}{,} \PYG{n+nv}{y}\PYG{p}{)} \PYG{n+nf}{=} \PYG{p}{(}\PYG{n+nv}{x}\PYG{p}{,} \PYG{n+nv}{y} \PYG{n+nf}{+} \PYG{l+m+mi}{1}\PYG{p}{)}
+\end{Verbatim}

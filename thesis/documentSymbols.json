@@ -1,0 +1,170 @@
+[
+  {
+    "lnum": 1,
+    "col": 1,
+    "range": {
+      "end": { "character": 0, "line": 128 },
+      "start": { "character": 0, "line": 0 }
+    },
+    "level": 0,
+    "kind": "File",
+    "containerName": null,
+    "text": "file"
+  },
+  {
+    "lnum": 1,
+    "col": 1,
+    "range": {
+      "end": { "character": 30, "line": 0 },
+      "start": { "character": 0, "line": 0 }
+    },
+    "level": 0,
+    "kind": "Module",
+    "containerName": null,
+    "text": "Main"
+  },
+  {
+    "lnum": 16,
+    "col": 1,
+    "range": {
+      "end": { "character": 9, "line": 21 },
+      "start": { "character": 0, "line": 15 }
+    },
+    "level": 0,
+    "kind": "Function",
+    "containerName": null,
+    "text": "main"
+  },
+  {
+    "lnum": 29,
+    "col": 1,
+    "range": {
+      "end": { "character": 5, "line": 31 },
+      "start": { "character": 0, "line": 28 }
+    },
+    "level": 0,
+    "kind": "Struct",
+    "containerName": null,
+    "text": "Model"
+  },
+  {
+    "lnum": 36,
+    "col": 1,
+    "range": {
+      "end": { "character": 5, "line": 43 },
+      "start": { "character": 0, "line": 35 }
+    },
+    "level": 0,
+    "kind": "Function",
+    "containerName": null,
+    "text": "init"
+  },
+  {
+    "lnum": 51,
+    "col": 1,
+    "range": {
+      "end": { "character": 25, "line": 52 },
+      "start": { "character": 0, "line": 50 }
+    },
+    "level": 0,
+    "kind": "Enum",
+    "containerName": null,
+    "text": "Msg"
+  },
+  {
+    "lnum": 52,
+    "col": 7,
+    "range": {
+      "end": { "character": 24, "line": 51 },
+      "start": { "character": 6, "line": 51 }
+    },
+    "level": 0,
+    "kind": "EnumMember",
+    "containerName": null,
+    "text": "NameChanged String"
+  },
+  {
+    "lnum": 53,
+    "col": 7,
+    "range": {
+      "end": { "character": 25, "line": 52 },
+      "start": { "character": 6, "line": 52 }
+    },
+    "level": 0,
+    "kind": "EnumMember",
+    "containerName": null,
+    "text": "EmailChanged String"
+  },
+  {
+    "lnum": 57,
+    "col": 1,
+    "range": {
+      "end": { "character": 7, "line": 70 },
+      "start": { "character": 0, "line": 56 }
+    },
+    "level": 0,
+    "kind": "Function",
+    "containerName": null,
+    "text": "update"
+  },
+  {
+    "lnum": 75,
+    "col": 1,
+    "range": {
+      "end": { "character": 9, "line": 90 },
+      "start": { "character": 0, "line": 74 }
+    },
+    "level": 0,
+    "kind": "Function",
+    "containerName": null,
+    "text": "view"
+  },
+  {
+    "lnum": 102,
+    "col": 1,
+    "range": {
+      "end": { "character": 5, "line": 108 },
+      "start": { "character": 0, "line": 101 }
+    },
+    "level": 0,
+    "kind": "Function",
+    "containerName": null,
+    "text": "updateWithStorage"
+  },
+  {
+    "lnum": 104,
+    "col": 9,
+    "range": {
+      "end": { "character": 31, "line": 104 },
+      "start": { "character": 8, "line": 103 }
+    },
+    "level": 0,
+    "kind": "Function",
+    "containerName": null,
+    "text": "( newModel, cmds )"
+  },
+  {
+    "lnum": 117,
+    "col": 1,
+    "range": {
+      "end": { "character": 9, "line": 120 },
+      "start": { "character": 0, "line": 116 }
+    },
+    "level": 0,
+    "kind": "Function",
+    "containerName": null,
+    "text": "encode"
+  },
+  {
+    "lnum": 125,
+    "col": 1,
+    "range": {
+      "end": { "character": 44, "line": 127 },
+      "start": { "character": 0, "line": 124 }
+    },
+    "level": 0,
+    "kind": "Function",
+    "containerName": null,
+    "text": "decoder"
+  }
+]

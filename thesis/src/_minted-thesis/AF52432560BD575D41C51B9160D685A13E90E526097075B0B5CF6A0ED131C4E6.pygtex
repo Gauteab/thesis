@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nv}{greet} \PYG{n+nv}{name} \PYG{n+nf}{=}
+    \PYG{l+s}{\PYGZdq{}Hello \PYGZdq{}} \PYG{n+nf}{++} \PYG{n+nv}{name}
+\end{Verbatim}

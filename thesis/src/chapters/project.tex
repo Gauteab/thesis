@@ -38,11 +38,37 @@ Additionally, not all function names are pronounceable, so this must also be han
 
 \paragraph{Code Navigation:}%
 \label{code_navigation}
-How to enable high-level code navigation commands?
+An integral part of editing code is moving the cursor between different parts of the program.
+Having made Talon aware of the contents of the program being edited, we can enable
+high-level voice commands for code navigation.
+For example, navigating using the search functionality of the editor can be improved
+by having a voice command that uses the list of known identifiers.
+\begin{verbatim}
+search <user.identifier>: 
+    edit.find()
+    insert(identifier)
+    key(enter)
+\end{verbatim}
+This can be improved even further by making the system aware of the
+location and class of these identifiers.
+A command like ``go function hello'' could move the user directly to the definition of the function named \textit{hello}.
+This is much more efficient than using the search functionality because the user would not have to
+consider whether or not there are occurrences of the same word between the current cursor position
+and the target location.
+% How to enable high-level code navigation commands?
 
 \paragraph{Structural Editing:}%
 \label{structural_editing}
-How to enable high-level editing commands?
+While it is easy to make voice commands for making simple edits such as deleting whole lines,
+programming often involves editing chunks of text that start in the middle of a line
+and spans multiple lines. 
+For mouse users it is quite simple to simply mark the start and end of any section, but for 
+users of keyboard or voice commands this might require many more steps.
+Since the target of these edits often corresponds to a node in the AST, this process
+can be made much more efficient by enabling the users to utilize high-level editing commands
+such as ``delete next case expression'', or ``delete type signature''.
+This has potential for making certain editing activities much more efficient and intuitive,
+as well as providing a more pleasant and natural user experience.
 
 \section{Classified Identifier Extraction}%
 \label{sec:classified_identifier_extraction}
@@ -55,34 +81,73 @@ for writing both \textit{Type Declaration} and \textit{Type Alias Declaration}.
 Tracking these classes of identifiers should be sufficient for Elm, but more
 might be added to how do more programming languages in the future.
 The following section will explain in detail how each of these classes of identifiers
-are extracted, on how they might be used in voice commands.
-As all of the identifer classes may be found in import statements, imports will be covered
-separately in Section~\ref{imports}.
+are extracted, and how they might be used in voice commands.
+% As all of the identifer classes may be found in import statements, imports will be covered
+% separately in Section~\ref{imports}.
 
 \begin{table}[htpb]
-    \centering
-    \caption{Constructs of Interest}
+    % \centering
     \label{tab:constructs_of_interest}
     \begin{tabular}{|c|c|}
         \hline
         Construct & Found In \\
         \hline
-        Module & Dependency, Import, Implicit Import \\
+        % add a column for reference
         Function & Function Declaration, Import, Type [Alias] Declaration \\
         Variable & Function Declaration, Import, Type [Alias] Declaration \\
+        Constructor & Type [Alias] Declaration \\
         Type & Type [Alias] Declaration, Import \\
+        Module & Dependency, Import, Implicit Import \\
+        Record Field & Record Type, Record Literal \\
         \hline
     \end{tabular}
+    \caption{Constructs of Interest}
 \end{table}
 
 \subsection{Identifer Classes}%
 \label{sub:identifer_classes}
+This section will provide a more in-depth explanation of the different identifer classes from Table~\ref{tab:constructs_of_interest}. 
 
-\paragraph{Types:}%
+\subsubsection{Functions, Variables and Constructors}%
+\label{par:functions_and_variables}
+Functions, variables and constructors are all normal ``values'' in Elm, but have some properties
+that needs to be taken care of in this context.
+There is no way to differentiate between functions and variables syntactically due to the higher order nature of the language.
+The only way to tell if a value is a function is to protect its type, which is not always available easily.
+It is debatable whether or not it is necessary to separate these two classes for the particular use case we have in mind,
+but we mention it as a possible capability of the system.
+The advantage is that we can further limit the vocabulary in commands such as:
+\begin{verbatim}
+call <user.function>: user.call_function(function)
+\end{verbatim}
+More important however is the difference between constructors and other values.
+In elm it is not possible to declare a function with an uppercase first letter.
+This is to make it easier to distinguish constructors from regular functions.
+It is however possible to have a function with the same name as a constructor, only with different formatting.
+Because we would like to have a way of distinguishing between declarations like:
+\begin{minted}{elm}
+type Box = Box Int
+
+box i = Box (i + 1) 
+\end{minted}
+we need to track constructors separately.
+
+\subsubsection{Types}%
 \label{par:types}
+As in most ML-style languages, types play an central role in Elm programming.
+Since Elm has global type inference, and the type system is simple enough that
+well-typed expressions are usually unambiguous, type signatures can be generated
+automatically which seemingly would make the ability to dictate signatures unnecessary.
+Automatically generating tab signatures is possible in IntelliJ, but the Elm LSP does not have this feature. 
+It will probably be implemented in the future.
+Regardless, programmers would often want to type out the signatures manually for a few reasons.
+Adding the type signature before writing the function body helps the compiler provide better
+error messages along the way when writing complex definitions.
+Additionally, the generated signature might not use all the type aliases the programmer intended, and
+type variables would have to be renamed.
+By tracking the known types, dictating type signatures can be made extremely efficient.
 
-
-\paragraph{Modules:}%
+\subsubsection{Modules}%
 \label{par:modules}
 The two main use cases for keeping a list of modules is to dictate imports, and referencing functions in those modules.
 The full list of modules available to the user can be found by retrieving the packages using the project, as described in Section~\ref{sub:dependencies}.
@@ -100,15 +165,59 @@ import Array as A
 the phrase ``array append'' should instead produce the output \textbf{A.append}.
 It should also be possible to reference the function using the alias (i.e ``A append'').
 
+\subsubsection{Record Fields}
+Record fields should be tracked for the same reason we track functions.
+Given the following decorations:
+\begin{minted}{elm}
+type alias Person = { name : String }
+
+john : Person
+john = ...
+\end{minted}
+it should be possible to enter \textit{john.name} by saying ``John dot name''.
+Elm also has syntax for record access functions, so the phrase ``dot name'' can be used to
+refer to the function \textit{.name}.
+Since Elm support anonymous records, to find all possible record fields we also need to check
+any record literal and destructuring declaration.
+Note that the type of the value \textit{john} is not necessarily relevant unless we
+aim to make the voice commands aware of the types as well.% referred to discussion on this in general
+This can be achieved with the following voice commands:
+\begin{verbatim}
+<user.value> [dot] <user.record_field>: "{value}.{record_field}"
+dot <user.record_field>: ".{record_field}"
+\end{verbatim}
+
+\subsection{Extracting with Regular Expressions}
+Regular Expressions are perhaps the simplest and most well-known tool for capturing parts of text according to given rules.
+The following regular expression captures the name of types from the regular type declarations and type alias declarations:
+\begin{verbatim}
+type (?:alias )?(?<type>[A-Za-z]+)
+\end{verbatim}
+This expression creates a capture group named ``type'' which matches sequences of lower and upper case letters
+that are preceded by the keyword \textit{type} and optionally the keyword \textit{alias}.
+It is worth considering regular expressions as a solution to the identifier extraction problem
+considering the ubiquitous nature of regular expression engines and libraries, but they do have some serious limitations.
+Regular expressions recognize regular languages, but the main subject of analysis is programming languages
+which usually have a context free syntax.
+While this does not necessarily mean that they will be insufficient for any particular analysis
+it does mean they can't recognize recursive patterns which are prevalent in the syntax of programming languages.
+Seemingly simple rules such as that a pattern should not occur within the string literal are often
+hard to express and requires advanced features like lookahead/lookbehind.
+Attempting to achieve higher granularity often results in complex and difficult to read expressions
+which make them impractical for certain use cases.
+
+Therefore, regular expressions are probably not well-suited for identifier extraction for Elm, but might be for simpler languages
+such as LaTex or Markdown, or for early iterations/prototypes of implementations for any given language.
 
 
-
-
-\paragraph{Functions and Variables:}%
-\label{par:functions_and_variables}
-
-\subsection{Dependencies}%
+\subsection{Extracting From Documentation}%
 \label{sub:dependencies}
+The vast majority of code used in a project will not be written by the project author, but will be available
+through a package. It is very important that the system is aware of packages the user is depending on, what modules can be found in these packages, 
+and which identifiers are exposed by these modules. Extracting information from the documentation is generally a simpler problem
+than extracting from source files because the data is exposed in a simpler format (json) which is much easier to parse then Elm source code.
+This section explains how we can analyze the Elm documentation to provide useful voice commands.
+
 The \textit{dependencies} field of the \textit{elm.json} file lists all the packages the authors of this project
 are using directly.
 There is a separate field for indirect dependencies, also known as transitive dependencies, 
@@ -121,7 +230,6 @@ The contents of these module objects along with an explanation can be seen in ta
 
 \begin{table}[htpb]
     \centering
-    \caption{docs.json Module Structure}
     \label{tab:documentation_fields}
     \begin{tabular}{|c|c|}
         \hline
@@ -135,7 +243,10 @@ The contents of these module objects along with an explanation can be seen in ta
         binops & User-defined binary operators \\
         \hline
     \end{tabular}
+    \caption{docs.json Module Structure}
 \end{table}
+
+% \subsubsection{Snippets}% figure out how to use coc lists
 
 Example~\ref{ex:array_excerpt} shows parts of the first module entry from \textit{elm/core}.
 \begin{example}[docs.json]\label{ex:array_excerpt}
@@ -256,31 +367,287 @@ Most operators are defined in \textit{elm/core}, but not all.% |., |=
 A reasonable way to this might be to checked operators found in packages against the talon list
 and warn the user if an operator is found, but is no way to be dictated.
 
-\subsection{Imports}\label{imports}
-Example~\ref{ex:import} shows an complex import statement which imports the \textit{Html.Events} module,
-introduces an alias (\textit{Events}) and also import one of the members of the module (\textit{onClick}).
-After processing this statement, \textit{Events} would be added to the list of active modules, 
-and \textit{onClick} would be added to the list of active functions.
+\subsection{Extracting From Language Server}%
+The Language Server Protocol defines two methods for requesting information about the symbols in the project: \textit{Document Symbols} and \textit{Workspace Symbols}.
 
-\begin{example}[Complex Import]\label{ex:import}
-\begin{minted}{elm}
-import Html.Events as Events exposing (onClick)
+\paragraph{Document Symbols} retrieves information about symbols in the file currently being edited.
+The responses is a list of objects describing symbols with information about where it is in the file
+and what kind of symbol it is. Example~\ref{document_symbols_entry} shows the entry for the main function in an Elm program.
+\begin{example}[Document Symbols Entry]\label{document_symbols_entry}
+\begin{minted}{ json }
+{
+  "lnum": 16,
+  "col": 1,
+  "range": {
+    "end": { "character": 9, "line": 21 },
+    "start": { "character": 0, "line": 15 }
+  },
+  "level": 0,
+  "kind": "Function",
+  "containerName": null,
+  "text": "main"
+} 
 \end{minted}
 \end{example}
 
-\subsection{Spoken Identifier Algorithm}\label{spoken_identifier_algorithm}
-Describe convert a formatted identifier into a form recognizable by talon.
+\paragraph{Workspace Symbols} retrieves information about symbols and entire project.
+This also includes symbols in packages the project depends on.
+Because of this, LSB might eliminate the need to analyze documentation directly for some use cases.
+This is however not always the case as the workspace entries provides less information than the documentation.
+The entries are similar to those of the document symbols, but because there will be a lot more entries some
+information is left out (such as line number), and the kind uses an ID instead of the name.
+The location field also has a \textit{uri} which tells which file the symbols from.
+This can be used to determine the package and module the symbol is from.
+\begin{example}[Workspace Symbols Entry]
+\begin{minted}{json}
+{ 
+  "location": {
+  "uri":
+    "file:///<HOME>/.elm/0.19.1/packages/elm/json/1.1.3/src/Json/Encode.elm",
+  "range": {
+    "end": { "character": 93, "line": 169 },
+    "start": { "character": 0, "line": 167 }
+    }
+  },
+  "name": "array",
+  "kind": 12 
+}
+\end{minted} 
+\end{example}
 
-\subsection{Abbreviations}\label{abbreviations}
-peekCString->``P C S''. How does this relate to normal auto complete?
+\subsubsection{Integration}% this section needs more work
+Integrating with the language server is very simple, especially if the editor in question allows users to easily
+call functions from the plug-in that acts as the LSP client.
+Example~\ref{vim_lsp} shows how you can define a function that requests the workspace symbols from the server and saves the result
+to a file.
+\begin{example}[Simple Vim LSP integration]\label{vim_lsp}
+\begin{minted}{vim}
+function SaveWorkspaceSymbols()
+    let symbols = CocAction('getWorkspaceSymbols')
+    let symbols = json_encode(symbols)
+    let file = "/Users/gauteab/uio/master/thesis/workspaceSymbols.json"
+    call writefile([symbols], file)
+endfunction
+\end{minted}
+\end{example}
+This can easily be extended to a full integration with the system.
+
+\subsubsection{Limitations}
+While using the LSP for extracting identifiers is convenient, it will likely be insufficient in terms of feature completeness in some cases.
+The implementations for different languages vary greatly in how feature-rich they are, and not all language servers support document symbols and workspace symbols.
+Many servers are in active development so this is likely to change at some point.
+
+
+\subsection{Extracting With TreeSitter}
+Being a general purpose parsing system, TreeSitter easily enables arbitrary syntactic analysis.
+Once the parser for the given programming language has been acquired, getting the parse tree
+is very simple.
+Then one could simply traverse the tree and extract identifiers from the nodes directly.
+This approach is straightforward, but manually defining the traversal take some extra work.
+Using the Query API of TreeSitter, this can be greatly simplified.
+% This section shows how TreeSitter Queries can be used to extract identifiers from a Elm source file.
+
+\subsubsection{Using TreeSitter with Elm}
+The parser for Elm is available at \url{https://github.com/elm-tooling/tree-sitter-elm}
+and is also available as a npm package at \url{https://www.npmjs.com/package/tree-sitter-elm} for simple installation
+for projects using the \textit{Node.js} bindings.
+A simple Elm declaration like
+\begin{minted}{elm}
+greet name = 
+    "Hello " ++ name
+\end{minted}
+would be represented by the following TreeSitter S-expression:
+\begin{verbatim}
+(value_declaration functionDeclarationLeft: 
+ (function_declaration_left (lower_case_identifier) 
+  pattern: (lower_pattern (lower_case_identifier))) (eq) 
+    body: (bin_op_expr part: (string_constant_expr (open_quote) 
+     (regular_string_part) (close_quote)) part: 
+     (operator (operator_identifier)) part: 
+       (value_expr name: (value_qid (lower_case_identifier)))))
+\end{verbatim}
+Note that it is a quirk of this implementation that all terminals in the grammar are named.
+Therefore nodes like \textit{(eq)} and \textit{(open\_quote)} are included in
+the textual representation of the tree, and you cannot use the \textit{is\_named} function
+to identify terminals when traversing the tree in code.
+This is unlikely to be a problem, but if it is it can be resolved by a simple change in the grammar.
+
+The rest of this section will show how identifiers can be extracted from an Elm source file using TreeSitter Queries.
+
+\subsubsection{Types}
+The following query finds the name of all types available in the given file:
+\begin{verbatim}
+(exposed_type (upper_case_identifier) @type)
+(type_declaration (upper_case_identifier) @type)
+(type_alias_declaration (upper_case_identifier) @type)
+\end{verbatim}
+The query consists of three parts.
+Each of them matches an \textit{upper\_case\_identifier} and assigns to it the label \textit{type}.
+The first one finds types in import statements, and the second and third finds names from regular type declarations
+and type alias declarations respectively.
+
+\subsubsection{Constructors}
+Constructors can be extracted from type declarations with a simple query:
+\begin{verbatim}
+(union_variant) @constroctor
+\end{verbatim}
+This would extract the whole constructor including parameter types, which could be used to distinguish
+between callable constructors and constants.
+If one were only interested in the name of the contractor that could be extracted with the following query:
+\begin{verbatim}
+(union_variant (upper_case_identifier) @constroctor)
+\end{verbatim}
+
+\subsubsection{Values}
+As TreeSitter only enable syntactic analysis we cannot distinguish between functions and other values
+without implementing the Elm type system as part of that analysis.
+Due to the variable naming rules of elm, the values in the program can be extracted with a very simple query:
+\begin{verbatim}
+(lower_case_identifier) @value
+\end{verbatim}
+This is a very simple solution, but there might be need for a more granular query.
+For example, this query would match the last part of a qualified identifier like
+\begin{minted}{elm}
+Browser.sandbox
+\end{minted}
+as well as type variables.
+A more granular query can be made to only include the desired kinds of lowercase identifiers:
+\begin{verbatim}
+(function_declaration_left (lower_case_identifier) @value)
+(exposed_value) @value
+(lower_pattern) @value
+\end{verbatim}
+\textit{function\_declaration\_left} refers to the left-hand side of an assignment, so the first part of the query refers to the name of functions.
+The second part finds values in import statements, similarly as the first part of the type of query.
+The last part \textit{(lower\_pattern)} refers to variable names in pattern matching expressions as well as the parameters of function declarations.
+In the following declaration:
+\begin{minted}{elm}
+unwrap : Maybe value -> value
+unwrap maybeValue =
+    case maybeValue of
+        Just content ->
+            content
+        Nothing ->
+            Debug.todo "trying to unwrap nothing"
+\end{minted}
+the query would find \textit{unwrap}, \textit{maybeValue} and \textit{content}, but not \textit{value} or \textit{todo}.
+
+\subsubsection{Modules}
+Extracting module names can be done with a simple query like:
+\begin{verbatim}
+(import_clause 
+    (upper_case_qid (upper_case_identifier) @module))
+(import_clause 
+    (as_clause (upper_case_identifier) @module-alias))
+\end{verbatim}
+This would find all identifiers used in module names in the import statements as well as the module aliases from \textit{as clauses}.
+If one wanted to merge these two classes that could be achieved simply by renaming the \textit{module-alias} capture to \textit{module}.
+
+More advanced use cases needs to keep the connection between module aliases and the module from which it was created.
+For the system in question this is indeed the case because we want to use the alias as part of the command for dictating functions in that module.
+To achieve this one could simply extract the whole node containing the alias, and extract the relevant parts in code.
+A query like:
+\begin{verbatim}
+(import_clause (as_clause)) @import-with-alias
+\end{verbatim}
+will capture any import statement with an alias.
+Once this node has been retrieved you can access the relevant parts of the tree directly:
+\begin{minted}{js}
+module = node.children[1]
+alias = node.children[2].children[1]
+\end{minted}
+
+\subsubsection{Record Fields}
+Extracting record fields from record types is very simple:
+\begin{verbatim}
+(field_type (lower_case_identifier) @record-field)
+\end{verbatim}
+Since elm has anonymous record types, there might be situations where record fields are used
+without having been declared or imported.
+For example in the declaration
+\begin{minted}{elm}
+f {a, b} = a.c.d
+\end{minted}
+we can see from the record destructuring expression \textit{\{a, b\}} that \textit{a} and \textit{b} are both used as record fields,
+and from the field access expression \textit{a.c} we can see that \textit{c} and \textit{d} are also record fields.
+These two cases can be captured by the following query:
+\begin{verbatim}
+(record_pattern (_ (lower_case_identifier) @record-field))
+(field_access_expr (lower_case_identifier) @record-field)
+\end{verbatim}
+
+
+
+% \subsubsection{Imports}\label{imports}
+% Example~\ref{ex:import} shows an complex import statement which imports the \textit{Html.Events} module,
+% introduces an alias (\textit{Events}) and also import one of the members of the module (\textit{onClick}).
+% After processing this statement, \textit{Events} would be added to the list of active modules, 
+% and \textit{onClick} would be added to the list of active functions.
+% \begin{example}[Complex Import]\label{ex:import}
+% \begin{minted}{elm}
+% import Html.Events as Events exposing (onClick)
+% \end{minted}
+% \end{example}
+
+% \subsection{Spoken Identifier Algorithm}\label{spoken_identifier_algorithm}
+% Describe convert a formatted identifier into a form recognizable by talon.
+
+\section{Voice Command Optimization}
+Simply extracting identifiers should result in a significant improvement, but there are still some cases
+where the naïve commands generated as described above could be improved upon.
+This section will discuss a few methods for achieving higher accuracy and shorter voice commands.
+
+\subsection{Automatic Acronyms}\label{automatic_acronyms}
+If an identifier is very long, its name might not be the most efficient way to refer to it.
+An identifier like \textit{processAnalysisResults} consists of three words, but is eight syllables long.
+A common way to enter long identifiers is to rely on the auto complete feature of the editor.
+Entering ``p a r'' is usually sufficient to have the correct identifier as one of the top results for the auto-complete.
+Then the user would have to say the command used for triggering the auto-complete.
+This is a useful workaround for long identifiers with hard to pronounce words, but it takes extra time
+due to the user having to wait for the auto-complete to activate.
+This pattern of use can be subsumed by this system by generating acronyms for long identifiers.
+By splitting identifiers by words, taking the first letter of each word, and adding this as an extra key
+for that identifier, users should be able to dictate more complex identifiers in shorter amounts of time.
+% maybe discuss the structure of identifiers (with respect to how to split them)
+
+\subsection{Prefix Elimination}
+A common idiom in some programming languages is to have the start of an function name refer to the ``thing''
+or datatype on which it operates. This is mostly common in languages without user-defined name spaces such as \textit{C}
+, but is also common in higher-level languages when a few functions share a domain, but they do not warrant
+being move to their own module/package.
+For example, if you have two functions \textit{handleHttpConnection} and \textit{handleTcpConnection}, and no other
+functions/variables containing the name \textit{HttpConnection} or \textit{TcpConnection}, you might want to
+be able to refer to those functions using only the suffix (without the ``handle'' prefix).
+This would be a relatively minor optimization, but nevertheless worth considering.
 
 \subsection{Overrides}\label{overrides}
-todo->to do, init->in it
+Not all identifiers will be perfectly pronounceable.
+Programmers often use domain specific vocabularies filled with words not used in normal English.
+For example the word \textit{json} is actually an acronym for ``JavaScript Object Notation'', but is rarely
+pronounced ``J S O N''.
+People will pronounce it as either ``J son'' (or ``jay son''), or as the name ``Jason''.
+Talon can recognize the first version most of the time, but it might require more precise enunciation from the user.
+The name Jason is easily recognizable, so overriding the word json with Jason will give higher overall accuracy.
+A simple solution to this problem is to allow users to declare a list of overrides for which the system
+can do a simple lookup to make substitutions in the final stage of command generation like so:
+\begin{minted}{json}
+{ "overrides": 
+    { "json": "Jason" }
+} 
+\end{minted}
 
-\subsection{Local Bindings}%
-\label{sub:local_bindings}
-Should local bindings be handled differently from top level bindings?
 
+% TODO: Find example of words talon can't recognize
+
+% \subsection{Local Bindings}%
+% \label{sub:local_bindings}
+% Should local bindings be handled differently from top level bindings?
+
+\section{Code Navigation}%
+\label{sec:code_navigation}
+
+\section{Structural Editing}%
+\label{sec:structural_editing}
 
 \section{Design Goals}%
 \label{sec:design_goals}

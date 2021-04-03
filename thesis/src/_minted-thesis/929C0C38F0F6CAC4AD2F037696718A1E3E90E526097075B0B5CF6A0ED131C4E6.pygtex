@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+cm}{\PYGZob{}\PYGZhy{}| Swaps the elements of a tuple \PYGZhy{}\PYGZcb{}}
+\PYG{n+nv}{swap} \PYG{n+nf}{:} \PYG{p}{(}\PYG{n+nv}{a}\PYG{p}{,} \PYG{n+nv}{b}\PYG{p}{)} \PYG{n+nf}{\PYGZhy{}\PYGZgt{}} \PYG{p}{(}\PYG{n+nv}{b}\PYG{p}{,} \PYG{n+nv}{a}\PYG{p}{)}
+\PYG{n+nv}{swap} \PYG{p}{(}\PYG{n+nv}{a}\PYG{p}{,} \PYG{n+nv}{b}\PYG{p}{)} \PYG{n+nf}{=} \PYG{p}{(}\PYG{n+nv}{b}\PYG{p}{,} \PYG{n+nv}{a}\PYG{p}{)}
+\end{Verbatim}

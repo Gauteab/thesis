@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nv}{unwrap} \PYG{n+nf}{:} \PYG{k+kt}{Maybe} \PYG{n+nv}{value} \PYG{n+nf}{\PYGZhy{}\PYGZgt{}} \PYG{n+nv}{value}
+\PYG{n+nv}{unwrap} \PYG{n+nv}{maybeValue} \PYG{n+nf}{=}
+    \PYG{k+kr}{case} \PYG{n+nv}{maybeValue} \PYG{k+kr}{of}
+        \PYG{k+kt}{Just} \PYG{n+nv}{content} \PYG{n+nf}{\PYGZhy{}\PYGZgt{}}
+            \PYG{n+nv}{content}
+        \PYG{k+kt}{Nothing} \PYG{n+nf}{\PYGZhy{}\PYGZgt{}}
+            \PYG{k+kt}{Debug}\PYG{n+nf}{.}\PYG{n+nv}{todo} \PYG{l+s}{\PYGZdq{}trying to unwrap nothing\PYGZdq{}}
+\end{Verbatim}
