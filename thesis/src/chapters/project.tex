@@ -635,6 +635,8 @@ can do a simple lookup to make substitutions in the final stage of command gener
     { "json": "Jason" }
 } 
 \end{minted}
+The list of overrides can be partially filled automatically by extracting the list of abbreviations and homophones
+from the users Talon configuration files.
 
 
 % TODO: Find example of words talon can't recognize
@@ -645,22 +647,94 @@ can do a simple lookup to make substitutions in the final stage of command gener
 
 \section{Code Navigation}%
 \label{sec:code_navigation}
+Once information has been extracted from the program, enabling high-level navigation commands is quite simple.
+The following example shows how you could create talon commands that uses the classified identifiers
+to implement a simple grammar that allows for navigation that takes the type of the navigation target
+into account:
+\begin{verbatim}
+go to { user.symbol_identifier }:
+    user.symbol_navigate("{symbol_identifier}", "identifier")
+go type {user.symbol_type}:
+    user.symbol_navigate("{symbol_type}", "type")
+go fun {user.symbol_function}:
+    user.symbol_navigate("{symbol_function}", "function")
+\end{verbatim}
+The action \textit{symbol\_navigate} queries the server
+for the position of the identifier with name matching the first parameter, and type matching the second.
+It will then trigger \textit{editor\_go\_to\_position} which in the context of the current editor
+to the beginning of that symbol.
+
+Since we have access to the entire parse tree, it is also possible to navigate two nodes that
+are not associated with any given identifier.
+This would not be possible with an implementation that only uses LSP.
+\begin{verbatim}
+go import: user.symbol_navigate("", "import")
+go string: user.symbol_navigate("", "string")
+go number: user.symbol_navigate("", "number")
+\end{verbatim}
+
+\paragraph{Context aware navigation}
+can be achieved simply by exposing the cursor position to Talon.
+When a query is executed, the response from the server will be the node
+which is closest to the cursor. By also keeping track of
+the previous query and its results, you can also have
+the commands that cycle through results in order to quickly navigate
+when the query can capture multiple nodes.
+\begin{verbatim}
+go to next: user.go_to_next_result("forward")
+go to last: user.go_to_next_result("backward")
+\end{verbatim}
+% Given the following program snippet:
+% \begin{minted}{elm}
+% type Update
+%     = SoftwareUpdate
+%     | FirmwareUpdate
+
+% update : Msg -> Model -> Model
+% update msg model = ...
+% \end{minted}
+
 
 \section{Structural Editing}%
 \label{sec:structural_editing}
+Structural editing can easily be achieved by building upon the implementation of navigation.
+By implementing an action to select a given range in the editor, you can create commands
+that select nodes based on their type and associated identifiers in the same manner as with navigation.
+For example, to delete the typed declaration in Vim, you can create a command that captures the name of the type declaration,
+selects it, and presses ``d'' in order to delete it.
+\begin{verbatim}
+delete type {user.symbol_type}: 
+    user.symbol_select("{symbol_type}", "type")
+    key(d)
+\end{verbatim}
+Structural editing capabilities can be implemented either client-side, server-side, or in Talon.
+There are certainly trade-offs to each approach, but I will not go into detail on this issue.
+For the prototype the editing commands were implemented in Talon.
+
 
 \section{Design Goals}%
 \label{sec:design_goals}
-configurable, accuracy, intuitive/consistent (user should not have to look up the generated commands), 
-shortest commands possible
+% configurable, accuracy, intuitive/consistent (user should not have to look up the generated commands), 
+% shortest commands possible
 
 \section{Architecture}%
 \label{sec:architecture}
-editor<->my system<->talon
+The system consists in total of three parts: Talon scripts, The Server and a Vim extension (Client).
+The server is responsible for parsing source files and extracting information using TreeSitter,
+as well as performing normalization on the extracted identifiers in order to make them
+more recognizable before sending them to Talon.
+The Vim extension manages the window title which is used by Talon to track information about the
+current editor state such as current mode and cursor position. Additionally, it will notify
+the server whenever an Elm document is either opened, closed or written to.
+The talon scripts defines voice commands that utilizes the information received from the server
+and defines actions to query the server for information about a given identifier.
+An overview of the system can be seen in Figure~\ref{fig:architecture}.
+
+% TODO: make a nice figure
 
 \section{Implementation}%
 \label{sec:implementation}
-implementation details such as programming language etc
+% implementation details such as programming language etc
 
 \end{document}
 
