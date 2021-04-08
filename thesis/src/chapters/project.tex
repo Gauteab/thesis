@@ -712,8 +712,8 @@ There are certainly trade-offs to each approach, but I will not go into detail o
 For the prototype the editing commands were implemented in Talon.
 
 
-\section{Design Goals}%
-\label{sec:design_goals}
+% \section{Design Goals}%
+% \label{sec:design_goals}
 % configurable, accuracy, intuitive/consistent (user should not have to look up the generated commands), 
 % shortest commands possible
 
@@ -732,9 +732,40 @@ An overview of the system can be seen in Figure~\ref{fig:architecture}.
 
 % TODO: make a nice figure
 
-\section{Implementation}%
+\section{Implementation Details}%
 \label{sec:implementation}
+This section presents information about the prototype in it's current state as well as reasoning behing the tools and techniques used.
 % implementation details such as programming language etc
+\subsection{Tools}%
+\label{sub:tools}
+For the purpose of this prototype I chose to use TreeSitter because it provides full information about the program
+being analyzed, whereas LSP only exposes information about symbols which does not enable the use of
+syntactic elements such as literals and if expressions as navigation targets.
+
+\subsection{Programming Languages and Frameworks}
+The main consideration with regards to choice of programming language for the server of this project is the availability of high-level bindings to the TreeSitter library.
+Using the C library directly would also have been a possibility, but going with a higher level language will likely result in a more reliable result.
+Of the handful of languages that has this, the \textit{Node.js} seems to be one of the most stable and mature.
+In order to get static type safety, PureScript was chosen over the dynamically typed JavaScript.
+TypeScript could also have been used to accomplish this, but PureScript has a stronger type system.
+Additionally, PureScript being a pure functional language similar to Haskell provides even stronger runtime guarantees.
+\textit{HTTPure}, a HTTP framework for PureScript, was used to develop the server.
+
+\subsection{Platforms}
+The prototype is multiplatform and has been tested on MacOS (Catalina and BigSur), Linux (Ubuntu) and Windows 10.
+
+\subsection{Interprocess Communication}
+Talon does not currently have any officially recommended way of handling communication with external programs.
+There has been discussion of implementing some kind of RPC in Talon.
+Currently there are two ways the server can send commands to Talon.
+By using the \textit{Node.ChildProcess} API, the server can spawn an instance of the Talon REPL (\textit{~/.talon/.venv/bin/repl}).
+This server can then simply pipe an action into the REPL as a string.
+The other method is to write the action to be executed to a file that is being watched by Talon using the \textit{fs.watch}
+method. Whenever the file is written to, Talon will pick up on the change and execute action within that file.
+The latter is slower, but was used in the Windows implementation due to permissions issue executing the Talon REPL from within Windows Subsystem Linux (WSL).
+
+
+% \subfile{chart}
 
 \end{document}
 
