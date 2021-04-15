@@ -610,7 +610,7 @@ By splitting identifiers by words, taking the first letter of each word, and add
 for that identifier, users should be able to dictate more complex identifiers in shorter amounts of time.
 % maybe discuss the structure of identifiers (with respect to how to split them)
 
-\subsection{Prefix Elimination}
+\subsection{Prefix Elimination}\label{prefix_elimination}
 A common idiom in some programming languages is to have the start of an function name refer to the ``thing''
 or datatype on which it operates. This is mostly common in languages without user-defined name spaces such as \textit{C}
 , but is also common in higher-level languages when a few functions share a domain, but they do not warrant
@@ -730,7 +730,12 @@ The talon scripts defines voice commands that utilizes the information received 
 and defines actions to query the server for information about a given identifier.
 An overview of the system can be seen in Figure~\ref{fig:architecture}.
 
-% TODO: make a nice figure
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/architecture.png}
+    \caption{System Architecture}%
+    \label{fig:architecture}
+\end{figure}
 
 \section{Implementation Details}%
 \label{sec:implementation}
@@ -765,7 +770,194 @@ method. Whenever the file is written to, Talon will pick up on the change and ex
 The latter is slower, but was used in the Windows implementation due to permissions issue executing the Talon REPL from within Windows Subsystem Linux (WSL).
 
 
-% \subfile{chart}
+
+\subsection{Project Statistics}%
+\label{sub:project_statistics}
+This section briefly present some data about the implementation of the prototype.
+Table~\ref{tab:stats} shows the amount of code written per programming language.
+This is worth noting because it shows how much of the system is implemented in the different parts
+(Editor, Server and Talon).
+The same information is presented in Figure~\ref{fig:lang_dist}.
+Not included in these figures are the talon files that defines the grammar for the voice commands,
+and talon extensions written by other users that were slightly modified and extended such as the Vim integration from \url{https://github.com/fidgetingbits/knausj_talon
+}.
+
+% \begin{figure}[!ht]
+%   \label{distribution}
+%   \centering
+%   % \rule{6.4cm}{3.6cm}
+%   % \qquad
+%   \begin{tabular}{|c|c|c|}
+%       \hline
+%       Language&Files&Lines\\
+%       \hline
+%       PureScript&8&626\\
+%       Python&3&210\\
+%       JavaScript&6&32\\
+%       VimScript&1&31\\
+%       \hline
+%       Total&18&899\\
+%       \hline
+%   \end{tabular}
+%   \subfile{chart}
+%   % \captionlistentry[table]{A table beside a figure}
+%   \captionsetup{labelformat=andtable}
+%   \caption{Language Distribution}
+% \end{figure}
+
+\begin{table}[htpb]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Language&Files&Lines\\
+        \hline
+        PureScript&8&626\\
+        Python&3&210\\
+        JavaScript&6&32\\
+        VimScript&1&31\\
+        \hline
+        Total&18&899\\
+        \hline
+    \end{tabular}
+    \caption{Files and lines per language}
+    \label{tab:stats}
+\end{table}
+
+
+\begin{figure}[htpb]
+    \centering
+    \subfile{chart}
+    \caption{Language Distribution}%
+    \label{fig:lang_dist}
+\end{figure}
+
+This shows that the server is by far the biggest part of the project (PureScript + JavaScript),
+although a notable portion of this is the definition of the foreign function interface to TreeSitter (188 lines).
+Most notably however it shows that the editor plug-in for Vim was a very small part of the work
+which should serve as an indicator that implementing these features in other editors
+it will be quite simple.
+It also shows that the total amount of code needed to implement the features available in the prototype
+is quite low, which speaks volumes about the ease-of-use of both Talon and TreeSitter.
+
+
+% ===============================================================================
+%  Language            Files        Lines         Code     Comments       Blanks
+% ===============================================================================
+%  JavaScript             &6          &32          &26           &0           &6
+%  PureScript              8          626          442           82          102
+%  Python                  3          210          142           26           42
+%  VimScript               1           31           -             -            -
+% ===============================================================================
+%  Total                  18          899          610          108          150
+% ===============================================================================
+\section{Prototype Completeness}%
+\label{sec:prototype_completeness}
+This section outlines the future completeness of the final prototype with respect to
+the features discussed previously in this chapter.
+The source code for the prototype is publicly available at \url{https://github.com/Gauteab/talon-tree-sitter-service}.
+
+\paragraph{Identifier Extraction:}
+The current implementation only uses TreeSitter and is only able to work with a single file.
+If the user opens a different file, the identifiers will be overwritten.
+Ideally, the system would have one namespace further identifiers in the current file
+and one for the whole project.
+This is likely the biggest limitation of the current implementation.
+
+Currently the system creates Talon lists for functions and type declarations as well as one for all identifiers using the following query:
+\begin{verbatim}
+(lower_case_identifier) @identifier 
+(upper_case_identifier) @identifier
+(function_declaration_left (lower_case_identifier) @function)
+(exposed_value) @function
+(lower_pattern) @function
+(exposed_type (upper_case_identifier) @type)
+(type_declaration (upper_case_identifier) @type)
+(type_alias_declaration (upper_case_identifier) @type)
+\end{verbatim}
+More queries have been written, but due to an issue with the Windows bindings for TreeSitter
+that causes segmentation faults when the query string is too long, some of the queries
+were not included in the prototype.
+This can be fixed by splitting up the query string and running it as multiple queries.
+
+\paragraph{Structural Navigation:}
+Besides only being able to navigate within a single file, navigation is working very well.
+Users can navigate using the type of the target node to disambiguate in their commands.
+It is both possible to navigate to nodes with and without associated identifiers.
+The currently available navigation targets are:
+\begin{itemize}
+    \item identifier
+    \item type declaration
+    \item function/value declaration
+    \item import statement
+    \item string literal
+    \item number literal
+\end{itemize}
+
+
+\paragraph{Structural Editing:}
+The prototype only supports very basic structural editing;
+it is possible to select and delete functions and type declarations.
+The capabilities of the server however should be enough to implement
+more complicated editing commands such as moving nodes.
+
+\paragraph{Voice Command Optimization:}
+This chapter outlined three optimizations that could be made to maximize accuracy
+and minimize verbosity: \nameref{automatic_acronyms}, \nameref{prefix_elimination}, and \nameref{overrides}.
+Overrides has been fully implemented, while the other two are not implemented at all.
+These require more complicated analysis, but are realistically achievable given a bit more time.
+
+\section{Extending the System}%
+\label{sec:extending_the_system}
+The most important motivation for using TreeSitter was the availability
+of parsers for many different languages.
+This section outlines the steps required to add support for more languages and editors.
+Do note that some re-factoring of the current code base might be required
+to facilitate these changes.
+
+\subsection{Adding Languages}
+The steps required to add support for a new programming language are as follows:
+\begin{enumerate}
+    \item Install TreeSitter Parser
+    \item Write TreeSitter Queries
+    \item Add Language Specific Voice Commands
+\end{enumerate}
+The first step is very simple.
+For example, to add Python support simply use npm to install the parser from \url{https://www.npmjs.com/package/tree-sitter-python}.
+
+Writing queries is also quite simple, but requires some knowledge of the internal structure
+of the parse tree.
+There were two sets of queries: one for extracting identifiers, and a separate one
+used for navigational commands.
+For the most part writing these queries as a matter of mapping the names
+in from the parse tree to the name you want users to dictate.
+This process can be quite iterative; you only need a few queries to start using the system.
+
+Step three is technically optional, but is recommended to get the most efficient commands set for the new language.
+The existing commands should work as long as the new queries uses the same names as the ones currently implemented.
+
+\subsection{Adding Editors}%
+\label{sec:adding_editors}
+As stated earlier, the vim plug in is very small should be easy to reproduce in a different editor.
+There are two steps to making the system work in a different editor:
+\begin{enumerate}
+    \item Notify the server on file save
+    \item Implement the editor actions for that context
+\end{enumerate}
+Notifying the server is done by making a HTTP call to the \textit{document-open} address with the filename.
+There are currently three editor actions:
+\begin{itemize}
+    \item editor\_go\_to\_position(row: int, column: int)
+    \item editor\_select\_range(line1: int, column1: int, line2: int, column2: int)
+    \item editor\_get\_cursor\_position()
+\end{itemize}
+These are used for implementing navigation, editing and context awareness respectively.
+It is not necessary to implement all of them.
+
+
+
+
+
+
 
 \end{document}
 
