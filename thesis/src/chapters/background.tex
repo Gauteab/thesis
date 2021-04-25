@@ -7,10 +7,10 @@ In this section I will cover the history of voice coding (Dragon, NatLink, Drago
 as well as the state of the art language tooling. (LSP and TreeSitter).
 I will also cover something about the Elm programming language, as I will be using that in my analysis.
 
-\section{Accessibility}%
-\label{sec:accessibility}
+% \section{Accessibility}%
+% \label{sec:accessibility}
 
-\section{History of Voice Coding}
+\section{Voice Coding}
 
 \paragraph{Dragon NaturallySpeaking}
 The worlds first large-vocabulary general purpose dictation system.
@@ -93,14 +93,166 @@ Not sure how much detail is appropriate here, but could be a source for a lot of
 Possible subjects: Parsing, type checking/inference, scopes, etc.
 
 \section{Language Server Protocol}
-Client-server based approach to reuable language IDE features.
-I'll compare this to the traditional IDE approach (Eclipse / Intellij)
-and discuss how this can be used by other tools than editors.
+Programmers today expect more of their code editing software than the ability to edit text.
+Integrated Development Environments (IDE) such as \textit{Intellij} and \textit{Eclipse} support many language specific features such as \textit{go to definition}, \textit{re-factoring}
+and displaying where the errors are in the program.
+Implementing these features take significant effort as they require the implementation of a large portion of the language front-end.
+This makes it very difficult for a new language to gain support across different IDEs.
+The solution is to decouple the language support from the editors by moving to code that does program analysis to an external program (server).
+The Language Server Protocol defines how these servers communicate with code editors.
+
+\subsection{Client/Server Communication}%
+\label{sub:client_server_communication}
+Clients (editors) and servers communicate over JSON-RPC, which is a remote procedure call protocol encoded in JSON.
+This allows clients to notify servers without having to wait for a response, on the server can respond to multiple requests asynchronously.
+Messages between the server and client will have the following form:
+\begin{Verbatim}
+Content-Length: ...\r\n
+\r\n
+{
+	"jsonrpc": "2.0",
+	"id": 1,
+	"method": "textDocument/didOpen",
+	"params": {
+		...
+	}
+}
+\end{Verbatim}
+An illustration of how clients and servers communicate during a normal editing session can be seen in Figure~\ref{fig:lsp-communication}
+\footnote{\url{https://microsoft.github.io/language-server-protocol/overviews/lsp/overview/}}.
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=1\linewidth]{images/lsp-communication.png}
+    \caption{Example Communication During Editing Session}%
+    \label{fig:lsp-communication}
+\end{figure}
+
+\subsection{Editor Plugins}%
+\label{sub:editor_plugins}
+
+
+
+% Client-server based approach to reuable language IDE features.
+% I'll compare this to the traditional IDE approach (Eclipse / Intellij)
+% and discuss how this can be used by other tools than editors.
 
 \section{TreeSitter}
-TreeSitter is a system for incremental parsing developed by GitHub.
-It was conceived as a solution to the problem of instant semantic syntax highlighting,
+Tree-sitter is a parser generator tool and an incremental parsing library developed by GitHub.~\parencite{WinNT}
+It was conceived as a solution to the problem of quick semantic syntax highlighting,
 but is also used in the implementation of some language servers.
+An incremental parser is one that can update the parse tree without having to re-parse the entire
+file with each modification.~\parencite{incremental}.
+Parser produced by TreeSitter are failure tolerant, which means that the parser will not instantly reject
+programs with syntax errors.
+This is a crucial feature for editors because the programs being analyzed
+are in an incomplete state a large portion of the time.
+
+There currently parsers written for many different languages.
+Because TreeSitter provides such excellent syntax highlighting, developers are incentivized
+to create and maintain parser for their language, even if the language
+uses a different parser for the compiler.
+TreeSitter can therefore be used as a common parsing framework for any tool that need to
+handle many different programming languages.
+
+\subsection{Libraries and Bindings}%
+\label{sub:libraries_and_bindings}
+TreeSitter produces parsers in pure \textit{C}.
+Documentation for the C API can be found on the official website.
+There are also bindings to the C API for a few different languages.
+The official TreeSitter repository include bindings for \textit{Rust}, as well as
+JavaScript (Web Assembly and NodeJS), Python, Ruby and Haskell.
+The bindings for Rust are the most mature and well-documented.
+Out of the other bindings, the ones for JavaScript and Python are the most complete.
+% mention that Ruby and Haskell does not have a query support?
+
+\subsection{Using Parsers}%
+\label{sub:using_parsers}
+To use TreeSitter, simply install the library along the individual parsers for each language you would like to parse.
+This process varies depending on which bindings that are being used.
+For the NodeJS bindings, both the library and parser can be installed via NPM:
+\begin{minted}{bash}
+npm install tree-sitter
+npm install tree-sitter-javascript
+\end{minted}
+The following JavaScript program uses TreeSitter to parse a JavaScript program and simply print the parse tree
+as an S-expression:
+\begin{minted}{JavaScript}
+const Parser = require('tree-sitter');
+const JavaScript = require('tree-sitter-javascript');
+
+const parser = new Parser();
+parser.setLanguage(JavaScript);
+
+const sourceCode = 'x = 5';
+const tree = parser.parse(sourceCode);
+
+console.log(tree.rootNode.toString());
+\end{minted}
+The result of running the above program is the following expression:
+\begin{Verbatim}
+(program 
+  (expression_statement 
+    (assignment_expression 
+      left: (identifier) 
+      right: (number))))
+\end{Verbatim}
+
+The website also provides an interface for interacting with the library
+that visualizes the parse tree as the program changes (\url{https://tree-sitter.github.io/tree-sitter/playground}).
+The same example as above can be seen in Figure~\ref{fig:playground}. 
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/playground.png}
+    \caption{TreeSitter Playground}%
+    \label{fig:playground}
+\end{figure}
+
+\subsection{Queries}%
+\label{sub:queries}
+TreeSitter provides an API for extracting pieces of a program that matches the patterns within a given query.
+This makes it very simple to use TreeSitter to find and analyze parts of a program without having to manually
+traverse the parse tree.
+Query patterns are written as \textit{S-expressions} where the first element within the parentheses
+is the type of node to match on, followed by zero or more patterns for the children of that node.
+The following query consist of a single pattern that will match in a binary expression were both operands are number literals
+such as \textit{1 + 2}, but not \textit{``hello '' + ``world''}:
+\begin{verbatim}
+(binary_expression (number) (number))
+\end{verbatim}
+
+Children of a particular node might have \textit{field names} assigned to them 
+which can be used in the pattern.
+For example, to match on binary expressions where the left-hand side is a number literal
+one might write a query like:
+\begin{verbatim}
+(binary_expression left: (number))
+\end{verbatim}
+
+Captures can be introduced to store and organize the results of the query.
+The following query would find all identifiers that occur on the left-hand side of an assignment,
+and let you refer to them through the name \textit{declared-variable}:
+\begin{verbatim}
+(assignment_expression left: (identifier) @declared-variable)
+\end{verbatim}
+
+Predicates allow query results to be filtered based on the value of the captured variables.
+This makes TreeSitter queries a convenient way of searching for specific nodes in a program.
+In addition to the \textit{\#eq?} predicate for checking equality, there is the \textit{\#match?} predicate
+to match by regular expressions.
+The following query will find all occurrences of assigning a value to the a variable ``x'':
+\begin{Verbatim}
+(
+ (assignment_expression left: (identifier) @declared-variable)
+ (#eq? @declared-variable "x")
+)
+\end{Verbatim}
+
+The query API is quite expressive and supports more featured than covered in this section.
+For more information, see 
+\url{https://tree-sitter.github.io/tree-sitter/using-parsers#pattern-matching-with-queries}.
+
+
 
 \section{Elm}\label{sec:elm}
 In this thisis I will be using Elm as the subject of the alysis.

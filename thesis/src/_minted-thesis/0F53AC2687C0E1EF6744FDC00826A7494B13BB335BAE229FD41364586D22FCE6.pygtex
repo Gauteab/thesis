@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{const} \PYG{n+nx}{Parser} \PYG{o}{=} \PYG{n+nx}{require}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}tree\PYGZhy{}sitter\PYGZsq{}}\PYG{p}{);}
+\PYG{k+kr}{const} \PYG{n+nx}{JavaScript} \PYG{o}{=} \PYG{n+nx}{require}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}tree\PYGZhy{}sitter\PYGZhy{}javascript\PYGZsq{}}\PYG{p}{);}
+
+\PYG{k+kr}{const} \PYG{n+nx}{parser} \PYG{o}{=} \PYG{k}{new} \PYG{n+nx}{Parser}\PYG{p}{();}
+\PYG{n+nx}{parser}\PYG{p}{.}\PYG{n+nx}{setLanguage}\PYG{p}{(}\PYG{n+nx}{JavaScript}\PYG{p}{);}
+
+\PYG{k+kr}{const} \PYG{n+nx}{sourceCode} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}x = 5\PYGZsq{}}\PYG{p}{;}
+\PYG{k+kr}{const} \PYG{n+nx}{tree} \PYG{o}{=} \PYG{n+nx}{parser}\PYG{p}{.}\PYG{n+nx}{parse}\PYG{p}{(}\PYG{n+nx}{sourceCode}\PYG{p}{);}
+
+\PYG{n+nx}{console}\PYG{p}{.}\PYG{n+nx}{log}\PYG{p}{(}\PYG{n+nx}{tree}\PYG{p}{.}\PYG{n+nx}{rootNode}\PYG{p}{.}\PYG{n+nx}{toString}\PYG{p}{());}
+\end{Verbatim}
