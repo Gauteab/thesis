@@ -1,7 +1,5 @@
 \documentclass[../thesis.tex]{subfiles}
 
-\begin{document}
-
 \chapter{Results}\label{results}
 This chapter presents the results of the study
 which will be used to evaluate
@@ -104,10 +102,54 @@ which is repetitive and make the voice control feel low-level and verbose.
     \caption{Word Cloud of Challenges}%
     \label{fig:challenges_cloud}
 \end{figure}
-\end{document}
 
 \section{Usability Test}%
 \label{sec:usability_test}
+Participants were given a list of example commands to try to execute
+while I observed the response of the system.
+The usability test showed that the system worked very well.
+Participants were able to navigate and edit code
+seamlessly after less than fifteen minutes of usage.
+Dictation capabilities were somewhat limited in the current prototype,
+but dictation of type signatures worked quite well aside from the issue discussed in Section~\ref{sub:engine_differences}.
+
+\subsection{How Well Did Participants Understand the System?}%
+\label{sub:how_well_did_participants_understand_the_system_}
+Participants were able to understand the system very quickly.
+Some of the more experienced participants were already familiar with structural editing
+and concepts in programming languages, and were able to spot
+some of the more subtle features such as when navigating to a string
+, it would skip strings within comments.
+The less experienced participants did however not have any issues
+understanding the concepts once pointed out to them.
+
+
+
+
+\subsection{Engine Differences}%
+\label{sub:engine_differences}
+Users of the \textit{Conformer} speech engine ran into an issue when dictating the
+\textit{Msg} type.
+The system had only been tested with \textit{Dragon} which happened to be able to
+recognize ``msg'' as ``message''.
+This could have been avoided by adding (msg, message) to the list of overrides,
+as was done with \textit{init}.
+When generating voice commands for talon it is important to
+test with multiple speech engines to make sure that the system is not relying
+on any special features of any particular engine.
+
+\subsection{User Experience Considerations}%
+\label{sub:user_experience_considerations}
+P6 brought up a potential issue with deleting nodes that are currently off screen.
+The execution of the command happens very fast and involves multiple actions
+that caused the text on screen to shift.
+This can be surprising to new users, but most importantly
+it is difficult to verify visually that the commanded what it was supposed to do.
+With voice control the risk of commands being misrecognized is always present, 
+so this must be accounted for by making sure the user can see what's going on.
+The participants suggests adding a delay between navigating to, and deleting
+a node that is far away.
+
 
 
 
@@ -193,6 +235,19 @@ and editors.
 P2, P4 and P5 expressed interest in contributing to the project
 if I was interested in working on it after the thesis is finished.
 P3 stated they would like to see the finished thesis.
+
+\section{Assessment of Tools}%
+\label{sec:assessment_of_tools}
+The main tool used for implementation of this prototype was TreeSitter
+, while LSP and Regular Expressions were not used.
+TreeSitter proved to be an excellent tool for this task due to its error robustness,
+performance\footnote{The system was not tested with very large files (See Limitations TODO)} and support for multiple languages.
+The Query API enabled a large portion of the backend logic
+to be agnostic of the language being analyzed which makes the system
+much easier to extend.
+The prototype developed for this project shows that TreeSitter can
+easily be used to enable high-level syntactic analysis for external systems
+such as Talon.
 
 
 

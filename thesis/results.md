@@ -79,6 +79,8 @@ dictating variable names, misrecognition, homophones, vocal strain
 > verbose commands: 1
 
 # User Testing
+installation issues: p1
+
 
 
 # Post Questions
