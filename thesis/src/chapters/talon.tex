@@ -193,11 +193,10 @@ normal English.
 % \subsection{Using The Terminal}
 % An essential part of the programming workflow. The terminal is accessible by default due to its text oriented interface.
 
-\section{Dealing With Homophones}\label{dealing_with_homophones}
-Here I will discuss how talon deals with homophones.
 
 \section{Writing Voice Commands with Talon}\label{wvc}
-This section covers some of the key concepts in Talon programming.
+This section covers some of the key concepts in Talon programming necessary to
+create the reusable and accurate voice commands.
 As previously mentioned, Talon is configured using Python and \textit{.talon} files.
 The talon files are used to define voice commands and implement \textit{Actions}, while Python is used to
 define \textit{Modules}, \textit{Contexts}, \textit{Actions}, \textit{Lists}.
@@ -224,7 +223,8 @@ The body is a sequence of actions and strings of text to be inserted.
     \end{tabular}
     \caption{Syntax of Rules}
 \end{table}
-
+Voice commands can be made specific to certain contexts by using the context header.
+This can be used to make certain commands sets only work within certain applications or operating systems. 
 % context Heather
 
 \paragraph{Modules}
@@ -277,14 +277,98 @@ class code_actions:
         actions.insert(text + " ")
 \end{minted}
 
+\paragraph{Lists}
+creates a group of string with associated spoken forms that can be used in voice commands.
+Lists can also be overwritten in different contexts in order to create grammars that are reusable
+with different vocabularies.
+Another key feature of Talon lists is that they can be updated during runtime which enables voice commands to have dynamic vocabularies.
+Lists are declared on a module and implemented on contexts.
+For example, this is used to create a generic grammar for invoking known functions.
+By first declaring a list for functions:
+\begin{minted}{Python}
+module.list('function', desc='Functions')
+\end{minted}
+the list can then be populated in the individual contexts:
+
+\begin{minipage}{0.5\textwidth}
+\begin{minted}{python}
+# elm.py
+ctx.lists['user.function'] = {
+    "print": "Debug.log",
+    "list map": "List.map"
+}
+\end{minted}
+\end{minipage}
+\vline
+\begin{minipage}{0.5\textwidth}
+\begin{minted}{python}
+# javassript.py
+ctx.lists['user.function'] = {
+    "print": "console.log",
+    "to string": ".toString"
+}
+\end{minted}
+\end{minipage}
+This creates a list where the function vocabulary differs depending on the language.
+Notice that the word ``print'' refers to different functions depending on the current language context,
+which can allow users to work on a higher level of abstraction across languages.
+The final voice command can look something like this:
+\begin{verbatim}
+call {user.function}: user.invoke_function(function) 
+\end{verbatim}
+
+\paragraph{Captures}
+can parse parts of a user spoken phrase in a voice command.
+These can be used day implement reusable pieces of a grammar.
+There are a few built-in ones the capture user input as is, such as \textit{<phrase>} and \textit{<word>}, 
+and it is also possible to create custom captures.
+The following example defines a capture that matches a sequence of one or more spoken letters
+and joins them together.
+\begin{minted}{Python}
+@mod.capture(rule="{self.letter}+")
+def letters(m) -> str:
+    "Multiple letter keys"
+    return "".join(m.letter_list)
+\end{minted}
 
 
+% \begin{listing}[ht]
+% \begin{minted}{Python}
+%     #test
+% \end{minted}
+% \caption{Example from external file}
+% \label{listing:3}
+% \end{listing}
 
 
-% \subsection{Rules}
-% \subsection{Actions}
-% \subsection{Contexts}
-% \subsection{Dynamic Lists}\label{dynamic_lists}
+\section{Dealing With Homophones}\label{dealing_with_homophones}
+% Here I will discuss how talon deals with homophones.
+As previously discussed, homophones are huge issue for vocal programmers, 
+so it's important to have techniques that alleviates this issue.
+The \textit{knausj\_talon} command set comes with a list of homophones that the user can extend
+as they discover more words that often conflict for them.
+Saying the word ``phones'' followed by award in the list of homophones a menu is brought up
+from which the user can choose which interpretation of the word they intended.
+It also supports command ``phones that'' to replace the currently selected word with one of its homophones.
+This is convenient for correcting mistakes and for dictating words you don't use very often, but it's a bit slow.
+
+Quite frequently there are homophone groups where you only use one of the words in the group often.
+To address this issue, knausj has a system for specifying a user vocabulary
+of words that are prioritized when the engine can recognize a phrase in multiple ways.
+This is accomplished by creating a capture that matches element in the vocabulary list, or any phrase:
+\begin{minted}{Python}
+@mod.capture(rule="({user.vocabulary} | <phrase>)+")
+def text(m) -> str: return format_phrase(m)
+\end{minted}
+
+The problem with this approach is that it works globally, and therefore affects
+how speech is recognized in every context.
+When programming, it would be best if the speech engine would prioritize recognizing
+words are part of identifiers already seen in the program.
+In Chapter~\ref{the_project}, I will be presenting a full solution to this problem
+based on the techniques that were just discussed.
+
+
 
 % \section{Editor Integration}
 % Here I will cover how Talon can be integrated with Vim and IntelliJ, and also cover how to edit text without editor integration.

@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{module}\PYG{o}{.}\PYG{n}{list}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}function\PYGZsq{}}\PYG{p}{,} \PYG{n}{desc}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}Functions\PYGZsq{}}\PYG{p}{)}
+\end{Verbatim}

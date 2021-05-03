@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+ \PYG{c+c1}{\PYGZsh{} elm.py}
+ \PYG{n}{ctx}\PYG{o}{.}\PYG{n}{lists}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}self.function\PYGZsq{}}\PYG{p}{]} \PYG{o}{=} \PYG{p}{\PYGZob{}}
+     \PYG{l+s+s2}{\PYGZdq{}print\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Debug.log\PYGZdq{}}\PYG{p}{,}
+     \PYG{l+s+s2}{\PYGZdq{}list map\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}List.map\PYGZdq{}}
+ \PYG{p}{\PYGZcb{}}
+\end{Verbatim}

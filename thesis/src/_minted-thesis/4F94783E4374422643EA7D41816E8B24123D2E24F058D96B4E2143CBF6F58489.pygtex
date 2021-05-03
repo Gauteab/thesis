@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nd}{@mod.capture}\PYG{p}{(}\PYG{n}{rule}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}\PYGZob{}self.letter\PYGZcb{}+\PYGZdq{}}\PYG{p}{)}
+\PYG{k}{def} \PYG{n+nf}{letters}\PYG{p}{(}\PYG{n}{m}\PYG{p}{)} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n+nb}{str}\PYG{p}{:}
+    \PYG{l+s+s2}{\PYGZdq{}Multiple letter keys\PYGZdq{}}
+    \PYG{k}{return} \PYG{l+s+s2}{\PYGZdq{}\PYGZdq{}}\PYG{o}{.}\PYG{n}{join}\PYG{p}{(}\PYG{n}{m}\PYG{o}{.}\PYG{n}{letter\PYGZus{}list}\PYG{p}{)}
+\end{Verbatim}
