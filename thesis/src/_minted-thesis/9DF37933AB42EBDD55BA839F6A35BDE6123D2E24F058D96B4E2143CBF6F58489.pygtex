@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{from} \PYG{n+nn}{talon} \PYG{k+kn}{import} \PYG{n}{Module}
+\PYG{n}{module} \PYG{o}{=} \PYG{n}{Module}\PYG{p}{()}
+\end{Verbatim}

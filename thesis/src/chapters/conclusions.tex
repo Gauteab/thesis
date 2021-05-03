@@ -1,0 +1,82 @@
+\documentclass[../thesis.tex]{subfiles}
+
+\chapter{Conclusions and future work}%
+\label{cha:conclusions_and_future_work}
+
+In this thesis I have presented a working prototype
+of an extension to Talon that can increase the efficiency of vocal programmers
+, along with a user study to evaluate its effectiveness
+in achieving this task.
+
+\paragraph{}
+
+The research questions were aimed at discovering
+tools that can be used to make vocal programming
+more efficient and high-level.
+This was achieved using TreeSitter, which proved to be an excellent tool
+for this task.
+Particularly the Query API made it very easy to extract
+relevant pieces of a program.
+LSP was also demonstrated to show great promise, but was not integrated
+into the prototype.
+
+\paragraph{}
+
+The response from users of Talon indicates that
+the prototype was indeed useful in addressing
+some of the challenges they were experiencing
+with programming by voice.
+Users were particularly impressed by the navigational features.
+The structural editing capabilities
+made editing less repetitive, and exposing
+symbols to Talon made code dictation faster and more accurate.
+
+\section{Future Work}%
+\label{sec:future_work}
+The field of vocal programming is severely underrepresented
+in academic research.
+Advancements in this field can significantly
+improve the lives of the increasingly many
+developers with RSI and/or physical disabilities.
+This section outlines a few topics that would be interesting
+to research further.
+
+\paragraph{Comparison of vocal programming systems:}
+Talon is not only advanced voice control system available.
+It would be very useful for researchers approaching the field
+to have an overview of what is available
+and what the differences are between the systems.
+This could also help encourage collaboration
+between the maintainers of these projects, which will
+drive advancements in the field even further.
+
+\paragraph{Structural editing with TreeSitter:}
+The system presented in this thesis
+used TreeSitter to implement structural editing commands
+with voice control.
+However as previously stated, the editing capabilities
+were somewhat rudimentary and it would be interesting to see
+how far this technology can be pushed to replicate the features
+of structural editors in a normal text editor.
+For example, the idea of ``holes''~\parencite{omar2019live} was not explored
+in this thesis.
+
+\paragraph{Effect on learning curve:}
+While the system was designed primarily with expert users in mind,
+as one participant noted, some of the features
+might be even more beneficial for novice users.
+This is because the high-level commands should be
+easier to remember and more intuitive.
+A study on the effects this extension has
+on the learning curve for new users could help shape
+future design.
+
+% \section{Comparison of Voice Programming Systems}
+% \section{Who benefits the most from structural navigation?}
+% Noivice vs experts? One user noted they thing the system would benefit beginners a lot due to the reduced cognitive load.
+% \section{Understanding users mental model of programs}
+% How easy is it to grasp the idea of ``nodes'' in a program?
+% \section{Voice Command Cost Model}\label{cost_model}
+% generate grammar from grammar.json???
+% Limitation: need more participants with less experience with programming
+

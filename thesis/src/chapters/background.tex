@@ -3,40 +3,68 @@
 \begin{document}
 
 \chapter{Background}\label{background}
-In this section I will cover the history of voice coding (Dragon, NatLink, Dragonfly, Caster etc\ldots)
-as well as the state of the art language tooling. (LSP and TreeSitter).
-I will also cover something about the Elm programming language, as I will be using that in my analysis.
+This chapter presents the background and theory relevant to this thesis.
+First I will give a brief introduction to the field of vocal programming
+and some of the challenges associated with it.
+Second, the tools and techniques that will be used
+to address these challenges will be presented.
+Lastly, there will be an introduction to the Elm
+programming language, which will be the subject
+of the experiments presented in Chapter~\ref{the_project}.
+% In this section I will cover the history of voice coding (Dragon, NatLink, Dragonfly, Caster etc\ldots)
+% as well as the state of the art language tooling. (LSP and TreeSitter).
+% I will also cover something about the Elm programming language, as I will be using that in my analysis.
 
 % \section{Accessibility}%
 % \label{sec:accessibility}
 
-\section{Voice Coding}
+\section{Vocal Programming}
+
+Vocal programming is a complex field with many interesting challenges.
+Users Need to be able to dictate and edit code, navigate files
+, as well as being able to performed a plethora
+of other tasks such as compiling and running the code in using version control.
+This section provides a brief introduction, while Chapter~\ref{talon}
+provides a more in-depth explanation to how people are using Talon to program.
+
+\subsection{History}
 
 \paragraph{Dragon NaturallySpeaking}
-The worlds first large-vocabulary general purpose dictation system.
+was the worlds first large-vocabulary general purpose dictation system.
 Dragon is in many ways the foundation for many of tools like Talon.
 Some voice systems use it as just a speach engine, but it also provides other functionality like mouse control.
 Available for mac and windows, but discontinued for mac.% when??
 The mac version is still available on eBay, and still works. % maybe something here about the download stuff.
 
-\paragraph{NatLink}
+\paragraph{NatLink:}
 While dragon alone is a very powerful dictation system, it's customization ability is limited.
 Dragon does provide a simple scripting language in the pro edition, but it has very limited capabilities compared to
 moden general purpose scripting languages.
 In 1999, NatLink was developed to solve this problem. It is a macro system for dragon which lets the user write macros that can be triggered by voice commands
-in python.~\parencite{gould2001implementation}
-Later on, more high level APIs were built on top on natlink such as dragonfly and caster. % Not really precise. Need to look into history here.
+in Python~\parencite{gould2001implementation}.
+Later on, more high level APIs were built on top on natlink such as Dragonfly. % Not really precise. Need to look into history here.
 
-\paragraph{Dragonfly}
-Higher-level scripting api on top of natlink.
+\paragraph{}
+These technologies heavily influenced modern voice control systems such as Talon,
+many of which still support Dragon as the speech recognition engine.
+In 2013, Travis Rudd held a talk at pycon demonstrating the power
+of vocal programming\footnote{Using Python to Code by Voice: \url{https://www.youtube.com/watch?v=8SkdfdXWYaI}}.
+This talk was very influential and was for many people
+their first exposure to the field.
 
-\paragraph{Caster}
-Another layer on top of dragonfly. Not totally sure if worth discussing.
 
-\paragraph{VoiceCode}
-Seems like this was a popular dictation system at some point. There are papers on it, so might be worth discussing.
 
-\section{Dictation}
+
+% \paragraph{Dragonfly}
+% Higher-level scripting api on top of natlink.
+
+% \paragraph{Caster}
+% Another layer on top of dragonfly. Not totally sure if worth discussing.
+
+% \paragraph{VoiceCode}
+% Seems like this was a popular dictation system at some point. There are papers on it, so might be worth discussing.
+
+\subsection{Dictation}
 Dictation, in this context, is the act of speaking phrases into a microphone and have those phrases translated into text.
 This is made possible by a technique called \textit{Speech Recognition} which combines techniques from natural language processing
 and signal processing. The soundwaves from the user is captured by the microphone, processed, and sent off to a machine learning algorithm
@@ -58,14 +86,14 @@ Dictation works better when the user speaks in full sentences, as opposed to sin
 Users will therefore have to learn to plan out their sentences before starting to speak.
 This can feel very different from the experience of typing on a keyboard, but it is a challenge that is surmountable by practice.
 
-\paragraph{Command First vs Data First}
-Two different dication strategies.
-Command first = Output only triggered when a command is triggered by speaking a particular phrase.
-Data first = The user can speak without keywords. The system should infer capitalization and punctuation.
-Here i will describe the tradeoff between these two.
+% \paragraph{Command First vs Data First}
+% Two different dication strategies.
+% Command first = Output only triggered when a command is triggered by speaking a particular phrase.
+% Data first = The user can speak without keywords. The system should infer capitalization and punctuation.
+% Here i will describe the tradeoff between these two.
 
 \paragraph{Homophones}
-A homophone is a word that sound the same as another word, but have different meaning.
+are words that sound the same as another word, but have different meaning.
 These groups of words may be spelled the same or differently.
 For example, ``rose'' may refer to the past tense of rise, or the flower.
 The word ``pair'' is \textit{homophonic} to ``pear'', and ``pare''.
@@ -86,11 +114,40 @@ spoken one at a time.
 There are however techniques for alleviating this problem, which will be discussed in the section on~\nameref{dealing_with_homophones}
 
 
+\section{Structural Editing}
+Structural editing is a technique used by some code editors to allow users to directly manipulate the underlying structure of the program.
+Computer programs typically have a textual representation that is readable both by humans and compilers.
+When a compiler reads a program, the text is converted to a datatype known as the Abstract Syntax Tree (AST), during the parsing phase.
+The AST contains all the information about the program necessary to produce the executable output program.
+When modifying a program the desired outcome is always the correct change in the underlying AST, however it is not always
+trivial to map of single text transformation to a transformation on the AST.
+One of the goals of structural editing is to allow users to work on a higher abstraction level.
+Another is to reduce the amount of invalid states the program needs to go through
+before the desired modification is completed.
+For this reason it is a popular technique in editors designed specifically for beginners.
+One very well-known example is ``Scratch'' which is an educational tool for teaching children to code.
+It provides a drag-and-drop interface enriched with visual cues that makes it easy to
+put together structurally valid programs.
+Scratch is an example of a purely structure oriented code editor.
+It does not provide enter text based interface to the language.
+There are also hybrid approaches that adds a structural layer on top of a normal textbased editor.
+These editors are sometimes referred to as structure-aware editors.
 
-\section{PL Theory}
-As much of the work is related to analysing programs, I should cover some general stuff abuut languages.
-Not sure how much detail is appropriate here, but could be a source for a lot of content.
-Possible subjects: Parsing, type checking/inference, scopes, etc.
+\paragraph{}
+
+Despite having some clear advantages over traditional textbased editors, structural editors are not commonly used among professional developers.
+One reason for this is that the editors that are popular today have many years of engineering behind them.
+There are no structural editors that come close in the amount of features or polish to that of IntelliJ, VSCode or Vim.
+Structural editor still have unresolved issues in their design that needs to be addressed before they will see commercial use.
+One example of a more advanced structural editor is
+``Deuce'', which is a structure-aware editor developed as part of a research project at the University of Chicago~\parencite{deuce}.
+It suggests a hybrid approach that addresses some of the problems with current textbased work-flows.
+% I will be using this as a reference for what the modern structural editor might look like.
+
+% \section{PL Theory}
+% As much of the work is related to analysing programs, I should cover some general stuff abuut languages.
+% Not sure how much detail is appropriate here, but could be a source for a lot of content.
+% Possible subjects: Parsing, type checking/inference, scopes, etc.
 
 \section{Language Server Protocol}
 Programmers today expect more of their code editing software than the ability to edit text.

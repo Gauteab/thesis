@@ -1,0 +1,15 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{from} \PYG{n+nn}{talon} \PYG{k+kn}{import} \PYG{n}{Context}\PYG{p}{,} \PYG{n}{actions}
+
+\PYG{n}{context} \PYG{o}{=} \PYG{n}{Context}\PYG{p}{()}
+\PYG{n}{context}\PYG{o}{.}\PYG{n}{matches} \PYG{o}{=} \PYG{l+s+sa}{r}\PYG{l+s+s2}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+s2}{mode: user.elm}
+\PYG{l+s+s2}{mode: command}
+\PYG{l+s+s2}{and code.language: elm}
+\PYG{l+s+s2}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+
+\PYG{n+nd}{@context.action\PYGZus{}class}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}user\PYGZdq{}}\PYG{p}{)}
+\PYG{k}{class} \PYG{n+nc}{code\PYGZus{}actions}\PYG{p}{:}
+    \PYG{k}{def} \PYG{n+nf}{invoke\PYGZus{}function}\PYG{p}{(}\PYG{n}{text}\PYG{p}{:} \PYG{n+nb}{str}\PYG{p}{):}
+        \PYG{n}{actions}\PYG{o}{.}\PYG{n}{insert}\PYG{p}{(}\PYG{n}{text} \PYG{o}{+} \PYG{l+s+s2}{\PYGZdq{} \PYGZdq{}}\PYG{p}{)}
+\end{Verbatim}

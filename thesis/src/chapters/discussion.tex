@@ -10,10 +10,89 @@ a section on the limitations of this study.
 \section{Increase in programming efficiency}%
 \label{sec:increase_in_programming_efficiency}
 The response to the prototype was overwhelmingly positive.
+A positive impression does however not necessarily imply an increase in efficiency.
+
+This section aims to answer the following research question:\newline
+\textit{RQ1: How can modern language tooling be leveraged to make vocal programming more efficient?}
+
+\paragraph{}
+
+The types of improvements provided by the system presented in this thesis 
+can be divided into two groups:
+\begin{enumerate}
+    \item Improvements to accuracy
+    \item Improvements to interactions
+\end{enumerate}
+Improvements to accuracy reduces the amount of misrecognition, which in turn
+reduces the amount of time the user has to spend correcting those errors.
+Improvements to interactions allows users to less to do more.
+The rest of this section will discuss how the prototype
+achieved this using modern language tooling.
+
+\paragraph{Improvements to accuracy:}%
+Voice command accuracy was improved by limiting the vocabulary
+of certain commands based on the contents of the file being edited.
+This was achieved by creating Talon lists for every
+node type of interest which then can be used in place of
+the normal dictation captures in voice commands.
+
+The process of extracting identifiers was made very simple
+due to the modern tools available.
+For this task, TreeSitter Queries was used in the prototype, but Chapter~\ref{the_project}
+also outlines how to do with using LSP.
+% These tools are designed to work well with any programming language.
+
+
+\paragraph{Improvements to interactions:}%
+By making Talon aware of the symbols within the file, 
+it was possible to issue much higher level commands for navigation and editing.
+As mentioned by multiple participants, the standard way of navigating
+is repetitive and low level.
+The voice commands provided by the system allow users to distinguish
+node based on their types as well as their associated identifiers, and perform actions on them in a single utterance.
+This also tackles the problem of cognitive load by making the commands
+easier to remember and more intuitive.
+
+\paragraph{}
+
+As seen, modern language tooling can be leveraged to make vocal programming
+more efficient by exposing syntactic information about programs
+to the voice control system in a way that enables higher-level commands
+with better accuracy.
+
 
 
 \section{Structural editing by voice}%
 \label{sec:structural_editing_by_voice}
+This section aims to answer the following research question:\newline
+\textit{RQ1: How can the benefits of structural editors be achieved in text oriented environments for vocal programmers?}
+
+\paragraph{}
+
+The structural editing capabilities of the prototypes were quite rudimentary
+, but is already showing great promise.
+The integration with TreeSitter makes it very easy to operate on the parse tree,
+and enables complex transformations for many languages.
+Integrating with TreeSitter can be done the regular plug-ins
+for editors support TreeSitter such as VSCode, or in an external program
+as was done in the prototype.
+
+Structural editing by voice even has some advantages over normal structural editing.
+Being able to refer to a node by its name or type in a voice command
+is often much more convenient then navigating to the node and then performing the action.
+
+
+Structural editing was achieved in the prototype by simply providing an
+API for acquiring the locations of node given a name and/or type that can be
+called from Talon scripts.
+Once the location was obtained, editing was performed by emulating keystrokes in the editor.
+
+
+% One challenge with structural editing in text editors that have not been addressed
+% is how to deal with missing parts of incomplete programs.
+% TreeSitter's error tolerance makes it so that the system still works
+% while there are syntax errors in the file, but I have not looked into
+
 
 
 
@@ -45,6 +124,48 @@ can address several issues that users of Talon are currently facing.
 
 \section{Limitations}%
 \label{sec:limitations}
+There are several elements of the study that could be improved.
+
+\paragraph{}
+
+When conducting interviews the captured experience of users it is recommended to have
+between 10 and 30 participants~\parencite{griffin1993voice}.
+My study only had 6 participants.
+It should however be noted that many of the interviews yielded very similar results
+which can indicate that the data set was already close to stagnating.
+More importantly than the total number of participants, 
+the study lacked participants with lower amount of experience
+with programming in general.
+Having more participants unfamiliar with
+concepts like parse trees could have affected the results.
+
+\paragraph{}
+
+In this study, participants were only interviewed about
+their initial impressions of the system.
+Given that this is an expert system, it would be interesting to see
+how users experience changes over time as they get more proficient.
+If time permitted, I would like to have done several rounds of interviews
+with enough time in between sessions to allow users to practice.
+
+\paragraph{}
+
+System performance has not been thoroughly tested as
+performance was not a major concern in this iteration.
+It is therefore a possibility that some of the solutions proposed
+in this thesis may have scalability issues.
+In order to ensure this is not the case, further development
+of the prototype would be required.
+
+\paragraph{}
+
+The capabilities of LSP for the use case of vocal programming has been explored
+during this thesis, but only partially tested.
+Examples shown in Chapter~\ref{the_project} were created in isolation
+from the prototype, and is therefore not been shown to work well
+as part of the system.
+Future iterations of the prototype would integrate LSP
+to enable project wide awareness of symbols.
 
 % Longevity
 % Numbers of participants

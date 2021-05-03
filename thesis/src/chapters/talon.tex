@@ -65,7 +65,7 @@ hello world: "Hello World"
 
 The above example shows a talon script that defines voice command such that uttering the phrase ``hello world''
 results in the text ``Hello World'' being outputted.
-Text being outputted correspondence to
+Text being outputted corresponds to
 a sequence of emulated keyboard presses.
 Lines starting with a \textbf{\#} are comments.
 Saving this file in the talon user directory with the file extension \textbf{.talon} will make this command available globally.
@@ -184,32 +184,116 @@ normal English.
    \caption{Formatters in knausj (excerpt)}
 \end{table}
 
-\subsection{Text Editing}
-Here i will cover navigating a text editor with voice commands and eye-tracker.
+% \subsection{Text Editing}
+% Here i will cover navigating a text editor with voice commands and eye-tracker.
 
-\subsection{Web Browsing}
-Vimium and Surfingkeys. How are these plugins used.
+% \subsection{Web Browsing}
+% Vimium and Surfingkeys. How are these plugins used.
 
-\subsection{Using The Terminal}
-An essential part of the programming workflow. The terminal is accessible by default due to its text oriented interface.
+% \subsection{Using The Terminal}
+% An essential part of the programming workflow. The terminal is accessible by default due to its text oriented interface.
 
 \section{Dealing With Homophones}\label{dealing_with_homophones}
 Here I will discuss how talon deals with homophones.
 
 \section{Writing Voice Commands with Talon}\label{wvc}
-\subsection{Rules}
-\subsection{Actions}
-\subsection{Contexts}
-\subsection{Dynamic Lists}\label{dynamic_lists}
+This section covers some of the key concepts in Talon programming.
+As previously mentioned, Talon is configured using Python and \textit{.talon} files.
+The talon files are used to define voice commands and implement \textit{Actions}, while Python is used to
+define \textit{Modules}, \textit{Contexts}, \textit{Actions}, \textit{Lists}.
 
-\section{Editor Integration}
-Here I will cover how Talon can be integrated with Vim and IntelliJ, and also cover how to edit text without editor integration.
-\subsection{Shortcut Mappings}
-The simplest integration. 
-\subsection{Server Client}
-Send commands from talon over http (IntelliJ)
-\subsection{Vim}
-Cover how vim is integrated in the community package.
+\paragraph{Voice commands}
+consists of a rule and a body.
+The syntax of rules similar to that of regular expressions except it is centered around words instead of characters, see  Table~\ref{tab:rules}.
+When the user enters a phrase that matches a rule, the associated body will then be executed.
+The body is a sequence of actions and strings of text to be inserted.
+
+\begin{table}[htpb]
+    \centering
+    \label{tab:rules}
+    \begin{tabular}{c|c|c}
+        Syntax &	Description &	Matches\\
+        foo &	Words &	``foo''\\
+        {[foo]} &	Optional &	``foo'' or ``''\\
+        foo* &	Zero or more &	``'', ``foo'', ``foo foo'', …\\
+        foo+ &	One or more &	“foo”, “foo foo”, …\\
+        foo|bar &	Choice &	“foo”, “bar”\\
+        (foo) &	Grouping &	“foo”\\
+        \{some\_list\} &	List &	Depends on the list\\
+        <some\_capture> &	Capture &	Depends on the capture
+    \end{tabular}
+    \caption{Syntax of Rules}
+\end{table}
+
+% context Heather
+
+\paragraph{Modules}
+are collections of related declarations such as Actions, Contexts and Lists.
+\begin{minted}{Python}
+from talon import Module
+module = Module()
+\end{minted}
+
+\paragraph{Actions}
+are functions that can be called from a voice command.
+There are a few built-in action such as key and insert, and it is also possible for users to define their own actions.
+Actions can be declared by defining functions within a class with the \textit{action\_class} decorator.
+\begin{minted}{Python}
+@module.action_class
+class Actions:
+    def invoke_function(text: str):
+        """Inserts a function and positions the cursor appropriately"""
+        text += "()"
+        actions.insert(text)
+        actions.edit.left()
+\end{minted}
+The example above defines an action for invoking a function.
+It inserts a piece of text with parenthesis added, and moves the cursor left one time.
+To use this action, you would create a voice commands such as:
+\begin{verbatim}
+call print: user.invoke_function("print") 
+\end{verbatim}
+
+\paragraph{Contexts}
+specifies conditions under which to add new behavior or override existing behavior.
+By creating a context, the behavior of actions can be overwritten.
+For example, the behavior of \textit{invoke\_function} can be changed
+whenever the user is programming in a language that uses different syntax for function invocation.
+The following defines a context that is active when the user is programming in Elm,
+and re-implements the action.
+\begin{minted}{Python}
+from talon import Context, actions
+
+context = Context()
+context.matches = r"""
+mode: user.elm
+mode: command
+and code.language: elm
+"""
+
+@context.action_class("user")
+class code_actions:
+    def invoke_function(text: str):
+        actions.insert(text + " ")
+\end{minted}
+
+
+
+
+
+% \subsection{Rules}
+% \subsection{Actions}
+% \subsection{Contexts}
+% \subsection{Dynamic Lists}\label{dynamic_lists}
+
+% \section{Editor Integration}
+% Here I will cover how Talon can be integrated with Vim and IntelliJ, and also cover how to edit text without editor integration.
+% \subsection{Shortcut Mappings}
+% The simplest integration. 
+% \subsection{Server Client}
+% Send commands from talon over http (IntelliJ)
+% \subsection{Vim}
+% Cover how vim is integrated in the community package.
 
 
 \end{document}
