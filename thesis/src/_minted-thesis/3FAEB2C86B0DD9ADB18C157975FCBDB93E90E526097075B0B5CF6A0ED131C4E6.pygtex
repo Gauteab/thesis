@@ -12,12 +12,10 @@
 
 \PYG{c+c1}{\PYGZhy{}\PYGZhy{} MODEL}
 
-\PYG{k+kr}{type} \PYG{k+kr}{alias} \PYG{k+kt}{Model} \PYG{n+nf}{=}
-    \PYG{k+kt}{Int}
+\PYG{k+kr}{type} \PYG{k+kr}{alias} \PYG{k+kt}{Model} \PYG{n+nf}{=} \PYG{k+kt}{Int}
 
 \PYG{n+nv}{init} \PYG{n+nf}{:} \PYG{k+kt}{Model}
-\PYG{n+nv}{init} \PYG{n+nf}{=}
-    \PYG{l+m+mi}{0}
+\PYG{n+nv}{init} \PYG{n+nf}{=} \PYG{l+m+mi}{0}
 
 \PYG{c+c1}{\PYGZhy{}\PYGZhy{} UPDATE}
 

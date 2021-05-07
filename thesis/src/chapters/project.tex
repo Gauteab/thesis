@@ -22,7 +22,7 @@ each of which will be discussed in more detail in their own sections.
 The primary feature of the system is to expose information about the code being edited
 to Talon such that the user can dictate high-level commands with a limited vocabulary
 specific to the code being edited with high accuracy.
-Perhaps the most important feature is the ability to keep updated talon lists (see Section~\ref{dynamic_lists})
+Perhaps the most important feature is the ability to keep updated talon lists
 of identifiers in different classes. For example, you might have a list \textit{user.functions} which would contain
 all the functions that are in scope in the file being edited.
 Then you could define a voice command such as 
@@ -30,11 +30,12 @@ Then you could define a voice command such as
 function {user.functions}: insert(functions)
 \end{verbatim} 
 which would provide the user with a way to insert a known function from a limited vocabulary which would increase the accuracy.
-Given the code in Example~\ref{ex:elm_simple_program}, the list \textit{user.functions} might contain ``update'' and ``view''
+Given the code in \Vref{listing:elm_simple}, the list \textit{user.functions} might contain ``update'' and ``view''
 (which were defined in this file), as well as ``onClick'', ``button'', ``text'' and ``div'' (from the import statements).
 As we saw in the section on~\nameref{sec:elm}, there are other ways functions can be introduced
 besides explicit declaration and imports, so some extra work is required define all relevant functions.
-Additionally, not all function names are pronounceable, so this must also be handled as discussed in Section~\ref{spoken_identifier_algorithm}.
+% Additionally, not all function names are pronounceable, so this must also be handled as discussed in Section~\ref{spoken_identifier_algorithm}.
+% TODO
 
 \paragraph{Code Navigation:}%
 \label{code_navigation}
@@ -43,12 +44,12 @@ Having made Talon aware of the contents of the program being edited, we can enab
 high-level voice commands for code navigation.
 For example, navigating using the search functionality of the editor can be improved
 by having a voice command that uses the list of known identifiers.
-\begin{verbatim}
+\begin{code}{text}{Simple Search Command}{symbol_search}
 search <user.identifier>: 
     edit.find()
     insert(identifier)
     key(enter)
-\end{verbatim}
+\end{code}
 This can be improved even further by making the system aware of the
 location and class of these identifiers.
 A command like ``go function hello'' could move the user directly to the definition of the function named \textit{hello}.
@@ -73,7 +74,7 @@ as well as providing a more pleasant and natural user experience.
 \section{Classified Identifier Extraction}%
 \label{sec:classified_identifier_extraction}
 This section should cover in detail what identifies should be extracted
-and how this is accomplished. Table~\ref{tab:constructs_of_interest} shows
+and how this is accomplished. \Vref{tab:constructs_of_interest} shows
 what identifiers should be tracked, and which constructs they can be found in.
 For example, a function can be declared directly, imported from another module, are generated
 from type declarations. The notation \textit{Type [Alias] Declaration} is a shorthand
@@ -87,7 +88,6 @@ are extracted, and how they might be used in voice commands.
 
 \begin{table}[htpb]
     % \centering
-    \label{tab:constructs_of_interest}
     \begin{tabular}{|c|c|}
         \hline
         Construct & Found In \\
@@ -102,6 +102,7 @@ are extracted, and how they might be used in voice commands.
         \hline
     \end{tabular}
     \caption{Constructs of Interest}
+    \label{tab:constructs_of_interest}
 \end{table}
 
 \subsection{Identifer Classes}%
@@ -124,13 +125,13 @@ More important however is the difference between constructors and other values.
 In elm it is not possible to declare a function with an uppercase first letter.
 This is to make it easier to distinguish constructors from regular functions.
 It is however possible to have a function with the same name as a constructor, only with different formatting.
-Because we would like to have a way of distinguishing between declarations like:
-\begin{minted}{elm}
+Because we would like to have a way of distinguishing between declarations like the one seen in \Vref{box_example},
+we need to track constructors separately.
+\begin{code}{elm}{}{box_example}
 type Box = Box Int
 
 box i = Box (i + 1) 
-\end{minted}
-we need to track constructors separately.
+\end{code}
 
 \subsubsection{Types}%
 \label{par:types}
@@ -230,7 +231,6 @@ The contents of these module objects along with an explanation can be seen in ta
 
 \begin{table}[htpb]
     \centering
-    \label{tab:documentation_fields}
     \begin{tabular}{|c|c|}
         \hline
         Field & Explanation \\
@@ -243,21 +243,21 @@ The contents of these module objects along with an explanation can be seen in ta
         binops & User-defined binary operators \\
         \hline
     \end{tabular}
-    \caption{docs.json Module Structure}
+    \caption{Module Structure in docs.json}
+    \label{tab:documentation_fields}
 \end{table}
 
 % \subsubsection{Snippets}% figure out how to use coc lists
 
-Example~\ref{ex:array_excerpt} shows parts of the first module entry from \textit{elm/core}.
-\begin{example}[docs.json]\label{ex:array_excerpt}
-\begin{minted}{json}
+\Vref{array_excerpt} shows parts of the first module entry from \textit{elm/core}.
+\begin{code}{json}{Excerpt from docs.json}{array_excerpt}
   {
     "name": "Array",
     "comment": " Fast immutable arrays. (...)",
     "unions": [
       {
         "name": "Array",
-        "comment": " Representation of fast immutable arrays. (...)",
+        "comment": "Representation of fast immutable arrays.",
         "args": ["a"],
         "cases": []
       }
@@ -266,29 +266,29 @@ Example~\ref{ex:array_excerpt} shows parts of the first module entry from \texti
     "values": [
       {
         "name": "append",
-        "comment": " Append two arrays to a new one. (...)",
-        "type": "Array.Array a -> Array.Array a -> Array.Array a"
+        "comment": "Append two arrays to a new one. (...)",
+        "type": 
+            "Array.Array a -> Array.Array a -> Array.Array a"
       },
       ...
     ],
     "binops": []
   }
-\end{minted}
-\end{example}
+\end{code}
 The rest of this sections will explain each of these fields in more detail.
 All of the following examples will be from \textit{elm/core}.
 
 \subsubsection{Unions}\label{unions}
 The \textit{unions} field contains the exposed type declarations and their constructors.
 The word \textit{unions} refers to the fact that elm types are \textit{disjoint union types}, or \textit{tagged unions}.
-A type declaration like
-\begin{minted}{elm}
-type Maybe a
-    = Just a
-    | Nothing
-\end{minted}
-would produce a union field like this: 
-\begin{minted}{ json }
+A type declaration like in the one in \Vref{maybe} would produce the union field in \Vref{maybe_json}.
+% \begin{minted}{elm}
+% type Maybe a
+%     = Just a
+%     | Nothing
+% \end{minted}
+% would produce a union field like this: 
+\begin{code}{ json }{Maybe JSON}{maybe_json}
 {
   "name": "Maybe",
   "comment": " Represent values that may or may not exist. (...)",
@@ -298,7 +298,7 @@ would produce a union field like this:
     ["Nothing", []]
   ]
 }
-\end{minted}
+\end{code}
 The \textit{args} field is a list of the names of the type parameters.
 A nonempty args indicates a polymorphic data type.
 There might be something to do with the name of these type arguments, but for now they will be ignored.
@@ -315,25 +315,26 @@ A type alias like
 \begin{minted}{elm}
 type alias Id = Platform.ProcessId
 \end{minted}
-would produce an alias field like:
-\begin{minted}{json}
+would produce the alias field in \Vref{processid}.
+\begin{code}{json}{Platform.ProcessId JSON}{processid}
 {
   "name": "Id",
   "comment": " A light-weight process that runs concurrently. (...)",
   "args": [],
   "type": "Platform.ProcessId"
 }
-\end{minted}
+\end{code}
 
 \subsubsection{Values}\label{values}
-The \textit{values} field contains all the functions and constants in the module, and might look like this:
-\begin{minted}{json}
+The \textit{values} field contains all the functions and constants in the module.
+One such example can be seen in \Vref{head_funk}.
+\begin{code}{json}{Value Declaration JSON}{head_funk}
 {
   "name": "head",
   "comment": " Extract the first element of a list. (...)",
   "type": "List.List a -> Maybe.Maybe a"
 }
-\end{minted}
+\end{code}
 Since functions are normal values, we need to look at the type to distinguish functions from constants.
 We can see that \textit{head} is a function from the use of the function type constructor (->).
 It is however not as simple as checking whether (->) occurs in the type.
@@ -342,13 +343,13 @@ The type
 List (a -> a)
 \end{minted}
 denotes a list of functions, but is not a function itself.
-Determining what values are functions therefore requires parsing the type signature.
+Determining what values are functions therefore requires more sophisticated parsing of the type signature.
 % reference: where do I explain this?
 
 \subsubsection{Binary Operators}\label{binary_operators}
 The \textit{binops} field contains the binary operators in that module.
 These entries are similar to \textit{values}, but also contain \textit{precedence} and \textit{associativity}.
-\begin{minted}{json}
+\begin{code}{json}{Cons Operator JSON}{cons}
 {
   "name": "::",
   "comment": " Add an element to the front of a list. (...)",
@@ -356,25 +357,24 @@ These entries are similar to \textit{values}, but also contain \textit{precedenc
   "associativity": "right",
   "precedence": 5
 }
-\end{minted}
+\end{code}
 In some languages, such as PureScript, infix operators are defined as aliases
 for regular functions which ensures that each operator has a canonical way of referencing it vocally.
 Since elm does not have this property, this connection is to be made another way.
 The operator in this example is historically referred to as \textit{cons}, but it could also be called
 \textit{prepend} if you want the name to be more descriptive.
-For the reasons discussed in Section~\ref{}, normal users can not define operators, so this might not be a problem in practice.
+Elm support declaring infix operators, but normal users can not define operators as of version 0.19, so this might not be a problem in practice.
 Most operators are defined in \textit{elm/core}, but not all.% |., |=
 A reasonable way to this might be to checked operators found in packages against the talon list
-and warn the user if an operator is found, but is no way to be dictated.
+and warn the user if an operator is found, but has no way to be dictated.
 
 \subsection{Extracting From Language Server}%
 The Language Server Protocol defines two methods for requesting information about the symbols in the project: \textit{Document Symbols} and \textit{Workspace Symbols}.
 
 \paragraph{Document Symbols} retrieves information about symbols in the file currently being edited.
 The responses is a list of objects describing symbols with information about where it is in the file
-and what kind of symbol it is. Example~\ref{document_symbols_entry} shows the entry for the main function in an Elm program.
-\begin{example}[Document Symbols Entry]\label{document_symbols_entry}
-\begin{minted}{ json }
+and what kind of symbol it is. \Vref{document_symbols_entry} shows the entry for the main function in an Elm program.
+\begin{code}{ json }{Document Symbol Entry}{document_symbols_entry}
 {
   "lnum": 16,
   "col": 1,
@@ -387,8 +387,7 @@ and what kind of symbol it is. Example~\ref{document_symbols_entry} shows the en
   "containerName": null,
   "text": "main"
 } 
-\end{minted}
-\end{example}
+\end{code}
 
 \paragraph{Workspace Symbols} retrieves information about symbols and entire project.
 This also includes symbols in packages the project depends on.
@@ -398,8 +397,7 @@ The entries are similar to those of the document symbols, but because there will
 information is left out (such as line number), and the kind uses an ID instead of the name.
 The location field also has a \textit{uri} which tells which file the symbols from.
 This can be used to determine the package and module the symbol is from.
-\begin{example}[Workspace Symbols Entry]
-\begin{minted}{json}
+\begin{code}{json}{Workspace Symbols Entry}{workspace_symbols_entry}
 { 
   "location": {
   "uri":
@@ -412,30 +410,32 @@ This can be used to determine the package and module the symbol is from.
   "name": "array",
   "kind": 12 
 }
-\end{minted} 
-\end{example}
+\end{code} 
 
 \subsubsection{Integration}% this section needs more work
 Integrating with the language server is very simple, especially if the editor in question allows users to easily
 call functions from the plug-in that acts as the LSP client.
-Example~\ref{vim_lsp} shows how you can define a function that requests the workspace symbols from the server and saves the result
+\Vref{vim_lsp} shows how you can define a function that requests the workspace symbols from the server and saves the result
 to a file.
-\begin{example}[Simple Vim LSP integration]\label{vim_lsp}
-\begin{minted}{vim}
+\begin{code}{vim}{Simple Vim LSP integration}{vim_lsp}
 function SaveWorkspaceSymbols()
     let symbols = CocAction('getWorkspaceSymbols')
     let symbols = json_encode(symbols)
     let file = "/Users/gauteab/uio/master/thesis/workspaceSymbols.json"
     call writefile([symbols], file)
 endfunction
-\end{minted}
-\end{example}
+\end{code}
 This can easily be extended to a full integration with the system.
 
 \subsubsection{Limitations}
 While using the LSP for extracting identifiers is convenient, it will likely be insufficient in terms of feature completeness in some cases.
-The implementations for different languages vary greatly in how feature-rich they are, and not all language servers support document symbols and workspace symbols.
+
+LSP does not expose information about the file that does not pertain to a symbol.
+It would therefore not be as useful for implementing navigation and structural editing.
+
+Additionally, the implementations for different languages vary greatly in how feature-rich they are, and not all language servers support document symbols and workspace symbols.
 Many servers are in active development so this is likely to change at some point.
+
 
 
 \subsection{Extracting With TreeSitter}
@@ -631,9 +631,12 @@ The name Jason is easily recognizable, so overriding the word json with Jason wi
 A simple solution to this problem is to allow users to declare a list of overrides for which the system
 can do a simple lookup to make substitutions in the final stage of command generation like so:
 \begin{minted}{json}
-{ "overrides": 
-    { "json": "Jason" }
-} 
+{
+  "overrides": {
+    "json": "Jason",
+    "init": "in it"
+  }
+}
 \end{minted}
 The list of overrides can be partially filled automatically by extracting the list of abbreviations and homophones
 from the users Talon configuration files.
@@ -648,17 +651,17 @@ from the users Talon configuration files.
 \section{Code Navigation}%
 \label{sec:code_navigation}
 Once information has been extracted from the program, enabling high-level navigation commands is quite simple.
-The following example shows how you could create talon commands that uses the classified identifiers
+\Vref{symbol_navigation} shows how you could create talon commands that uses the classified identifiers
 to implement a simple grammar that allows for navigation that takes the type of the navigation target
-into account:
-\begin{verbatim}
+into account.
+\begin{code}{text}{Navigational Commands for Symbols}{symbol_navigation}
 go to { user.symbol_identifier }:
     user.symbol_navigate("{symbol_identifier}", "identifier")
 go type {user.symbol_type}:
     user.symbol_navigate("{symbol_type}", "type")
 go fun {user.symbol_function}:
     user.symbol_navigate("{symbol_function}", "function")
-\end{verbatim}
+\end{code}
 The action \textit{symbol\_navigate} queries the server
 for the position of the identifier with name matching the first parameter, and type matching the second.
 It will then trigger \textit{editor\_go\_to\_position} which in the context of the current editor
@@ -667,11 +670,11 @@ to the beginning of that symbol.
 Since we have access to the entire parse tree, it is also possible to navigate two nodes that
 are not associated with any given identifier.
 This would not be possible with an implementation that only uses LSP.
-\begin{verbatim}
+\begin{code}{text}{Navigational Commands for Non-symbols}{literal_navigation}
 go import: user.symbol_navigate("", "import")
 go string: user.symbol_navigate("", "string")
 go number: user.symbol_navigate("", "number")
-\end{verbatim}
+\end{code}
 
 \paragraph{Context aware navigation}
 can be achieved simply by exposing the cursor position to Talon.
@@ -863,8 +866,8 @@ Ideally, the system would have one namespace further identifiers in the current 
 and one for the whole project.
 This is likely the biggest limitation of the current implementation.
 
-Currently the system creates Talon lists for functions and type declarations as well as one for all identifiers using the following query:
-\begin{verbatim}
+Currently the system creates Talon lists for functions and type declarations as well as one for all identifiers using the query in \Vref{identifier_extraction_query}.
+\begin{code}{text}{Final Identifier Extraction Query}{identifier_extraction_query}
 (lower_case_identifier) @identifier 
 (upper_case_identifier) @identifier
 (function_declaration_left (lower_case_identifier) @function)
@@ -873,7 +876,7 @@ Currently the system creates Talon lists for functions and type declarations as 
 (exposed_type (upper_case_identifier) @type)
 (type_declaration (upper_case_identifier) @type)
 (type_alias_declaration (upper_case_identifier) @type)
-\end{verbatim}
+\end{code}
 More queries have been written, but due to an issue with the Windows bindings for TreeSitter
 that causes segmentation faults when the query string is too long, some of the queries
 were not included in the prototype.

@@ -90,12 +90,11 @@ As this alphabet was designed for unambiguously spelling words even with poor co
 This is however not practical solution due to some words being very long. ``November'' is three syllables long, which
 is not ideal for such a basic command that will be used often.
 Therefore the alphabets being used are designed to be as quick and easy to say as possible, sometimes at the cost of
-being less mnemonic. An example can be seen in Table~\ref{alphabet}, but users will often make their own
+being less mnemonic. An example can be seen in \Vref{alphabet}, but users will often make their own
 modifications. With this alphabet, to press the ``n'' key the user would say ``near''.
 
 \begin{table}[htpb]
     \centering
-    \label{alphabet}
     \begin{tabular}{ c c | c c }
         air & a & bat & b \\
         cap & c & drum & d \\
@@ -112,6 +111,7 @@ modifications. With this alphabet, to press the ``n'' key the user would say ``n
         yell & y & zip & z
     \end{tabular}
     \caption{Alphabet used in knausj\_talon}
+    \label{alphabet}
 \end{table}
 
 \paragraph{Basic Keys:}
@@ -159,7 +159,6 @@ normal English.
 
 \begin{table}[htpb]
    \centering
-   \label{tab:formatters}
    \begin{tabular}{|c|c|}
       \toprule
       Formatter Name & Example Output \\
@@ -182,6 +181,7 @@ normal English.
       \bottomrule
    \end{tabular}
    \caption{Formatters in knausj (excerpt)}
+   \label{tab:formatters}
 \end{table}
 
 % \subsection{Text Editing}
@@ -209,7 +209,6 @@ The body is a sequence of actions and strings of text to be inserted.
 
 \begin{table}[htpb]
     \centering
-    \label{tab:rules}
     \begin{tabular}{c|c|c}
         Syntax &	Description &	Matches\\
         foo &	Words &	``foo''\\
@@ -222,6 +221,7 @@ The body is a sequence of actions and strings of text to be inserted.
         <some\_capture> &	Capture &	Depends on the capture
     \end{tabular}
     \caption{Syntax of Rules}
+    \label{tab:rules}
 \end{table}
 Voice commands can be made specific to certain contexts by using the context header.
 This can be used to make certain commands sets only work within certain applications or operating systems. 
@@ -229,16 +229,16 @@ This can be used to make certain commands sets only work within certain applicat
 
 \paragraph{Modules}
 are collections of related declarations such as Actions, Contexts and Lists.
-\begin{minted}{Python}
+\begin{code}{Python}{Talon Module Declaration}{module}
 from talon import Module
 module = Module()
-\end{minted}
+\end{code}
 
 \paragraph{Actions}
 are functions that can be called from a voice command.
 There are a few built-in action such as key and insert, and it is also possible for users to define their own actions.
 Actions can be declared by defining functions within a class with the \textit{action\_class} decorator.
-\begin{minted}{Python}
+\begin{code}{Python}{Talon Action}{action}
 @module.action_class
 class Actions:
     def invoke_function(text: str):
@@ -246,7 +246,7 @@ class Actions:
         text += "()"
         actions.insert(text)
         actions.edit.left()
-\end{minted}
+\end{code}
 The example above defines an action for invoking a function.
 It inserts a piece of text with parenthesis added, and moves the cursor left one time.
 To use this action, you would create a voice commands such as:
@@ -261,7 +261,7 @@ For example, the behavior of \textit{invoke\_function} can be changed
 whenever the user is programming in a language that uses different syntax for function invocation.
 The following defines a context that is active when the user is programming in Elm,
 and re-implements the action.
-\begin{minted}{Python}
+\begin{code}{Python}{Talon Context Declaration with Action Override}{context}
 from talon import Context, actions
 
 context = Context()
@@ -275,7 +275,7 @@ and code.language: elm
 class code_actions:
     def invoke_function(text: str):
         actions.insert(text + " ")
-\end{minted}
+\end{code}
 
 \paragraph{Lists}
 creates a group of string with associated spoken forms that can be used in voice commands.
@@ -288,9 +288,21 @@ By first declaring a list for functions:
 \begin{minted}{Python}
 module.list('function', desc='Functions')
 \end{minted}
-the list can then be populated in the individual contexts:
-
-\begin{minipage}{0.5\textwidth}
+the list can then be populated in the individual contexts as seen in \Vref{listing:lists}.
+\begin{listing}[ht]
+\begin{tabular}{|r|r|}
+\hline
+\begin{minipage}[t]{0.49\textwidth}
+\begin{minted}{python}
+# javascript.py
+ctx.lists['user.function'] = {
+    "print": "console.log",
+    "to string": ".toString"
+}
+\end{minted}
+\end{minipage}
+& 
+\begin{minipage}[t]{0.49\textwidth}
 \begin{minted}{python}
 # elm.py
 ctx.lists['user.function'] = {
@@ -298,17 +310,13 @@ ctx.lists['user.function'] = {
     "list map": "List.map"
 }
 \end{minted}
-\end{minipage}
-\vline
-\begin{minipage}{0.5\textwidth}
-\begin{minted}{python}
-# javassript.py
-ctx.lists['user.function'] = {
-    "print": "console.log",
-    "to string": ".toString"
-}
-\end{minted}
-\end{minipage}
+\end{minipage}\\
+\hline
+\end{tabular}
+\caption{Talon lists for functions}
+\label{listing:lists}
+\end{listing}
+
 This creates a list where the function vocabulary differs depending on the language.
 Notice that the word ``print'' refers to different functions depending on the current language context,
 which can allow users to work on a higher level of abstraction across languages.
@@ -324,21 +332,12 @@ There are a few built-in ones the capture user input as is, such as \textit{<phr
 and it is also possible to create custom captures.
 The following example defines a capture that matches a sequence of one or more spoken letters
 and joins them together.
-\begin{minted}{Python}
+\begin{code}{Python}{Capture Example}{capture}
 @mod.capture(rule="{self.letter}+")
 def letters(m) -> str:
     "Multiple letter keys"
     return "".join(m.letter_list)
-\end{minted}
-
-
-% \begin{listing}[ht]
-% \begin{minted}{Python}
-%     #test
-% \end{minted}
-% \caption{Example from external file}
-% \label{listing:3}
-% \end{listing}
+\end{code}
 
 
 \section{Dealing With Homophones}\label{dealing_with_homophones}

@@ -1,0 +1,634 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{\PYGZob{}}
+  \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}head\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}comment\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{} Extract the first element of a list. (...)\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}type\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}List.List a \PYGZhy{}\PYGZgt{} Maybe.Maybe a\PYGZdq{}}
+\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Since} \PYG{err}{functions} \PYG{err}{are} \PYG{err}{normal} \PYG{err}{values,} \PYG{err}{we} \PYG{err}{need} \PYG{err}{to} \PYG{err}{look} \PYG{err}{at} \PYG{err}{the} \PYG{err}{type} \PYG{err}{to} \PYG{err}{distinguish} \PYG{err}{functions} \PYG{err}{from} \PYG{err}{constants.}
+\PYG{err}{We} \PYG{err}{can} \PYG{err}{see} \PYG{err}{that} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{head}\PYG{p}{\PYGZcb{}} \PYG{err}{is} \PYG{err}{a} \PYG{err}{function} \PYG{err}{from} \PYG{err}{the} \PYG{err}{use} \PYG{err}{of} \PYG{err}{the} \PYG{err}{function} \PYG{err}{type} \PYG{err}{constructor} \PYG{err}{(\PYGZhy{}\PYGZgt{}).}
+\PYG{err}{It} \PYG{err}{is} \PYG{err}{however} \PYG{err}{not} \PYG{err}{as} \PYG{err}{simple} \PYG{err}{as} \PYG{err}{checking} \PYG{err}{whether} \PYG{err}{(\PYGZhy{}\PYGZgt{})} \PYG{err}{occurs} \PYG{err}{in} \PYG{err}{the} \PYG{err}{type.}
+\PYG{err}{The} \PYG{err}{type}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{elm}\PYG{p}{\PYGZcb{}}
+\PYG{err}{List} \PYG{err}{(a} \PYG{err}{\PYGZhy{}\PYGZgt{}} \PYG{err}{a)}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}}
+\PYG{err}{denotes} \PYG{err}{a} \PYG{err}{list} \PYG{err}{of} \PYG{err}{functions,} \PYG{err}{but} \PYG{err}{is} \PYG{err}{not} \PYG{err}{a} \PYG{err}{function} \PYG{err}{itself.}
+\PYG{err}{Determining} \PYG{err}{what} \PYG{err}{values} \PYG{err}{are} \PYG{err}{functions} \PYG{err}{therefore} \PYG{err}{requires} \PYG{err}{parsing} \PYG{err}{the} \PYG{err}{type} \PYG{err}{signature.}
+\PYG{err}{\PYGZpc{}} \PYG{err}{reference:} \PYG{err}{where} \PYG{err}{do} \PYG{err}{I} \PYG{err}{explain} \PYG{err}{this?}
+
+\PYG{err}{\PYGZbs{}subsubsection}\PYG{p}{\PYGZob{}}\PYG{err}{Binary} \PYG{err}{Operators}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{binary\PYGZus{}operators}\PYG{p}{\PYGZcb{}}
+\PYG{err}{The} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{binops}\PYG{p}{\PYGZcb{}} \PYG{err}{field} \PYG{err}{contains} \PYG{err}{the} \PYG{err}{binary} \PYG{err}{operators} \PYG{err}{in} \PYG{err}{that} \PYG{err}{module.}
+\PYG{err}{These} \PYG{err}{entries} \PYG{err}{are} \PYG{err}{similar} \PYG{err}{to} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{values}\PYG{p}{\PYGZcb{}}\PYG{err}{,} \PYG{err}{but} \PYG{err}{also} \PYG{err}{contain} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{precedence}\PYG{p}{\PYGZcb{}} \PYG{err}{and} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{associativity}\PYG{p}{\PYGZcb{}}\PYG{err}{.}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{json}\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZob{}}
+  \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}::\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}comment\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{} Add an element to the front of a list. (...)\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}type\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}a \PYGZhy{}\PYGZgt{} List.List a \PYGZhy{}\PYGZgt{} List.List a\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}associativity\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}right\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}precedence\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{5}
+\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}}
+\PYG{err}{In} \PYG{err}{some} \PYG{err}{languages,} \PYG{err}{such} \PYG{err}{as} \PYG{err}{PureScript,} \PYG{err}{infix} \PYG{err}{operators} \PYG{err}{are} \PYG{err}{defined} \PYG{err}{as} \PYG{err}{aliases}
+\PYG{err}{for} \PYG{err}{regular} \PYG{err}{functions} \PYG{err}{which} \PYG{err}{ensures} \PYG{err}{that} \PYG{err}{each} \PYG{err}{operator} \PYG{err}{has} \PYG{err}{a} \PYG{err}{canonical} \PYG{err}{way} \PYG{err}{of} \PYG{err}{referencing} \PYG{err}{it} \PYG{err}{vocally.}
+\PYG{err}{Since} \PYG{err}{elm} \PYG{err}{does} \PYG{err}{not} \PYG{err}{have} \PYG{err}{this} \PYG{err}{property,} \PYG{err}{this} \PYG{err}{connection} \PYG{err}{is} \PYG{err}{to} \PYG{err}{be} \PYG{err}{made} \PYG{err}{another} \PYG{err}{way.}
+\PYG{err}{The} \PYG{err}{operator} \PYG{err}{in} \PYG{err}{this} \PYG{err}{example} \PYG{err}{is} \PYG{err}{historically} \PYG{err}{referred} \PYG{err}{to} \PYG{err}{as} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{cons}\PYG{p}{\PYGZcb{}}\PYG{err}{,} \PYG{err}{but} \PYG{err}{it} \PYG{err}{could} \PYG{err}{also} \PYG{err}{be} \PYG{err}{called}
+\PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{prepend}\PYG{p}{\PYGZcb{}} \PYG{err}{if} \PYG{err}{you} \PYG{err}{want} \PYG{err}{the} \PYG{err}{name} \PYG{err}{to} \PYG{err}{be} \PYG{err}{more} \PYG{err}{descriptive.}
+\PYG{err}{For} \PYG{err}{the} \PYG{err}{reasons} \PYG{err}{discussed} \PYG{err}{in} \PYG{err}{Section\PYGZti{}\PYGZbs{}ref}\PYG{p}{\PYGZob{}\PYGZcb{}}\PYG{err}{,} \PYG{err}{normal} \PYG{err}{users} \PYG{err}{can} \PYG{err}{not} \PYG{err}{define} \PYG{err}{operators,} \PYG{err}{so} \PYG{err}{this} \PYG{err}{might} \PYG{err}{not} \PYG{err}{be} \PYG{err}{a} \PYG{err}{problem} \PYG{err}{in} \PYG{err}{practice.}
+\PYG{err}{Most} \PYG{err}{operators} \PYG{err}{are} \PYG{err}{defined} \PYG{err}{in} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{elm/core}\PYG{p}{\PYGZcb{}}\PYG{err}{,} \PYG{err}{but} \PYG{err}{not} \PYG{err}{all.\PYGZpc{}} \PYG{err}{|.,} \PYG{err}{|=}
+\PYG{err}{A} \PYG{err}{reasonable} \PYG{err}{way} \PYG{err}{to} \PYG{err}{this} \PYG{err}{might} \PYG{err}{be} \PYG{err}{to} \PYG{err}{checked} \PYG{err}{operators} \PYG{err}{found} \PYG{err}{in} \PYG{err}{packages} \PYG{err}{against} \PYG{err}{the} \PYG{err}{talon} \PYG{err}{list}
+\PYG{err}{and} \PYG{err}{warn} \PYG{err}{the} \PYG{err}{user} \PYG{err}{if} \PYG{err}{an} \PYG{err}{operator} \PYG{err}{is} \PYG{err}{found,} \PYG{err}{but} \PYG{err}{is} \PYG{err}{no} \PYG{err}{way} \PYG{err}{to} \PYG{err}{be} \PYG{err}{dictated.}
+
+\PYG{err}{\PYGZbs{}subsection}\PYG{p}{\PYGZob{}}\PYG{err}{Extracting} \PYG{err}{From} \PYG{err}{Language} \PYG{err}{Server}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}}
+\PYG{err}{The} \PYG{err}{Language} \PYG{err}{Server} \PYG{err}{Protocol} \PYG{err}{defines} \PYG{err}{two} \PYG{err}{methods} \PYG{err}{for} \PYG{err}{requesting} \PYG{err}{information} \PYG{err}{about} \PYG{err}{the} \PYG{err}{symbols} \PYG{err}{in} \PYG{err}{the} \PYG{err}{project:} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{Document} \PYG{err}{Symbols}\PYG{p}{\PYGZcb{}} \PYG{err}{and} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{Workspace} \PYG{err}{Symbols}\PYG{p}{\PYGZcb{}}\PYG{err}{.}
+
+\PYG{err}{\PYGZbs{}paragraph}\PYG{p}{\PYGZob{}}\PYG{err}{Document} \PYG{err}{Symbols}\PYG{p}{\PYGZcb{}} \PYG{err}{retrieves} \PYG{err}{information} \PYG{err}{about} \PYG{err}{symbols} \PYG{err}{in} \PYG{err}{the} \PYG{err}{file} \PYG{err}{currently} \PYG{err}{being} \PYG{err}{edited.}
+\PYG{err}{The} \PYG{err}{responses} \PYG{err}{is} \PYG{err}{a} \PYG{err}{list} \PYG{err}{of} \PYG{err}{objects} \PYG{err}{describing} \PYG{err}{symbols} \PYG{err}{with} \PYG{err}{information} \PYG{err}{about} \PYG{err}{where} \PYG{err}{it} \PYG{err}{is} \PYG{err}{in} \PYG{err}{the} \PYG{err}{file}
+\PYG{err}{and} \PYG{err}{what} \PYG{err}{kind} \PYG{err}{of} \PYG{err}{symbol} \PYG{err}{it} \PYG{err}{is.} \PYG{err}{Example\PYGZti{}\PYGZbs{}ref}\PYG{p}{\PYGZob{}}\PYG{err}{document\PYGZus{}symbols\PYGZus{}entry}\PYG{p}{\PYGZcb{}} \PYG{err}{shows} \PYG{err}{the} \PYG{err}{entry} \PYG{err}{for} \PYG{err}{the} \PYG{err}{main} \PYG{err}{function} \PYG{err}{in} \PYG{err}{an} \PYG{err}{Elm} \PYG{err}{program.}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{example}\PYG{p}{\PYGZcb{}[}\PYG{err}{Document} \PYG{err}{Symbols} \PYG{err}{Entry}\PYG{p}{]}\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{document\PYGZus{}symbols\PYGZus{}entry}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}\PYGZob{}} \PYG{err}{json} \PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZob{}}
+  \PYG{n+nt}{\PYGZdq{}lnum\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{16}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}col\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{1}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}range\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+    \PYG{n+nt}{\PYGZdq{}end\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}} \PYG{n+nt}{\PYGZdq{}character\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{9}\PYG{p}{,} \PYG{n+nt}{\PYGZdq{}line\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{21} \PYG{p}{\PYGZcb{},}
+    \PYG{n+nt}{\PYGZdq{}start\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}} \PYG{n+nt}{\PYGZdq{}character\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n+nt}{\PYGZdq{}line\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{15} \PYG{p}{\PYGZcb{}}
+  \PYG{p}{\PYGZcb{},}
+  \PYG{n+nt}{\PYGZdq{}level\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{0}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}kind\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Function\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}containerName\PYGZdq{}}\PYG{p}{:} \PYG{k+kc}{null}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}text\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}main\PYGZdq{}}
+\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{example}\PYG{p}{\PYGZcb{}}
+
+\PYG{err}{\PYGZbs{}paragraph}\PYG{p}{\PYGZob{}}\PYG{err}{Workspace} \PYG{err}{Symbols}\PYG{p}{\PYGZcb{}} \PYG{err}{retrieves} \PYG{err}{information} \PYG{err}{about} \PYG{err}{symbols} \PYG{err}{and} \PYG{err}{entire} \PYG{err}{project.}
+\PYG{err}{This} \PYG{err}{also} \PYG{err}{includes} \PYG{err}{symbols} \PYG{err}{in} \PYG{err}{packages} \PYG{err}{the} \PYG{err}{project} \PYG{err}{depends} \PYG{err}{on.}
+\PYG{err}{Because} \PYG{err}{of} \PYG{err}{this,} \PYG{err}{LSB} \PYG{err}{might} \PYG{err}{eliminate} \PYG{err}{the} \PYG{err}{need} \PYG{err}{to} \PYG{err}{analyze} \PYG{err}{documentation} \PYG{err}{directly} \PYG{err}{for} \PYG{err}{some} \PYG{err}{use} \PYG{err}{cases.}
+\PYG{err}{This} \PYG{err}{is} \PYG{err}{however} \PYG{err}{not} \PYG{err}{always} \PYG{err}{the} \PYG{err}{case} \PYG{err}{as} \PYG{err}{the} \PYG{err}{workspace} \PYG{err}{entries} \PYG{err}{provides} \PYG{err}{less} \PYG{err}{information} \PYG{err}{than} \PYG{err}{the} \PYG{err}{documentation.}
+\PYG{err}{The} \PYG{err}{entries} \PYG{err}{are} \PYG{err}{similar} \PYG{err}{to} \PYG{err}{those} \PYG{err}{of} \PYG{err}{the} \PYG{err}{document} \PYG{err}{symbols,} \PYG{err}{but} \PYG{err}{because} \PYG{err}{there} \PYG{err}{will} \PYG{err}{be} \PYG{err}{a} \PYG{err}{lot} \PYG{err}{more} \PYG{err}{entries} \PYG{err}{some}
+\PYG{err}{information} \PYG{err}{is} \PYG{err}{left} \PYG{err}{out} \PYG{err}{(such} \PYG{err}{as} \PYG{err}{line} \PYG{err}{number),} \PYG{err}{and} \PYG{err}{the} \PYG{err}{kind} \PYG{err}{uses} \PYG{err}{an} \PYG{err}{ID} \PYG{err}{instead} \PYG{err}{of} \PYG{err}{the} \PYG{err}{name.}
+\PYG{err}{The} \PYG{err}{location} \PYG{err}{field} \PYG{err}{also} \PYG{err}{has} \PYG{err}{a} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{uri}\PYG{p}{\PYGZcb{}} \PYG{err}{which} \PYG{err}{tells} \PYG{err}{which} \PYG{err}{file} \PYG{err}{the} \PYG{err}{symbols} \PYG{err}{from.}
+\PYG{err}{This} \PYG{err}{can} \PYG{err}{be} \PYG{err}{used} \PYG{err}{to} \PYG{err}{determine} \PYG{err}{the} \PYG{err}{package} \PYG{err}{and} \PYG{err}{module} \PYG{err}{the} \PYG{err}{symbol} \PYG{err}{is} \PYG{err}{from.}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{example}\PYG{p}{\PYGZcb{}[}\PYG{err}{Workspace} \PYG{err}{Symbols} \PYG{err}{Entry}\PYG{p}{]}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{json}\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZob{}}
+  \PYG{n+nt}{\PYGZdq{}location\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+  \PYG{n+nt}{\PYGZdq{}uri\PYGZdq{}}\PYG{p}{:}
+    \PYG{l+s+s2}{\PYGZdq{}file:///\PYGZlt{}HOME\PYGZgt{}/.elm/0.19.1/packages/elm/json/1.1.3/src/Json/Encode.elm\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}range\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+    \PYG{n+nt}{\PYGZdq{}end\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}} \PYG{n+nt}{\PYGZdq{}character\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{93}\PYG{p}{,} \PYG{n+nt}{\PYGZdq{}line\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{169} \PYG{p}{\PYGZcb{},}
+    \PYG{n+nt}{\PYGZdq{}start\PYGZdq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}} \PYG{n+nt}{\PYGZdq{}character\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n+nt}{\PYGZdq{}line\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{167} \PYG{p}{\PYGZcb{}}
+    \PYG{p}{\PYGZcb{}}
+  \PYG{p}{\PYGZcb{},}
+  \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}array\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}kind\PYGZdq{}}\PYG{p}{:} \PYG{l+m+mi}{12}
+\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{example}\PYG{p}{\PYGZcb{}}
+
+\PYG{err}{\PYGZbs{}subsubsection}\PYG{p}{\PYGZob{}}\PYG{err}{Integration}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}} \PYG{err}{this} \PYG{err}{section} \PYG{err}{needs} \PYG{err}{more} \PYG{err}{work}
+\PYG{err}{Integrating} \PYG{err}{with} \PYG{err}{the} \PYG{err}{language} \PYG{err}{server} \PYG{err}{is} \PYG{err}{very} \PYG{err}{simple,} \PYG{err}{especially} \PYG{err}{if} \PYG{err}{the} \PYG{err}{editor} \PYG{err}{in} \PYG{err}{question} \PYG{err}{allows} \PYG{err}{users} \PYG{err}{to} \PYG{err}{easily}
+\PYG{err}{call} \PYG{err}{functions} \PYG{err}{from} \PYG{err}{the} \PYG{err}{plug\PYGZhy{}in} \PYG{err}{that} \PYG{err}{acts} \PYG{err}{as} \PYG{err}{the} \PYG{err}{LSP} \PYG{err}{client.}
+\PYG{err}{Example\PYGZti{}\PYGZbs{}ref}\PYG{p}{\PYGZob{}}\PYG{err}{vim\PYGZus{}lsp}\PYG{p}{\PYGZcb{}} \PYG{err}{shows} \PYG{err}{how} \PYG{err}{you} \PYG{err}{can} \PYG{err}{define} \PYG{err}{a} \PYG{err}{function} \PYG{err}{that} \PYG{err}{requests} \PYG{err}{the} \PYG{err}{workspace} \PYG{err}{symbols} \PYG{err}{from} \PYG{err}{the} \PYG{err}{server} \PYG{err}{and} \PYG{err}{saves} \PYG{err}{the} \PYG{err}{result}
+\PYG{err}{to} \PYG{err}{a} \PYG{err}{file.}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{example}\PYG{p}{\PYGZcb{}[}\PYG{err}{Simple} \PYG{err}{Vim} \PYG{err}{LSP} \PYG{err}{integration}\PYG{p}{]}\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{vim\PYGZus{}lsp}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{vim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{function} \PYG{err}{SaveWorkspaceSymbols()}
+    \PYG{err}{let} \PYG{err}{symbols} \PYG{err}{=} \PYG{err}{CocAction(\PYGZsq{}getWorkspaceSymbols\PYGZsq{})}
+    \PYG{err}{let} \PYG{err}{symbols} \PYG{err}{=} \PYG{err}{json\PYGZus{}encode(symbols)}
+    \PYG{err}{let} \PYG{err}{file} \PYG{err}{=} \PYG{l+s+s2}{\PYGZdq{}/Users/gauteab/uio/master/thesis/workspaceSymbols.json\PYGZdq{}}
+    \PYG{err}{call} \PYG{err}{writefile(}\PYG{p}{[}\PYG{err}{symbols}\PYG{p}{]}\PYG{err}{,} \PYG{err}{file)}
+\PYG{err}{endfunction}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{example}\PYG{p}{\PYGZcb{}}
+\PYG{err}{This} \PYG{err}{can} \PYG{err}{easily} \PYG{err}{be} \PYG{err}{extended} \PYG{err}{to} \PYG{err}{a} \PYG{err}{full} \PYG{err}{integration} \PYG{err}{with} \PYG{err}{the} \PYG{err}{system.}
+
+\PYG{err}{\PYGZbs{}subsubsection}\PYG{p}{\PYGZob{}}\PYG{err}{Limitations}\PYG{p}{\PYGZcb{}}
+\PYG{err}{While} \PYG{err}{using} \PYG{err}{the} \PYG{err}{LSP} \PYG{err}{for} \PYG{err}{extracting} \PYG{err}{identifiers} \PYG{err}{is} \PYG{err}{convenient,} \PYG{err}{it} \PYG{err}{will} \PYG{err}{likely} \PYG{err}{be} \PYG{err}{insufficient} \PYG{err}{in} \PYG{err}{terms} \PYG{err}{of} \PYG{err}{feature} \PYG{err}{completeness} \PYG{err}{in} \PYG{err}{some} \PYG{err}{cases.}
+\PYG{err}{The} \PYG{err}{implementations} \PYG{err}{for} \PYG{err}{different} \PYG{err}{languages} \PYG{err}{vary} \PYG{err}{greatly} \PYG{err}{in} \PYG{err}{how} \PYG{err}{feature\PYGZhy{}rich} \PYG{err}{they} \PYG{err}{are,} \PYG{err}{and} \PYG{err}{not} \PYG{err}{all} \PYG{err}{language} \PYG{err}{servers} \PYG{err}{support} \PYG{err}{document} \PYG{err}{symbols} \PYG{err}{and} \PYG{err}{workspace} \PYG{err}{symbols.}
+\PYG{err}{Many} \PYG{err}{servers} \PYG{err}{are} \PYG{err}{in} \PYG{err}{active} \PYG{err}{development} \PYG{err}{so} \PYG{err}{this} \PYG{err}{is} \PYG{err}{likely} \PYG{err}{to} \PYG{err}{change} \PYG{err}{at} \PYG{err}{some} \PYG{err}{point.}
+
+
+\PYG{err}{\PYGZbs{}subsection}\PYG{p}{\PYGZob{}}\PYG{err}{Extracting} \PYG{err}{With} \PYG{err}{TreeSitter}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Being} \PYG{err}{a} \PYG{err}{general} \PYG{err}{purpose} \PYG{err}{parsing} \PYG{err}{system,} \PYG{err}{TreeSitter} \PYG{err}{easily} \PYG{err}{enables} \PYG{err}{arbitrary} \PYG{err}{syntactic} \PYG{err}{analysis.}
+\PYG{err}{Once} \PYG{err}{the} \PYG{err}{parser} \PYG{err}{for} \PYG{err}{the} \PYG{err}{given} \PYG{err}{programming} \PYG{err}{language} \PYG{err}{has} \PYG{err}{been} \PYG{err}{acquired,} \PYG{err}{getting} \PYG{err}{the} \PYG{err}{parse} \PYG{err}{tree}
+\PYG{err}{is} \PYG{err}{very} \PYG{err}{simple.}
+\PYG{err}{Then} \PYG{err}{one} \PYG{err}{could} \PYG{err}{simply} \PYG{err}{traverse} \PYG{err}{the} \PYG{err}{tree} \PYG{err}{and} \PYG{err}{extract} \PYG{err}{identifiers} \PYG{err}{from} \PYG{err}{the} \PYG{err}{nodes} \PYG{err}{directly.}
+\PYG{err}{This} \PYG{err}{approach} \PYG{err}{is} \PYG{err}{straightforward,} \PYG{err}{but} \PYG{err}{manually} \PYG{err}{defining} \PYG{err}{the} \PYG{err}{traversal} \PYG{err}{take} \PYG{err}{some} \PYG{err}{extra} \PYG{err}{work.}
+\PYG{err}{Using} \PYG{err}{the} \PYG{err}{Query} \PYG{err}{API} \PYG{err}{of} \PYG{err}{TreeSitter,} \PYG{err}{this} \PYG{err}{can} \PYG{err}{be} \PYG{err}{greatly} \PYG{err}{simplified.}
+\PYG{err}{\PYGZpc{}} \PYG{err}{This} \PYG{err}{section} \PYG{err}{shows} \PYG{err}{how} \PYG{err}{TreeSitter} \PYG{err}{Queries} \PYG{err}{can} \PYG{err}{be} \PYG{err}{used} \PYG{err}{to} \PYG{err}{extract} \PYG{err}{identifiers} \PYG{err}{from} \PYG{err}{a} \PYG{err}{Elm} \PYG{err}{source} \PYG{err}{file.}
+
+\PYG{err}{\PYGZbs{}subsubsection}\PYG{p}{\PYGZob{}}\PYG{err}{Using} \PYG{err}{TreeSitter} \PYG{err}{with} \PYG{err}{Elm}\PYG{p}{\PYGZcb{}}
+\PYG{err}{The} \PYG{err}{parser} \PYG{err}{for} \PYG{err}{Elm} \PYG{err}{is} \PYG{err}{available} \PYG{err}{at} \PYG{err}{\PYGZbs{}url}\PYG{p}{\PYGZob{}}\PYG{err}{https://github.com/elm\PYGZhy{}tooling/tree\PYGZhy{}sitter\PYGZhy{}elm}\PYG{p}{\PYGZcb{}}
+\PYG{err}{and} \PYG{err}{is} \PYG{err}{also} \PYG{err}{available} \PYG{err}{as} \PYG{err}{a} \PYG{err}{npm} \PYG{err}{package} \PYG{err}{at} \PYG{err}{\PYGZbs{}url}\PYG{p}{\PYGZob{}}\PYG{err}{https://www.npmjs.com/package/tree\PYGZhy{}sitter\PYGZhy{}elm}\PYG{p}{\PYGZcb{}} \PYG{err}{for} \PYG{err}{simple} \PYG{err}{installation}
+\PYG{err}{for} \PYG{err}{projects} \PYG{err}{using} \PYG{err}{the} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{Node.js}\PYG{p}{\PYGZcb{}} \PYG{err}{bindings.}
+\PYG{err}{A} \PYG{err}{simple} \PYG{err}{Elm} \PYG{err}{declaration} \PYG{err}{like}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{elm}\PYG{p}{\PYGZcb{}}
+\PYG{err}{greet} \PYG{err}{name} \PYG{err}{=}
+    \PYG{l+s+s2}{\PYGZdq{}Hello \PYGZdq{}} \PYG{err}{++} \PYG{err}{name}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}}
+\PYG{err}{would} \PYG{err}{be} \PYG{err}{represented} \PYG{err}{by} \PYG{err}{the} \PYG{err}{following} \PYG{err}{TreeSitter} \PYG{err}{S\PYGZhy{}expression:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{(value\PYGZus{}declaration} \PYG{err}{functionDeclarationLeft:}
+ \PYG{err}{(function\PYGZus{}declaration\PYGZus{}left} \PYG{err}{(lower\PYGZus{}case\PYGZus{}identifier)}
+  \PYG{err}{pattern:} \PYG{err}{(lower\PYGZus{}pattern} \PYG{err}{(lower\PYGZus{}case\PYGZus{}identifier)))} \PYG{err}{(eq)}
+    \PYG{err}{body:} \PYG{err}{(bin\PYGZus{}op\PYGZus{}expr} \PYG{err}{part:} \PYG{err}{(string\PYGZus{}constant\PYGZus{}expr} \PYG{err}{(open\PYGZus{}quote)}
+     \PYG{err}{(regular\PYGZus{}string\PYGZus{}part)} \PYG{err}{(close\PYGZus{}quote))} \PYG{err}{part:}
+     \PYG{err}{(operator} \PYG{err}{(operator\PYGZus{}identifier))} \PYG{err}{part:}
+       \PYG{err}{(value\PYGZus{}expr} \PYG{err}{name:} \PYG{err}{(value\PYGZus{}qid} \PYG{err}{(lower\PYGZus{}case\PYGZus{}identifier)))))}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Note} \PYG{err}{that} \PYG{err}{it} \PYG{err}{is} \PYG{err}{a} \PYG{err}{quirk} \PYG{err}{of} \PYG{err}{this} \PYG{err}{implementation} \PYG{err}{that} \PYG{err}{all} \PYG{err}{terminals} \PYG{err}{in} \PYG{err}{the} \PYG{err}{grammar} \PYG{err}{are} \PYG{err}{named.}
+\PYG{err}{Therefore} \PYG{err}{nodes} \PYG{err}{like} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{(eq)}\PYG{p}{\PYGZcb{}} \PYG{err}{and} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{(open\PYGZbs{}\PYGZus{}quote)}\PYG{p}{\PYGZcb{}} \PYG{err}{are} \PYG{err}{included} \PYG{err}{in}
+\PYG{err}{the} \PYG{err}{textual} \PYG{err}{representation} \PYG{err}{of} \PYG{err}{the} \PYG{err}{tree,} \PYG{err}{and} \PYG{err}{you} \PYG{err}{cannot} \PYG{err}{use} \PYG{err}{the} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{is\PYGZbs{}\PYGZus{}named}\PYG{p}{\PYGZcb{}} \PYG{err}{function}
+\PYG{err}{to} \PYG{err}{identify} \PYG{err}{terminals} \PYG{err}{when} \PYG{err}{traversing} \PYG{err}{the} \PYG{err}{tree} \PYG{err}{in} \PYG{err}{code.}
+\PYG{err}{This} \PYG{err}{is} \PYG{err}{unlikely} \PYG{err}{to} \PYG{err}{be} \PYG{err}{a} \PYG{err}{problem,} \PYG{err}{but} \PYG{err}{if} \PYG{err}{it} \PYG{err}{is} \PYG{err}{it} \PYG{err}{can} \PYG{err}{be} \PYG{err}{resolved} \PYG{err}{by} \PYG{err}{a} \PYG{err}{simple} \PYG{err}{change} \PYG{err}{in} \PYG{err}{the} \PYG{err}{grammar.}
+
+\PYG{err}{The} \PYG{err}{rest} \PYG{err}{of} \PYG{err}{this} \PYG{err}{section} \PYG{err}{will} \PYG{err}{show} \PYG{err}{how} \PYG{err}{identifiers} \PYG{err}{can} \PYG{err}{be} \PYG{err}{extracted} \PYG{err}{from} \PYG{err}{an} \PYG{err}{Elm} \PYG{err}{source} \PYG{err}{file} \PYG{err}{using} \PYG{err}{TreeSitter} \PYG{err}{Queries.}
+
+\PYG{err}{\PYGZbs{}subsubsection}\PYG{p}{\PYGZob{}}\PYG{err}{Types}\PYG{p}{\PYGZcb{}}
+\PYG{err}{The} \PYG{err}{following} \PYG{err}{query} \PYG{err}{finds} \PYG{err}{the} \PYG{err}{name} \PYG{err}{of} \PYG{err}{all} \PYG{err}{types} \PYG{err}{available} \PYG{err}{in} \PYG{err}{the} \PYG{err}{given} \PYG{err}{file:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{(exposed\PYGZus{}type} \PYG{err}{(upper\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@type)}
+\PYG{err}{(type\PYGZus{}declaration} \PYG{err}{(upper\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@type)}
+\PYG{err}{(type\PYGZus{}alias\PYGZus{}declaration} \PYG{err}{(upper\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@type)}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{The} \PYG{err}{query} \PYG{err}{consists} \PYG{err}{of} \PYG{err}{three} \PYG{err}{parts.}
+\PYG{err}{Each} \PYG{err}{of} \PYG{err}{them} \PYG{err}{matches} \PYG{err}{an} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{upper\PYGZbs{}\PYGZus{}case\PYGZbs{}\PYGZus{}identifier}\PYG{p}{\PYGZcb{}} \PYG{err}{and} \PYG{err}{assigns} \PYG{err}{to} \PYG{err}{it} \PYG{err}{the} \PYG{err}{label} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{type}\PYG{p}{\PYGZcb{}}\PYG{err}{.}
+\PYG{err}{The} \PYG{err}{first} \PYG{err}{one} \PYG{err}{finds} \PYG{err}{types} \PYG{err}{in} \PYG{err}{import} \PYG{err}{statements,} \PYG{err}{and} \PYG{err}{the} \PYG{err}{second} \PYG{err}{and} \PYG{err}{third} \PYG{err}{finds} \PYG{err}{names} \PYG{err}{from} \PYG{err}{regular} \PYG{err}{type} \PYG{err}{declarations}
+\PYG{err}{and} \PYG{err}{type} \PYG{err}{alias} \PYG{err}{declarations} \PYG{err}{respectively.}
+
+\PYG{err}{\PYGZbs{}subsubsection}\PYG{p}{\PYGZob{}}\PYG{err}{Constructors}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Constructors} \PYG{err}{can} \PYG{err}{be} \PYG{err}{extracted} \PYG{err}{from} \PYG{err}{type} \PYG{err}{declarations} \PYG{err}{with} \PYG{err}{a} \PYG{err}{simple} \PYG{err}{query:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{(union\PYGZus{}variant)} \PYG{err}{@constroctor}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{This} \PYG{err}{would} \PYG{err}{extract} \PYG{err}{the} \PYG{err}{whole} \PYG{err}{constructor} \PYG{err}{including} \PYG{err}{parameter} \PYG{err}{types,} \PYG{err}{which} \PYG{err}{could} \PYG{err}{be} \PYG{err}{used} \PYG{err}{to} \PYG{err}{distinguish}
+\PYG{err}{between} \PYG{err}{callable} \PYG{err}{constructors} \PYG{err}{and} \PYG{err}{constants.}
+\PYG{err}{If} \PYG{err}{one} \PYG{err}{were} \PYG{err}{only} \PYG{err}{interested} \PYG{err}{in} \PYG{err}{the} \PYG{err}{name} \PYG{err}{of} \PYG{err}{the} \PYG{err}{contractor} \PYG{err}{that} \PYG{err}{could} \PYG{err}{be} \PYG{err}{extracted} \PYG{err}{with} \PYG{err}{the} \PYG{err}{following} \PYG{err}{query:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{(union\PYGZus{}variant} \PYG{err}{(upper\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@constroctor)}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+
+\PYG{err}{\PYGZbs{}subsubsection}\PYG{p}{\PYGZob{}}\PYG{err}{Values}\PYG{p}{\PYGZcb{}}
+\PYG{err}{As} \PYG{err}{TreeSitter} \PYG{err}{only} \PYG{err}{enable} \PYG{err}{syntactic} \PYG{err}{analysis} \PYG{err}{we} \PYG{err}{cannot} \PYG{err}{distinguish} \PYG{err}{between} \PYG{err}{functions} \PYG{err}{and} \PYG{err}{other} \PYG{err}{values}
+\PYG{err}{without} \PYG{err}{implementing} \PYG{err}{the} \PYG{err}{Elm} \PYG{err}{type} \PYG{err}{system} \PYG{err}{as} \PYG{err}{part} \PYG{err}{of} \PYG{err}{that} \PYG{err}{analysis.}
+\PYG{err}{Due} \PYG{err}{to} \PYG{err}{the} \PYG{err}{variable} \PYG{err}{naming} \PYG{err}{rules} \PYG{err}{of} \PYG{err}{elm,} \PYG{err}{the} \PYG{err}{values} \PYG{err}{in} \PYG{err}{the} \PYG{err}{program} \PYG{err}{can} \PYG{err}{be} \PYG{err}{extracted} \PYG{err}{with} \PYG{err}{a} \PYG{err}{very} \PYG{err}{simple} \PYG{err}{query:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{(lower\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@value}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{This} \PYG{err}{is} \PYG{err}{a} \PYG{err}{very} \PYG{err}{simple} \PYG{err}{solution,} \PYG{err}{but} \PYG{err}{there} \PYG{err}{might} \PYG{err}{be} \PYG{err}{need} \PYG{err}{for} \PYG{err}{a} \PYG{err}{more} \PYG{err}{granular} \PYG{err}{query.}
+\PYG{err}{For} \PYG{err}{example,} \PYG{err}{this} \PYG{err}{query} \PYG{err}{would} \PYG{err}{match} \PYG{err}{the} \PYG{err}{last} \PYG{err}{part} \PYG{err}{of} \PYG{err}{a} \PYG{err}{qualified} \PYG{err}{identifier} \PYG{err}{like}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{elm}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Browser.sandbox}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}}
+\PYG{err}{as} \PYG{err}{well} \PYG{err}{as} \PYG{err}{type} \PYG{err}{variables.}
+\PYG{err}{A} \PYG{err}{more} \PYG{err}{granular} \PYG{err}{query} \PYG{err}{can} \PYG{err}{be} \PYG{err}{made} \PYG{err}{to} \PYG{err}{only} \PYG{err}{include} \PYG{err}{the} \PYG{err}{desired} \PYG{err}{kinds} \PYG{err}{of} \PYG{err}{lowercase} \PYG{err}{identifiers:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{(function\PYGZus{}declaration\PYGZus{}left} \PYG{err}{(lower\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@value)}
+\PYG{err}{(exposed\PYGZus{}value)} \PYG{err}{@value}
+\PYG{err}{(lower\PYGZus{}pattern)} \PYG{err}{@value}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{function\PYGZbs{}\PYGZus{}declaration\PYGZbs{}\PYGZus{}left}\PYG{p}{\PYGZcb{}} \PYG{err}{refers} \PYG{err}{to} \PYG{err}{the} \PYG{err}{left\PYGZhy{}hand} \PYG{err}{side} \PYG{err}{of} \PYG{err}{an} \PYG{err}{assignment,} \PYG{err}{so} \PYG{err}{the} \PYG{err}{first} \PYG{err}{part} \PYG{err}{of} \PYG{err}{the} \PYG{err}{query} \PYG{err}{refers} \PYG{err}{to} \PYG{err}{the} \PYG{err}{name} \PYG{err}{of} \PYG{err}{functions.}
+\PYG{err}{The} \PYG{err}{second} \PYG{err}{part} \PYG{err}{finds} \PYG{err}{values} \PYG{err}{in} \PYG{err}{import} \PYG{err}{statements,} \PYG{err}{similarly} \PYG{err}{as} \PYG{err}{the} \PYG{err}{first} \PYG{err}{part} \PYG{err}{of} \PYG{err}{the} \PYG{err}{type} \PYG{err}{of} \PYG{err}{query.}
+\PYG{err}{The} \PYG{err}{last} \PYG{err}{part} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{(lower\PYGZbs{}\PYGZus{}pattern)}\PYG{p}{\PYGZcb{}} \PYG{err}{refers} \PYG{err}{to} \PYG{err}{variable} \PYG{err}{names} \PYG{err}{in} \PYG{err}{pattern} \PYG{err}{matching} \PYG{err}{expressions} \PYG{err}{as} \PYG{err}{well} \PYG{err}{as} \PYG{err}{the} \PYG{err}{parameters} \PYG{err}{of} \PYG{err}{function} \PYG{err}{declarations.}
+\PYG{err}{In} \PYG{err}{the} \PYG{err}{following} \PYG{err}{declaration:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{elm}\PYG{p}{\PYGZcb{}}
+\PYG{err}{unwrap} \PYG{err}{:} \PYG{err}{Maybe} \PYG{err}{value} \PYG{err}{\PYGZhy{}\PYGZgt{}} \PYG{err}{value}
+\PYG{err}{unwrap} \PYG{err}{maybeValue} \PYG{err}{=}
+    \PYG{err}{case} \PYG{err}{maybeValue} \PYG{err}{of}
+        \PYG{err}{Just} \PYG{err}{content} \PYG{err}{\PYGZhy{}\PYGZgt{}}
+            \PYG{err}{content}
+        \PYG{err}{Nothing} \PYG{err}{\PYGZhy{}\PYGZgt{}}
+            \PYG{err}{Debug.todo} \PYG{l+s+s2}{\PYGZdq{}trying to unwrap nothing\PYGZdq{}}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}}
+\PYG{err}{the} \PYG{err}{query} \PYG{err}{would} \PYG{err}{find} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{unwrap}\PYG{p}{\PYGZcb{}}\PYG{err}{,} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{maybeValue}\PYG{p}{\PYGZcb{}} \PYG{err}{and} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{content}\PYG{p}{\PYGZcb{}}\PYG{err}{,} \PYG{err}{but} \PYG{err}{not} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{value}\PYG{p}{\PYGZcb{}} \PYG{err}{or} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{todo}\PYG{p}{\PYGZcb{}}\PYG{err}{.}
+
+\PYG{err}{\PYGZbs{}subsubsection}\PYG{p}{\PYGZob{}}\PYG{err}{Modules}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Extracting} \PYG{err}{module} \PYG{err}{names} \PYG{err}{can} \PYG{err}{be} \PYG{err}{done} \PYG{err}{with} \PYG{err}{a} \PYG{err}{simple} \PYG{err}{query} \PYG{err}{like:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{(import\PYGZus{}clause}
+    \PYG{err}{(upper\PYGZus{}case\PYGZus{}qid} \PYG{err}{(upper\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@module))}
+\PYG{err}{(import\PYGZus{}clause}
+    \PYG{err}{(as\PYGZus{}clause} \PYG{err}{(upper\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@module\PYGZhy{}alias))}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{This} \PYG{err}{would} \PYG{err}{find} \PYG{err}{all} \PYG{err}{identifiers} \PYG{err}{used} \PYG{err}{in} \PYG{err}{module} \PYG{err}{names} \PYG{err}{in} \PYG{err}{the} \PYG{err}{import} \PYG{err}{statements} \PYG{err}{as} \PYG{err}{well} \PYG{err}{as} \PYG{err}{the} \PYG{err}{module} \PYG{err}{aliases} \PYG{err}{from} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{as} \PYG{err}{clauses}\PYG{p}{\PYGZcb{}}\PYG{err}{.}
+\PYG{err}{If} \PYG{err}{one} \PYG{err}{wanted} \PYG{err}{to} \PYG{err}{merge} \PYG{err}{these} \PYG{err}{two} \PYG{err}{classes} \PYG{err}{that} \PYG{err}{could} \PYG{err}{be} \PYG{err}{achieved} \PYG{err}{simply} \PYG{err}{by} \PYG{err}{renaming} \PYG{err}{the} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{module\PYGZhy{}alias}\PYG{p}{\PYGZcb{}} \PYG{err}{capture} \PYG{err}{to} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{module}\PYG{p}{\PYGZcb{}}\PYG{err}{.}
+
+\PYG{err}{More} \PYG{err}{advanced} \PYG{err}{use} \PYG{err}{cases} \PYG{err}{needs} \PYG{err}{to} \PYG{err}{keep} \PYG{err}{the} \PYG{err}{connection} \PYG{err}{between} \PYG{err}{module} \PYG{err}{aliases} \PYG{err}{and} \PYG{err}{the} \PYG{err}{module} \PYG{err}{from} \PYG{err}{which} \PYG{err}{it} \PYG{err}{was} \PYG{err}{created.}
+\PYG{err}{For} \PYG{err}{the} \PYG{err}{system} \PYG{err}{in} \PYG{err}{question} \PYG{err}{this} \PYG{err}{is} \PYG{err}{indeed} \PYG{err}{the} \PYG{err}{case} \PYG{err}{because} \PYG{err}{we} \PYG{err}{want} \PYG{err}{to} \PYG{err}{use} \PYG{err}{the} \PYG{err}{alias} \PYG{err}{as} \PYG{err}{part} \PYG{err}{of} \PYG{err}{the} \PYG{err}{command} \PYG{err}{for} \PYG{err}{dictating} \PYG{err}{functions} \PYG{err}{in} \PYG{err}{that} \PYG{err}{module.}
+\PYG{err}{To} \PYG{err}{achieve} \PYG{err}{this} \PYG{err}{one} \PYG{err}{could} \PYG{err}{simply} \PYG{err}{extract} \PYG{err}{the} \PYG{err}{whole} \PYG{err}{node} \PYG{err}{containing} \PYG{err}{the} \PYG{err}{alias,} \PYG{err}{and} \PYG{err}{extract} \PYG{err}{the} \PYG{err}{relevant} \PYG{err}{parts} \PYG{err}{in} \PYG{err}{code.}
+\PYG{err}{A} \PYG{err}{query} \PYG{err}{like:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{(import\PYGZus{}clause} \PYG{err}{(as\PYGZus{}clause))} \PYG{err}{@import\PYGZhy{}with\PYGZhy{}alias}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{will} \PYG{err}{capture} \PYG{err}{any} \PYG{err}{import} \PYG{err}{statement} \PYG{err}{with} \PYG{err}{an} \PYG{err}{alias.}
+\PYG{err}{Once} \PYG{err}{this} \PYG{err}{node} \PYG{err}{has} \PYG{err}{been} \PYG{err}{retrieved} \PYG{err}{you} \PYG{err}{can} \PYG{err}{access} \PYG{err}{the} \PYG{err}{relevant} \PYG{err}{parts} \PYG{err}{of} \PYG{err}{the} \PYG{err}{tree} \PYG{err}{directly:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{js}\PYG{p}{\PYGZcb{}}
+\PYG{err}{module} \PYG{err}{=} \PYG{err}{node.children}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}
+\PYG{err}{alias} \PYG{err}{=} \PYG{err}{node.children}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{]}\PYG{err}{.children}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}}
+
+\PYG{err}{\PYGZbs{}subsubsection}\PYG{p}{\PYGZob{}}\PYG{err}{Record} \PYG{err}{Fields}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Extracting} \PYG{err}{record} \PYG{err}{fields} \PYG{err}{from} \PYG{err}{record} \PYG{err}{types} \PYG{err}{is} \PYG{err}{very} \PYG{err}{simple:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{(field\PYGZus{}type} \PYG{err}{(lower\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@record\PYGZhy{}field)}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Since} \PYG{err}{elm} \PYG{err}{has} \PYG{err}{anonymous} \PYG{err}{record} \PYG{err}{types,} \PYG{err}{there} \PYG{err}{might} \PYG{err}{be} \PYG{err}{situations} \PYG{err}{where} \PYG{err}{record} \PYG{err}{fields} \PYG{err}{are} \PYG{err}{used}
+\PYG{err}{without} \PYG{err}{having} \PYG{err}{been} \PYG{err}{declared} \PYG{err}{or} \PYG{err}{imported.}
+\PYG{err}{For} \PYG{err}{example} \PYG{err}{in} \PYG{err}{the} \PYG{err}{declaration}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{elm}\PYG{p}{\PYGZcb{}}
+\PYG{err}{f} \PYG{p}{\PYGZob{}}\PYG{err}{a,} \PYG{err}{b}\PYG{p}{\PYGZcb{}} \PYG{err}{=} \PYG{err}{a.c.d}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}}
+\PYG{err}{we} \PYG{err}{can} \PYG{err}{see} \PYG{err}{from} \PYG{err}{the} \PYG{err}{record} \PYG{err}{destructuring} \PYG{err}{expression} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{\PYGZbs{}\PYGZob{}a,} \PYG{err}{b\PYGZbs{}}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZcb{}} \PYG{err}{that} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{a}\PYG{p}{\PYGZcb{}} \PYG{err}{and} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{b}\PYG{p}{\PYGZcb{}} \PYG{err}{are} \PYG{err}{both} \PYG{err}{used} \PYG{err}{as} \PYG{err}{record} \PYG{err}{fields,}
+\PYG{err}{and} \PYG{err}{from} \PYG{err}{the} \PYG{err}{field} \PYG{err}{access} \PYG{err}{expression} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{a.c}\PYG{p}{\PYGZcb{}} \PYG{err}{we} \PYG{err}{can} \PYG{err}{see} \PYG{err}{that} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{c}\PYG{p}{\PYGZcb{}} \PYG{err}{and} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{d}\PYG{p}{\PYGZcb{}} \PYG{err}{are} \PYG{err}{also} \PYG{err}{record} \PYG{err}{fields.}
+\PYG{err}{These} \PYG{err}{two} \PYG{err}{cases} \PYG{err}{can} \PYG{err}{be} \PYG{err}{captured} \PYG{err}{by} \PYG{err}{the} \PYG{err}{following} \PYG{err}{query:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{(record\PYGZus{}pattern} \PYG{err}{(\PYGZus{}} \PYG{err}{(lower\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@record\PYGZhy{}field))}
+\PYG{err}{(field\PYGZus{}access\PYGZus{}expr} \PYG{err}{(lower\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@record\PYGZhy{}field)}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+
+
+
+\PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}subsubsection}\PYG{p}{\PYGZob{}}\PYG{err}{Imports}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{imports}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}} \PYG{err}{Example\PYGZti{}\PYGZbs{}ref}\PYG{p}{\PYGZob{}}\PYG{err}{ex:import}\PYG{p}{\PYGZcb{}} \PYG{err}{shows} \PYG{err}{an} \PYG{err}{complex} \PYG{err}{import} \PYG{err}{statement} \PYG{err}{which} \PYG{err}{imports} \PYG{err}{the} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{Html.Events}\PYG{p}{\PYGZcb{}} \PYG{err}{module,}
+\PYG{err}{\PYGZpc{}} \PYG{err}{introduces} \PYG{err}{an} \PYG{err}{alias} \PYG{err}{(\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{Events}\PYG{p}{\PYGZcb{}}\PYG{err}{)} \PYG{err}{and} \PYG{err}{also} \PYG{err}{import} \PYG{err}{one} \PYG{err}{of} \PYG{err}{the} \PYG{err}{members} \PYG{err}{of} \PYG{err}{the} \PYG{err}{module} \PYG{err}{(\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{onClick}\PYG{p}{\PYGZcb{}}\PYG{err}{).}
+\PYG{err}{\PYGZpc{}} \PYG{err}{After} \PYG{err}{processing} \PYG{err}{this} \PYG{err}{statement,} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{Events}\PYG{p}{\PYGZcb{}} \PYG{err}{would} \PYG{err}{be} \PYG{err}{added} \PYG{err}{to} \PYG{err}{the} \PYG{err}{list} \PYG{err}{of} \PYG{err}{active} \PYG{err}{modules,}
+\PYG{err}{\PYGZpc{}} \PYG{err}{and} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{onClick}\PYG{p}{\PYGZcb{}} \PYG{err}{would} \PYG{err}{be} \PYG{err}{added} \PYG{err}{to} \PYG{err}{the} \PYG{err}{list} \PYG{err}{of} \PYG{err}{active} \PYG{err}{functions.}
+\PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{example}\PYG{p}{\PYGZcb{}[}\PYG{err}{Complex} \PYG{err}{Import}\PYG{p}{]}\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{ex:import}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{elm}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}} \PYG{err}{import} \PYG{err}{Html.Events} \PYG{err}{as} \PYG{err}{Events} \PYG{err}{exposing} \PYG{err}{(onClick)}
+\PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{example}\PYG{p}{\PYGZcb{}}
+
+\PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}subsection}\PYG{p}{\PYGZob{}}\PYG{err}{Spoken} \PYG{err}{Identifier} \PYG{err}{Algorithm}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{spoken\PYGZus{}identifier\PYGZus{}algorithm}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}} \PYG{err}{Describe} \PYG{err}{convert} \PYG{err}{a} \PYG{err}{formatted} \PYG{err}{identifier} \PYG{err}{into} \PYG{err}{a} \PYG{err}{form} \PYG{err}{recognizable} \PYG{err}{by} \PYG{err}{talon.}
+
+\PYG{err}{\PYGZbs{}section}\PYG{p}{\PYGZob{}}\PYG{err}{Voice} \PYG{err}{Command} \PYG{err}{Optimization}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Simply} \PYG{err}{extracting} \PYG{err}{identifiers} \PYG{err}{should} \PYG{err}{result} \PYG{err}{in} \PYG{err}{a} \PYG{err}{significant} \PYG{err}{improvement,} \PYG{err}{but} \PYG{err}{there} \PYG{err}{are} \PYG{err}{still} \PYG{err}{some} \PYG{err}{cases}
+\PYG{err}{where} \PYG{err}{the} \PYG{err}{naïve} \PYG{err}{commands} \PYG{err}{generated} \PYG{err}{as} \PYG{err}{described} \PYG{err}{above} \PYG{err}{could} \PYG{err}{be} \PYG{err}{improved} \PYG{err}{upon.}
+\PYG{err}{This} \PYG{err}{section} \PYG{err}{will} \PYG{err}{discuss} \PYG{err}{a} \PYG{err}{few} \PYG{err}{methods} \PYG{err}{for} \PYG{err}{achieving} \PYG{err}{higher} \PYG{err}{accuracy} \PYG{err}{and} \PYG{err}{shorter} \PYG{err}{voice} \PYG{err}{commands.}
+
+\PYG{err}{\PYGZbs{}subsection}\PYG{p}{\PYGZob{}}\PYG{err}{Automatic} \PYG{err}{Acronyms}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{automatic\PYGZus{}acronyms}\PYG{p}{\PYGZcb{}}
+\PYG{err}{If} \PYG{err}{an} \PYG{err}{identifier} \PYG{err}{is} \PYG{err}{very} \PYG{err}{long,} \PYG{err}{its} \PYG{err}{name} \PYG{err}{might} \PYG{err}{not} \PYG{err}{be} \PYG{err}{the} \PYG{err}{most} \PYG{err}{efficient} \PYG{err}{way} \PYG{err}{to} \PYG{err}{refer} \PYG{err}{to} \PYG{err}{it.}
+\PYG{err}{An} \PYG{err}{identifier} \PYG{err}{like} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{processAnalysisResults}\PYG{p}{\PYGZcb{}} \PYG{err}{consists} \PYG{err}{of} \PYG{err}{three} \PYG{err}{words,} \PYG{err}{but} \PYG{err}{is} \PYG{err}{eight} \PYG{err}{syllables} \PYG{err}{long.}
+\PYG{err}{A} \PYG{err}{common} \PYG{err}{way} \PYG{err}{to} \PYG{err}{enter} \PYG{err}{long} \PYG{err}{identifiers} \PYG{err}{is} \PYG{err}{to} \PYG{err}{rely} \PYG{err}{on} \PYG{err}{the} \PYG{err}{auto} \PYG{err}{complete} \PYG{err}{feature} \PYG{err}{of} \PYG{err}{the} \PYG{err}{editor.}
+\PYG{err}{Entering} \PYG{err}{``p} \PYG{err}{a} \PYG{err}{r\PYGZsq{}\PYGZsq{}} \PYG{err}{is} \PYG{err}{usually} \PYG{err}{sufficient} \PYG{err}{to} \PYG{err}{have} \PYG{err}{the} \PYG{err}{correct} \PYG{err}{identifier} \PYG{err}{as} \PYG{err}{one} \PYG{err}{of} \PYG{err}{the} \PYG{err}{top} \PYG{err}{results} \PYG{err}{for} \PYG{err}{the} \PYG{err}{auto\PYGZhy{}complete.}
+\PYG{err}{Then} \PYG{err}{the} \PYG{err}{user} \PYG{err}{would} \PYG{err}{have} \PYG{err}{to} \PYG{err}{say} \PYG{err}{the} \PYG{err}{command} \PYG{err}{used} \PYG{err}{for} \PYG{err}{triggering} \PYG{err}{the} \PYG{err}{auto\PYGZhy{}complete.}
+\PYG{err}{This} \PYG{err}{is} \PYG{err}{a} \PYG{err}{useful} \PYG{err}{workaround} \PYG{err}{for} \PYG{err}{long} \PYG{err}{identifiers} \PYG{err}{with} \PYG{err}{hard} \PYG{err}{to} \PYG{err}{pronounce} \PYG{err}{words,} \PYG{err}{but} \PYG{err}{it} \PYG{err}{takes} \PYG{err}{extra} \PYG{err}{time}
+\PYG{err}{due} \PYG{err}{to} \PYG{err}{the} \PYG{err}{user} \PYG{err}{having} \PYG{err}{to} \PYG{err}{wait} \PYG{err}{for} \PYG{err}{the} \PYG{err}{auto\PYGZhy{}complete} \PYG{err}{to} \PYG{err}{activate.}
+\PYG{err}{This} \PYG{err}{pattern} \PYG{err}{of} \PYG{err}{use} \PYG{err}{can} \PYG{err}{be} \PYG{err}{subsumed} \PYG{err}{by} \PYG{err}{this} \PYG{err}{system} \PYG{err}{by} \PYG{err}{generating} \PYG{err}{acronyms} \PYG{err}{for} \PYG{err}{long} \PYG{err}{identifiers.}
+\PYG{err}{By} \PYG{err}{splitting} \PYG{err}{identifiers} \PYG{err}{by} \PYG{err}{words,} \PYG{err}{taking} \PYG{err}{the} \PYG{err}{first} \PYG{err}{letter} \PYG{err}{of} \PYG{err}{each} \PYG{err}{word,} \PYG{err}{and} \PYG{err}{adding} \PYG{err}{this} \PYG{err}{as} \PYG{err}{an} \PYG{err}{extra} \PYG{err}{key}
+\PYG{err}{for} \PYG{err}{that} \PYG{err}{identifier,} \PYG{err}{users} \PYG{err}{should} \PYG{err}{be} \PYG{err}{able} \PYG{err}{to} \PYG{err}{dictate} \PYG{err}{more} \PYG{err}{complex} \PYG{err}{identifiers} \PYG{err}{in} \PYG{err}{shorter} \PYG{err}{amounts} \PYG{err}{of} \PYG{err}{time.}
+\PYG{err}{\PYGZpc{}} \PYG{err}{maybe} \PYG{err}{discuss} \PYG{err}{the} \PYG{err}{structure} \PYG{err}{of} \PYG{err}{identifiers} \PYG{err}{(with} \PYG{err}{respect} \PYG{err}{to} \PYG{err}{how} \PYG{err}{to} \PYG{err}{split} \PYG{err}{them)}
+
+\PYG{err}{\PYGZbs{}subsection}\PYG{p}{\PYGZob{}}\PYG{err}{Prefix} \PYG{err}{Elimination}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{prefix\PYGZus{}elimination}\PYG{p}{\PYGZcb{}}
+\PYG{err}{A} \PYG{err}{common} \PYG{err}{idiom} \PYG{err}{in} \PYG{err}{some} \PYG{err}{programming} \PYG{err}{languages} \PYG{err}{is} \PYG{err}{to} \PYG{err}{have} \PYG{err}{the} \PYG{err}{start} \PYG{err}{of} \PYG{err}{an} \PYG{err}{function} \PYG{err}{name} \PYG{err}{refer} \PYG{err}{to} \PYG{err}{the} \PYG{err}{``thing\PYGZsq{}\PYGZsq{}}
+\PYG{err}{or} \PYG{err}{datatype} \PYG{err}{on} \PYG{err}{which} \PYG{err}{it} \PYG{err}{operates.} \PYG{err}{This} \PYG{err}{is} \PYG{err}{mostly} \PYG{err}{common} \PYG{err}{in} \PYG{err}{languages} \PYG{err}{without} \PYG{err}{user\PYGZhy{}defined} \PYG{err}{name} \PYG{err}{spaces} \PYG{err}{such} \PYG{err}{as} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{C}\PYG{p}{\PYGZcb{}}
+\PYG{err}{,} \PYG{err}{but} \PYG{err}{is} \PYG{err}{also} \PYG{err}{common} \PYG{err}{in} \PYG{err}{higher\PYGZhy{}level} \PYG{err}{languages} \PYG{err}{when} \PYG{err}{a} \PYG{err}{few} \PYG{err}{functions} \PYG{err}{share} \PYG{err}{a} \PYG{err}{domain,} \PYG{err}{but} \PYG{err}{they} \PYG{err}{do} \PYG{err}{not} \PYG{err}{warrant}
+\PYG{err}{being} \PYG{err}{move} \PYG{err}{to} \PYG{err}{their} \PYG{err}{own} \PYG{err}{module/package.}
+\PYG{err}{For} \PYG{err}{example,} \PYG{err}{if} \PYG{err}{you} \PYG{err}{have} \PYG{err}{two} \PYG{err}{functions} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{handleHttpConnection}\PYG{p}{\PYGZcb{}} \PYG{err}{and} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{handleTcpConnection}\PYG{p}{\PYGZcb{}}\PYG{err}{,} \PYG{err}{and} \PYG{err}{no} \PYG{err}{other}
+\PYG{err}{functions/variables} \PYG{err}{containing} \PYG{err}{the} \PYG{err}{name} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{HttpConnection}\PYG{p}{\PYGZcb{}} \PYG{err}{or} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{TcpConnection}\PYG{p}{\PYGZcb{}}\PYG{err}{,} \PYG{err}{you} \PYG{err}{might} \PYG{err}{want} \PYG{err}{to}
+\PYG{err}{be} \PYG{err}{able} \PYG{err}{to} \PYG{err}{refer} \PYG{err}{to} \PYG{err}{those} \PYG{err}{functions} \PYG{err}{using} \PYG{err}{only} \PYG{err}{the} \PYG{err}{suffix} \PYG{err}{(without} \PYG{err}{the} \PYG{err}{``handle\PYGZsq{}\PYGZsq{}} \PYG{err}{prefix).}
+\PYG{err}{This} \PYG{err}{would} \PYG{err}{be} \PYG{err}{a} \PYG{err}{relatively} \PYG{err}{minor} \PYG{err}{optimization,} \PYG{err}{but} \PYG{err}{nevertheless} \PYG{err}{worth} \PYG{err}{considering.}
+
+\PYG{err}{\PYGZbs{}subsection}\PYG{p}{\PYGZob{}}\PYG{err}{Overrides}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{overrides}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Not} \PYG{err}{all} \PYG{err}{identifiers} \PYG{err}{will} \PYG{err}{be} \PYG{err}{perfectly} \PYG{err}{pronounceable.}
+\PYG{err}{Programmers} \PYG{err}{often} \PYG{err}{use} \PYG{err}{domain} \PYG{err}{specific} \PYG{err}{vocabularies} \PYG{err}{filled} \PYG{err}{with} \PYG{err}{words} \PYG{err}{not} \PYG{err}{used} \PYG{err}{in} \PYG{err}{normal} \PYG{err}{English.}
+\PYG{err}{For} \PYG{err}{example} \PYG{err}{the} \PYG{err}{word} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{json}\PYG{p}{\PYGZcb{}} \PYG{err}{is} \PYG{err}{actually} \PYG{err}{an} \PYG{err}{acronym} \PYG{err}{for} \PYG{err}{``JavaScript} \PYG{err}{Object} \PYG{err}{Notation\PYGZsq{}\PYGZsq{},} \PYG{err}{but} \PYG{err}{is} \PYG{err}{rarely}
+\PYG{err}{pronounced} \PYG{err}{``J} \PYG{err}{S} \PYG{err}{O} \PYG{err}{N\PYGZsq{}\PYGZsq{}.}
+\PYG{err}{People} \PYG{err}{will} \PYG{err}{pronounce} \PYG{err}{it} \PYG{err}{as} \PYG{err}{either} \PYG{err}{``J} \PYG{err}{son\PYGZsq{}\PYGZsq{}} \PYG{err}{(or} \PYG{err}{``jay} \PYG{err}{son\PYGZsq{}\PYGZsq{}),} \PYG{err}{or} \PYG{err}{as} \PYG{err}{the} \PYG{err}{name} \PYG{err}{``Jason\PYGZsq{}\PYGZsq{}.}
+\PYG{err}{Talon} \PYG{err}{can} \PYG{err}{recognize} \PYG{err}{the} \PYG{err}{first} \PYG{err}{version} \PYG{err}{most} \PYG{err}{of} \PYG{err}{the} \PYG{err}{time,} \PYG{err}{but} \PYG{err}{it} \PYG{err}{might} \PYG{err}{require} \PYG{err}{more} \PYG{err}{precise} \PYG{err}{enunciation} \PYG{err}{from} \PYG{err}{the} \PYG{err}{user.}
+\PYG{err}{The} \PYG{err}{name} \PYG{err}{Jason} \PYG{err}{is} \PYG{err}{easily} \PYG{err}{recognizable,} \PYG{err}{so} \PYG{err}{overriding} \PYG{err}{the} \PYG{err}{word} \PYG{err}{json} \PYG{err}{with} \PYG{err}{Jason} \PYG{err}{will} \PYG{err}{give} \PYG{err}{higher} \PYG{err}{overall} \PYG{err}{accuracy.}
+\PYG{err}{A} \PYG{err}{simple} \PYG{err}{solution} \PYG{err}{to} \PYG{err}{this} \PYG{err}{problem} \PYG{err}{is} \PYG{err}{to} \PYG{err}{allow} \PYG{err}{users} \PYG{err}{to} \PYG{err}{declare} \PYG{err}{a} \PYG{err}{list} \PYG{err}{of} \PYG{err}{overrides} \PYG{err}{for} \PYG{err}{which} \PYG{err}{the} \PYG{err}{system}
+\PYG{err}{can} \PYG{err}{do} \PYG{err}{a} \PYG{err}{simple} \PYG{err}{lookup} \PYG{err}{to} \PYG{err}{make} \PYG{err}{substitutions} \PYG{err}{in} \PYG{err}{the} \PYG{err}{final} \PYG{err}{stage} \PYG{err}{of} \PYG{err}{command} \PYG{err}{generation} \PYG{err}{like} \PYG{err}{so:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{json}\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZob{}} \PYG{n+nt}{\PYGZdq{}overrides\PYGZdq{}}\PYG{p}{:}
+    \PYG{p}{\PYGZob{}} \PYG{n+nt}{\PYGZdq{}json\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Jason\PYGZdq{}} \PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}}
+\PYG{err}{The} \PYG{err}{list} \PYG{err}{of} \PYG{err}{overrides} \PYG{err}{can} \PYG{err}{be} \PYG{err}{partially} \PYG{err}{filled} \PYG{err}{automatically} \PYG{err}{by} \PYG{err}{extracting} \PYG{err}{the} \PYG{err}{list} \PYG{err}{of} \PYG{err}{abbreviations} \PYG{err}{and} \PYG{err}{homophones}
+\PYG{err}{from} \PYG{err}{the} \PYG{err}{users} \PYG{err}{Talon} \PYG{err}{configuration} \PYG{err}{files.}
+
+
+\PYG{err}{\PYGZpc{}} \PYG{err}{TODO:} \PYG{err}{Find} \PYG{err}{example} \PYG{err}{of} \PYG{err}{words} \PYG{err}{talon} \PYG{err}{can\PYGZsq{}t} \PYG{err}{recognize}
+
+\PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}subsection}\PYG{p}{\PYGZob{}}\PYG{err}{Local} \PYG{err}{Bindings}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}}
+\PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{sub:local\PYGZus{}bindings}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}} \PYG{err}{Should} \PYG{err}{local} \PYG{err}{bindings} \PYG{err}{be} \PYG{err}{handled} \PYG{err}{differently} \PYG{err}{from} \PYG{err}{top} \PYG{err}{level} \PYG{err}{bindings?}
+
+\PYG{err}{\PYGZbs{}section}\PYG{p}{\PYGZob{}}\PYG{err}{Code} \PYG{err}{Navigation}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}}
+\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{sec:code\PYGZus{}navigation}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Once} \PYG{err}{information} \PYG{err}{has} \PYG{err}{been} \PYG{err}{extracted} \PYG{err}{from} \PYG{err}{the} \PYG{err}{program,} \PYG{err}{enabling} \PYG{err}{high\PYGZhy{}level} \PYG{err}{navigation} \PYG{err}{commands} \PYG{err}{is} \PYG{err}{quite} \PYG{err}{simple.}
+\PYG{err}{The} \PYG{err}{following} \PYG{err}{example} \PYG{err}{shows} \PYG{err}{how} \PYG{err}{you} \PYG{err}{could} \PYG{err}{create} \PYG{err}{talon} \PYG{err}{commands} \PYG{err}{that} \PYG{err}{uses} \PYG{err}{the} \PYG{err}{classified} \PYG{err}{identifiers}
+\PYG{err}{to} \PYG{err}{implement} \PYG{err}{a} \PYG{err}{simple} \PYG{err}{grammar} \PYG{err}{that} \PYG{err}{allows} \PYG{err}{for} \PYG{err}{navigation} \PYG{err}{that} \PYG{err}{takes} \PYG{err}{the} \PYG{err}{type} \PYG{err}{of} \PYG{err}{the} \PYG{err}{navigation} \PYG{err}{target}
+\PYG{err}{into} \PYG{err}{account:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{go} \PYG{err}{to} \PYG{p}{\PYGZob{}} \PYG{err}{user.symbol\PYGZus{}identifier} \PYG{p}{\PYGZcb{}}\PYG{err}{:}
+    \PYG{err}{user.symbol\PYGZus{}navigate(}\PYG{l+s+s2}{\PYGZdq{}\PYGZob{}symbol\PYGZus{}identifier\PYGZcb{}\PYGZdq{}}\PYG{err}{,} \PYG{l+s+s2}{\PYGZdq{}identifier\PYGZdq{}}\PYG{err}{)}
+\PYG{err}{go} \PYG{err}{type} \PYG{p}{\PYGZob{}}\PYG{err}{user.symbol\PYGZus{}type}\PYG{p}{\PYGZcb{}}\PYG{err}{:}
+    \PYG{err}{user.symbol\PYGZus{}navigate(}\PYG{l+s+s2}{\PYGZdq{}\PYGZob{}symbol\PYGZus{}type\PYGZcb{}\PYGZdq{}}\PYG{err}{,} \PYG{l+s+s2}{\PYGZdq{}type\PYGZdq{}}\PYG{err}{)}
+\PYG{err}{go} \PYG{err}{fun} \PYG{p}{\PYGZob{}}\PYG{err}{user.symbol\PYGZus{}function}\PYG{p}{\PYGZcb{}}\PYG{err}{:}
+    \PYG{err}{user.symbol\PYGZus{}navigate(}\PYG{l+s+s2}{\PYGZdq{}\PYGZob{}symbol\PYGZus{}function\PYGZcb{}\PYGZdq{}}\PYG{err}{,} \PYG{l+s+s2}{\PYGZdq{}function\PYGZdq{}}\PYG{err}{)}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{The} \PYG{err}{action} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{symbol\PYGZbs{}\PYGZus{}navigate}\PYG{p}{\PYGZcb{}} \PYG{err}{queries} \PYG{err}{the} \PYG{err}{server}
+\PYG{err}{for} \PYG{err}{the} \PYG{err}{position} \PYG{err}{of} \PYG{err}{the} \PYG{err}{identifier} \PYG{err}{with} \PYG{err}{name} \PYG{err}{matching} \PYG{err}{the} \PYG{err}{first} \PYG{err}{parameter,} \PYG{err}{and} \PYG{err}{type} \PYG{err}{matching} \PYG{err}{the} \PYG{err}{second.}
+\PYG{err}{It} \PYG{err}{will} \PYG{err}{then} \PYG{err}{trigger} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{editor\PYGZbs{}\PYGZus{}go\PYGZbs{}\PYGZus{}to\PYGZbs{}\PYGZus{}position}\PYG{p}{\PYGZcb{}} \PYG{err}{which} \PYG{err}{in} \PYG{err}{the} \PYG{err}{context} \PYG{err}{of} \PYG{err}{the} \PYG{err}{current} \PYG{err}{editor}
+\PYG{err}{to} \PYG{err}{the} \PYG{err}{beginning} \PYG{err}{of} \PYG{err}{that} \PYG{err}{symbol.}
+
+\PYG{err}{Since} \PYG{err}{we} \PYG{err}{have} \PYG{err}{access} \PYG{err}{to} \PYG{err}{the} \PYG{err}{entire} \PYG{err}{parse} \PYG{err}{tree,} \PYG{err}{it} \PYG{err}{is} \PYG{err}{also} \PYG{err}{possible} \PYG{err}{to} \PYG{err}{navigate} \PYG{err}{two} \PYG{err}{nodes} \PYG{err}{that}
+\PYG{err}{are} \PYG{err}{not} \PYG{err}{associated} \PYG{err}{with} \PYG{err}{any} \PYG{err}{given} \PYG{err}{identifier.}
+\PYG{err}{This} \PYG{err}{would} \PYG{err}{not} \PYG{err}{be} \PYG{err}{possible} \PYG{err}{with} \PYG{err}{an} \PYG{err}{implementation} \PYG{err}{that} \PYG{err}{only} \PYG{err}{uses} \PYG{err}{LSP.}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{go} \PYG{err}{import:} \PYG{err}{user.symbol\PYGZus{}navigate(}\PYG{l+s+s2}{\PYGZdq{}\PYGZdq{}}\PYG{err}{,} \PYG{l+s+s2}{\PYGZdq{}import\PYGZdq{}}\PYG{err}{)}
+\PYG{err}{go} \PYG{err}{string:} \PYG{err}{user.symbol\PYGZus{}navigate(}\PYG{l+s+s2}{\PYGZdq{}\PYGZdq{}}\PYG{err}{,} \PYG{l+s+s2}{\PYGZdq{}string\PYGZdq{}}\PYG{err}{)}
+\PYG{err}{go} \PYG{err}{number:} \PYG{err}{user.symbol\PYGZus{}navigate(}\PYG{l+s+s2}{\PYGZdq{}\PYGZdq{}}\PYG{err}{,} \PYG{l+s+s2}{\PYGZdq{}number\PYGZdq{}}\PYG{err}{)}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+
+\PYG{err}{\PYGZbs{}paragraph}\PYG{p}{\PYGZob{}}\PYG{err}{Context} \PYG{err}{aware} \PYG{err}{navigation}\PYG{p}{\PYGZcb{}}
+\PYG{err}{can} \PYG{err}{be} \PYG{err}{achieved} \PYG{err}{simply} \PYG{err}{by} \PYG{err}{exposing} \PYG{err}{the} \PYG{err}{cursor} \PYG{err}{position} \PYG{err}{to} \PYG{err}{Talon.}
+\PYG{err}{When} \PYG{err}{a} \PYG{err}{query} \PYG{err}{is} \PYG{err}{executed,} \PYG{err}{the} \PYG{err}{response} \PYG{err}{from} \PYG{err}{the} \PYG{err}{server} \PYG{err}{will} \PYG{err}{be} \PYG{err}{the} \PYG{err}{node}
+\PYG{err}{which} \PYG{err}{is} \PYG{err}{closest} \PYG{err}{to} \PYG{err}{the} \PYG{err}{cursor.} \PYG{err}{By} \PYG{err}{also} \PYG{err}{keeping} \PYG{err}{track} \PYG{err}{of}
+\PYG{err}{the} \PYG{err}{previous} \PYG{err}{query} \PYG{err}{and} \PYG{err}{its} \PYG{err}{results,} \PYG{err}{you} \PYG{err}{can} \PYG{err}{also} \PYG{err}{have}
+\PYG{err}{the} \PYG{err}{commands} \PYG{err}{that} \PYG{err}{cycle} \PYG{err}{through} \PYG{err}{results} \PYG{err}{in} \PYG{err}{order} \PYG{err}{to} \PYG{err}{quickly} \PYG{err}{navigate}
+\PYG{err}{when} \PYG{err}{the} \PYG{err}{query} \PYG{err}{can} \PYG{err}{capture} \PYG{err}{multiple} \PYG{err}{nodes.}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{go} \PYG{err}{to} \PYG{err}{next:} \PYG{err}{user.go\PYGZus{}to\PYGZus{}next\PYGZus{}result(}\PYG{l+s+s2}{\PYGZdq{}forward\PYGZdq{}}\PYG{err}{)}
+\PYG{err}{go} \PYG{err}{to} \PYG{err}{last:} \PYG{err}{user.go\PYGZus{}to\PYGZus{}next\PYGZus{}result(}\PYG{l+s+s2}{\PYGZdq{}backward\PYGZdq{}}\PYG{err}{)}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}} \PYG{err}{Given} \PYG{err}{the} \PYG{err}{following} \PYG{err}{program} \PYG{err}{snippet:}
+\PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{elm}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}} \PYG{err}{type} \PYG{err}{Update}
+\PYG{err}{\PYGZpc{}}     \PYG{err}{=} \PYG{err}{SoftwareUpdate}
+\PYG{err}{\PYGZpc{}}     \PYG{err}{|} \PYG{err}{FirmwareUpdate}
+
+\PYG{err}{\PYGZpc{}} \PYG{err}{update} \PYG{err}{:} \PYG{err}{Msg} \PYG{err}{\PYGZhy{}\PYGZgt{}} \PYG{err}{Model} \PYG{err}{\PYGZhy{}\PYGZgt{}} \PYG{err}{Model}
+\PYG{err}{\PYGZpc{}} \PYG{err}{update} \PYG{err}{msg} \PYG{err}{model} \PYG{err}{=} \PYG{err}{...}
+\PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{minted}\PYG{p}{\PYGZcb{}}
+
+
+\PYG{err}{\PYGZbs{}section}\PYG{p}{\PYGZob{}}\PYG{err}{Structural} \PYG{err}{Editing}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}}
+\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{sec:structural\PYGZus{}editing}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Structural} \PYG{err}{editing} \PYG{err}{can} \PYG{err}{easily} \PYG{err}{be} \PYG{err}{achieved} \PYG{err}{by} \PYG{err}{building} \PYG{err}{upon} \PYG{err}{the} \PYG{err}{implementation} \PYG{err}{of} \PYG{err}{navigation.}
+\PYG{err}{By} \PYG{err}{implementing} \PYG{err}{an} \PYG{err}{action} \PYG{err}{to} \PYG{err}{select} \PYG{err}{a} \PYG{err}{given} \PYG{err}{range} \PYG{err}{in} \PYG{err}{the} \PYG{err}{editor,} \PYG{err}{you} \PYG{err}{can} \PYG{err}{create} \PYG{err}{commands}
+\PYG{err}{that} \PYG{err}{select} \PYG{err}{nodes} \PYG{err}{based} \PYG{err}{on} \PYG{err}{their} \PYG{err}{type} \PYG{err}{and} \PYG{err}{associated} \PYG{err}{identifiers} \PYG{err}{in} \PYG{err}{the} \PYG{err}{same} \PYG{err}{manner} \PYG{err}{as} \PYG{err}{with} \PYG{err}{navigation.}
+\PYG{err}{For} \PYG{err}{example,} \PYG{err}{to} \PYG{err}{delete} \PYG{err}{the} \PYG{err}{typed} \PYG{err}{declaration} \PYG{err}{in} \PYG{err}{Vim,} \PYG{err}{you} \PYG{err}{can} \PYG{err}{create} \PYG{err}{a} \PYG{err}{command} \PYG{err}{that} \PYG{err}{captures} \PYG{err}{the} \PYG{err}{name} \PYG{err}{of} \PYG{err}{the} \PYG{err}{type} \PYG{err}{declaration,}
+\PYG{err}{selects} \PYG{err}{it,} \PYG{err}{and} \PYG{err}{presses} \PYG{err}{``d\PYGZsq{}\PYGZsq{}} \PYG{err}{in} \PYG{err}{order} \PYG{err}{to} \PYG{err}{delete} \PYG{err}{it.}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{delete} \PYG{err}{type} \PYG{p}{\PYGZob{}}\PYG{err}{user.symbol\PYGZus{}type}\PYG{p}{\PYGZcb{}}\PYG{err}{:}
+    \PYG{err}{user.symbol\PYGZus{}select(}\PYG{l+s+s2}{\PYGZdq{}\PYGZob{}symbol\PYGZus{}type\PYGZcb{}\PYGZdq{}}\PYG{err}{,} \PYG{l+s+s2}{\PYGZdq{}type\PYGZdq{}}\PYG{err}{)}
+    \PYG{err}{key(d)}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Structural} \PYG{err}{editing} \PYG{err}{capabilities} \PYG{err}{can} \PYG{err}{be} \PYG{err}{implemented} \PYG{err}{either} \PYG{err}{client\PYGZhy{}side,} \PYG{err}{server\PYGZhy{}side,} \PYG{err}{or} \PYG{err}{in} \PYG{err}{Talon.}
+\PYG{err}{There} \PYG{err}{are} \PYG{err}{certainly} \PYG{err}{trade\PYGZhy{}offs} \PYG{err}{to} \PYG{err}{each} \PYG{err}{approach,} \PYG{err}{but} \PYG{err}{I} \PYG{err}{will} \PYG{err}{not} \PYG{err}{go} \PYG{err}{into} \PYG{err}{detail} \PYG{err}{on} \PYG{err}{this} \PYG{err}{issue.}
+\PYG{err}{For} \PYG{err}{the} \PYG{err}{prototype} \PYG{err}{the} \PYG{err}{editing} \PYG{err}{commands} \PYG{err}{were} \PYG{err}{implemented} \PYG{err}{in} \PYG{err}{Talon.}
+
+
+\PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}section}\PYG{p}{\PYGZob{}}\PYG{err}{Design} \PYG{err}{Goals}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}}
+\PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{sec:design\PYGZus{}goals}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}} \PYG{err}{configurable,} \PYG{err}{accuracy,} \PYG{err}{intuitive/consistent} \PYG{err}{(user} \PYG{err}{should} \PYG{err}{not} \PYG{err}{have} \PYG{err}{to} \PYG{err}{look} \PYG{err}{up} \PYG{err}{the} \PYG{err}{generated} \PYG{err}{commands),}
+\PYG{err}{\PYGZpc{}} \PYG{err}{shortest} \PYG{err}{commands} \PYG{err}{possible}
+
+\PYG{err}{\PYGZbs{}section}\PYG{p}{\PYGZob{}}\PYG{err}{Architecture}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}}
+\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{sec:architecture}\PYG{p}{\PYGZcb{}}
+\PYG{err}{The} \PYG{err}{system} \PYG{err}{consists} \PYG{err}{in} \PYG{err}{total} \PYG{err}{of} \PYG{err}{three} \PYG{err}{parts:} \PYG{err}{Talon} \PYG{err}{scripts,} \PYG{err}{The} \PYG{err}{Server} \PYG{err}{and} \PYG{err}{a} \PYG{err}{Vim} \PYG{err}{extension} \PYG{err}{(Client).}
+\PYG{err}{The} \PYG{err}{server} \PYG{err}{is} \PYG{err}{responsible} \PYG{err}{for} \PYG{err}{parsing} \PYG{err}{source} \PYG{err}{files} \PYG{err}{and} \PYG{err}{extracting} \PYG{err}{information} \PYG{err}{using} \PYG{err}{TreeSitter,}
+\PYG{err}{as} \PYG{err}{well} \PYG{err}{as} \PYG{err}{performing} \PYG{err}{normalization} \PYG{err}{on} \PYG{err}{the} \PYG{err}{extracted} \PYG{err}{identifiers} \PYG{err}{in} \PYG{err}{order} \PYG{err}{to} \PYG{err}{make} \PYG{err}{them}
+\PYG{err}{more} \PYG{err}{recognizable} \PYG{err}{before} \PYG{err}{sending} \PYG{err}{them} \PYG{err}{to} \PYG{err}{Talon.}
+\PYG{err}{The} \PYG{err}{Vim} \PYG{err}{extension} \PYG{err}{manages} \PYG{err}{the} \PYG{err}{window} \PYG{err}{title} \PYG{err}{which} \PYG{err}{is} \PYG{err}{used} \PYG{err}{by} \PYG{err}{Talon} \PYG{err}{to} \PYG{err}{track} \PYG{err}{information} \PYG{err}{about} \PYG{err}{the}
+\PYG{err}{current} \PYG{err}{editor} \PYG{err}{state} \PYG{err}{such} \PYG{err}{as} \PYG{err}{current} \PYG{err}{mode} \PYG{err}{and} \PYG{err}{cursor} \PYG{err}{position.} \PYG{err}{Additionally,} \PYG{err}{it} \PYG{err}{will} \PYG{err}{notify}
+\PYG{err}{the} \PYG{err}{server} \PYG{err}{whenever} \PYG{err}{an} \PYG{err}{Elm} \PYG{err}{document} \PYG{err}{is} \PYG{err}{either} \PYG{err}{opened,} \PYG{err}{closed} \PYG{err}{or} \PYG{err}{written} \PYG{err}{to.}
+\PYG{err}{The} \PYG{err}{talon} \PYG{err}{scripts} \PYG{err}{defines} \PYG{err}{voice} \PYG{err}{commands} \PYG{err}{that} \PYG{err}{utilizes} \PYG{err}{the} \PYG{err}{information} \PYG{err}{received} \PYG{err}{from} \PYG{err}{the} \PYG{err}{server}
+\PYG{err}{and} \PYG{err}{defines} \PYG{err}{actions} \PYG{err}{to} \PYG{err}{query} \PYG{err}{the} \PYG{err}{server} \PYG{err}{for} \PYG{err}{information} \PYG{err}{about} \PYG{err}{a} \PYG{err}{given} \PYG{err}{identifier.}
+\PYG{err}{An} \PYG{err}{overview} \PYG{err}{of} \PYG{err}{the} \PYG{err}{system} \PYG{err}{can} \PYG{err}{be} \PYG{err}{seen} \PYG{err}{in} \PYG{err}{Figure\PYGZti{}\PYGZbs{}ref}\PYG{p}{\PYGZob{}}\PYG{err}{fig:architecture}\PYG{p}{\PYGZcb{}}\PYG{err}{.}
+
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{figure}\PYG{p}{\PYGZcb{}[}\PYG{err}{htpb}\PYG{p}{]}
+    \PYG{err}{\PYGZbs{}centering}
+    \PYG{err}{\PYGZbs{}includegraphics}\PYG{p}{[}\PYG{err}{width=}\PYG{l+m+mf}{0.8}\PYG{err}{\PYGZbs{}linewidth}\PYG{p}{]\PYGZob{}}\PYG{err}{images/architecture.png}\PYG{p}{\PYGZcb{}}
+    \PYG{err}{\PYGZbs{}caption}\PYG{p}{\PYGZob{}}\PYG{err}{System} \PYG{err}{Architecture}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}}
+    \PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{fig:architecture}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{figure}\PYG{p}{\PYGZcb{}}
+
+\PYG{err}{\PYGZbs{}section}\PYG{p}{\PYGZob{}}\PYG{err}{Implementation} \PYG{err}{Details}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}}
+\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{sec:implementation}\PYG{p}{\PYGZcb{}}
+\PYG{err}{This} \PYG{err}{section} \PYG{err}{presents} \PYG{err}{information} \PYG{err}{about} \PYG{err}{the} \PYG{err}{prototype} \PYG{err}{in} \PYG{err}{it\PYGZsq{}s} \PYG{err}{current} \PYG{err}{state} \PYG{err}{as} \PYG{err}{well} \PYG{err}{as} \PYG{err}{reasoning} \PYG{err}{behing} \PYG{err}{the} \PYG{err}{tools} \PYG{err}{and} \PYG{err}{techniques} \PYG{err}{used.}
+\PYG{err}{\PYGZpc{}} \PYG{err}{implementation} \PYG{err}{details} \PYG{err}{such} \PYG{err}{as} \PYG{err}{programming} \PYG{err}{language} \PYG{err}{etc}
+\PYG{err}{\PYGZbs{}subsection}\PYG{p}{\PYGZob{}}\PYG{err}{Tools}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}}
+\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{sub:tools}\PYG{p}{\PYGZcb{}}
+\PYG{err}{For} \PYG{err}{the} \PYG{err}{purpose} \PYG{err}{of} \PYG{err}{this} \PYG{err}{prototype} \PYG{err}{I} \PYG{err}{chose} \PYG{err}{to} \PYG{err}{use} \PYG{err}{TreeSitter} \PYG{err}{because} \PYG{err}{it} \PYG{err}{provides} \PYG{err}{full} \PYG{err}{information} \PYG{err}{about} \PYG{err}{the} \PYG{err}{program}
+\PYG{err}{being} \PYG{err}{analyzed,} \PYG{err}{whereas} \PYG{err}{LSP} \PYG{err}{only} \PYG{err}{exposes} \PYG{err}{information} \PYG{err}{about} \PYG{err}{symbols} \PYG{err}{which} \PYG{err}{does} \PYG{err}{not} \PYG{err}{enable} \PYG{err}{the} \PYG{err}{use} \PYG{err}{of}
+\PYG{err}{syntactic} \PYG{err}{elements} \PYG{err}{such} \PYG{err}{as} \PYG{err}{literals} \PYG{err}{and} \PYG{err}{if} \PYG{err}{expressions} \PYG{err}{as} \PYG{err}{navigation} \PYG{err}{targets.}
+
+\PYG{err}{\PYGZbs{}subsection}\PYG{p}{\PYGZob{}}\PYG{err}{Programming} \PYG{err}{Languages} \PYG{err}{and} \PYG{err}{Frameworks}\PYG{p}{\PYGZcb{}}
+\PYG{err}{The} \PYG{err}{main} \PYG{err}{consideration} \PYG{err}{with} \PYG{err}{regards} \PYG{err}{to} \PYG{err}{choice} \PYG{err}{of} \PYG{err}{programming} \PYG{err}{language} \PYG{err}{for} \PYG{err}{the} \PYG{err}{server} \PYG{err}{of} \PYG{err}{this} \PYG{err}{project} \PYG{err}{is} \PYG{err}{the} \PYG{err}{availability} \PYG{err}{of} \PYG{err}{high\PYGZhy{}level} \PYG{err}{bindings} \PYG{err}{to} \PYG{err}{the} \PYG{err}{TreeSitter} \PYG{err}{library.}
+\PYG{err}{Using} \PYG{err}{the} \PYG{err}{C} \PYG{err}{library} \PYG{err}{directly} \PYG{err}{would} \PYG{err}{also} \PYG{err}{have} \PYG{err}{been} \PYG{err}{a} \PYG{err}{possibility,} \PYG{err}{but} \PYG{err}{going} \PYG{err}{with} \PYG{err}{a} \PYG{err}{higher} \PYG{err}{level} \PYG{err}{language} \PYG{err}{will} \PYG{err}{likely} \PYG{err}{result} \PYG{err}{in} \PYG{err}{a} \PYG{err}{more} \PYG{err}{reliable} \PYG{err}{result.}
+\PYG{err}{Of} \PYG{err}{the} \PYG{err}{handful} \PYG{err}{of} \PYG{err}{languages} \PYG{err}{that} \PYG{err}{has} \PYG{err}{this,} \PYG{err}{the} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{Node.js}\PYG{p}{\PYGZcb{}} \PYG{err}{seems} \PYG{err}{to} \PYG{err}{be} \PYG{err}{one} \PYG{err}{of} \PYG{err}{the} \PYG{err}{most} \PYG{err}{stable} \PYG{err}{and} \PYG{err}{mature.}
+\PYG{err}{In} \PYG{err}{order} \PYG{err}{to} \PYG{err}{get} \PYG{err}{static} \PYG{err}{type} \PYG{err}{safety,} \PYG{err}{PureScript} \PYG{err}{was} \PYG{err}{chosen} \PYG{err}{over} \PYG{err}{the} \PYG{err}{dynamically} \PYG{err}{typed} \PYG{err}{JavaScript.}
+\PYG{err}{TypeScript} \PYG{err}{could} \PYG{err}{also} \PYG{err}{have} \PYG{err}{been} \PYG{err}{used} \PYG{err}{to} \PYG{err}{accomplish} \PYG{err}{this,} \PYG{err}{but} \PYG{err}{PureScript} \PYG{err}{has} \PYG{err}{a} \PYG{err}{stronger} \PYG{err}{type} \PYG{err}{system.}
+\PYG{err}{Additionally,} \PYG{err}{PureScript} \PYG{err}{being} \PYG{err}{a} \PYG{err}{pure} \PYG{err}{functional} \PYG{err}{language} \PYG{err}{similar} \PYG{err}{to} \PYG{err}{Haskell} \PYG{err}{provides} \PYG{err}{even} \PYG{err}{stronger} \PYG{err}{runtime} \PYG{err}{guarantees.}
+\PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{HTTPure}\PYG{p}{\PYGZcb{}}\PYG{err}{,} \PYG{err}{a} \PYG{err}{HTTP} \PYG{err}{framework} \PYG{err}{for} \PYG{err}{PureScript,} \PYG{err}{was} \PYG{err}{used} \PYG{err}{to} \PYG{err}{develop} \PYG{err}{the} \PYG{err}{server.}
+
+\PYG{err}{\PYGZbs{}subsection}\PYG{p}{\PYGZob{}}\PYG{err}{Platforms}\PYG{p}{\PYGZcb{}}
+\PYG{err}{The} \PYG{err}{prototype} \PYG{err}{is} \PYG{err}{multiplatform} \PYG{err}{and} \PYG{err}{has} \PYG{err}{been} \PYG{err}{tested} \PYG{err}{on} \PYG{err}{MacOS} \PYG{err}{(Catalina} \PYG{err}{and} \PYG{err}{BigSur),} \PYG{err}{Linux} \PYG{err}{(Ubuntu)} \PYG{err}{and} \PYG{err}{Windows} \PYG{l+m+mi}{10}\PYG{err}{.}
+
+\PYG{err}{\PYGZbs{}subsection}\PYG{p}{\PYGZob{}}\PYG{err}{Interprocess} \PYG{err}{Communication}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Talon} \PYG{err}{does} \PYG{err}{not} \PYG{err}{currently} \PYG{err}{have} \PYG{err}{any} \PYG{err}{officially} \PYG{err}{recommended} \PYG{err}{way} \PYG{err}{of} \PYG{err}{handling} \PYG{err}{communication} \PYG{err}{with} \PYG{err}{external} \PYG{err}{programs.}
+\PYG{err}{There} \PYG{err}{has} \PYG{err}{been} \PYG{err}{discussion} \PYG{err}{of} \PYG{err}{implementing} \PYG{err}{some} \PYG{err}{kind} \PYG{err}{of} \PYG{err}{RPC} \PYG{err}{in} \PYG{err}{Talon.}
+\PYG{err}{Currently} \PYG{err}{there} \PYG{err}{are} \PYG{err}{two} \PYG{err}{ways} \PYG{err}{the} \PYG{err}{server} \PYG{err}{can} \PYG{err}{send} \PYG{err}{commands} \PYG{err}{to} \PYG{err}{Talon.}
+\PYG{err}{By} \PYG{err}{using} \PYG{err}{the} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{Node.ChildProcess}\PYG{p}{\PYGZcb{}} \PYG{err}{API,} \PYG{err}{the} \PYG{err}{server} \PYG{err}{can} \PYG{err}{spawn} \PYG{err}{an} \PYG{err}{instance} \PYG{err}{of} \PYG{err}{the} \PYG{err}{Talon} \PYG{err}{REPL} \PYG{err}{(\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{\PYGZti{}/.talon/.venv/bin/repl}\PYG{p}{\PYGZcb{}}\PYG{err}{).}
+\PYG{err}{This} \PYG{err}{server} \PYG{err}{can} \PYG{err}{then} \PYG{err}{simply} \PYG{err}{pipe} \PYG{err}{an} \PYG{err}{action} \PYG{err}{into} \PYG{err}{the} \PYG{err}{REPL} \PYG{err}{as} \PYG{err}{a} \PYG{err}{string.}
+\PYG{err}{The} \PYG{err}{other} \PYG{err}{method} \PYG{err}{is} \PYG{err}{to} \PYG{err}{write} \PYG{err}{the} \PYG{err}{action} \PYG{err}{to} \PYG{err}{be} \PYG{err}{executed} \PYG{err}{to} \PYG{err}{a} \PYG{err}{file} \PYG{err}{that} \PYG{err}{is} \PYG{err}{being} \PYG{err}{watched} \PYG{err}{by} \PYG{err}{Talon} \PYG{err}{using} \PYG{err}{the} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{fs.watch}\PYG{p}{\PYGZcb{}}
+\PYG{err}{method.} \PYG{err}{Whenever} \PYG{err}{the} \PYG{err}{file} \PYG{err}{is} \PYG{err}{written} \PYG{err}{to,} \PYG{err}{Talon} \PYG{err}{will} \PYG{err}{pick} \PYG{err}{up} \PYG{err}{on} \PYG{err}{the} \PYG{err}{change} \PYG{err}{and} \PYG{err}{execute} \PYG{err}{action} \PYG{err}{within} \PYG{err}{that} \PYG{err}{file.}
+\PYG{err}{The} \PYG{err}{latter} \PYG{err}{is} \PYG{err}{slower,} \PYG{err}{but} \PYG{err}{was} \PYG{err}{used} \PYG{err}{in} \PYG{err}{the} \PYG{err}{Windows} \PYG{err}{implementation} \PYG{err}{due} \PYG{err}{to} \PYG{err}{permissions} \PYG{err}{issue} \PYG{err}{executing} \PYG{err}{the} \PYG{err}{Talon} \PYG{err}{REPL} \PYG{err}{from} \PYG{err}{within} \PYG{err}{Windows} \PYG{err}{Subsystem} \PYG{err}{Linux} \PYG{err}{(WSL).}
+
+
+
+\PYG{err}{\PYGZbs{}subsection}\PYG{p}{\PYGZob{}}\PYG{err}{Project} \PYG{err}{Statistics}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}}
+\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{sub:project\PYGZus{}statistics}\PYG{p}{\PYGZcb{}}
+\PYG{err}{This} \PYG{err}{section} \PYG{err}{briefly} \PYG{err}{present} \PYG{err}{some} \PYG{err}{data} \PYG{err}{about} \PYG{err}{the} \PYG{err}{implementation} \PYG{err}{of} \PYG{err}{the} \PYG{err}{prototype.}
+\PYG{err}{Table\PYGZti{}\PYGZbs{}ref}\PYG{p}{\PYGZob{}}\PYG{err}{tab:stats}\PYG{p}{\PYGZcb{}} \PYG{err}{shows} \PYG{err}{the} \PYG{err}{amount} \PYG{err}{of} \PYG{err}{code} \PYG{err}{written} \PYG{err}{per} \PYG{err}{programming} \PYG{err}{language.}
+\PYG{err}{This} \PYG{err}{is} \PYG{err}{worth} \PYG{err}{noting} \PYG{err}{because} \PYG{err}{it} \PYG{err}{shows} \PYG{err}{how} \PYG{err}{much} \PYG{err}{of} \PYG{err}{the} \PYG{err}{system} \PYG{err}{is} \PYG{err}{implemented} \PYG{err}{in} \PYG{err}{the} \PYG{err}{different} \PYG{err}{parts}
+\PYG{err}{(Editor,} \PYG{err}{Server} \PYG{err}{and} \PYG{err}{Talon).}
+\PYG{err}{The} \PYG{err}{same} \PYG{err}{information} \PYG{err}{is} \PYG{err}{presented} \PYG{err}{in} \PYG{err}{Figure\PYGZti{}\PYGZbs{}ref}\PYG{p}{\PYGZob{}}\PYG{err}{fig:lang\PYGZus{}dist}\PYG{p}{\PYGZcb{}}\PYG{err}{.}
+\PYG{err}{Not} \PYG{err}{included} \PYG{err}{in} \PYG{err}{these} \PYG{err}{figures} \PYG{err}{are} \PYG{err}{the} \PYG{err}{talon} \PYG{err}{files} \PYG{err}{that} \PYG{err}{defines} \PYG{err}{the} \PYG{err}{grammar} \PYG{err}{for} \PYG{err}{the} \PYG{err}{voice} \PYG{err}{commands,}
+\PYG{err}{and} \PYG{err}{talon} \PYG{err}{extensions} \PYG{err}{written} \PYG{err}{by} \PYG{err}{other} \PYG{err}{users} \PYG{err}{that} \PYG{err}{were} \PYG{err}{slightly} \PYG{err}{modified} \PYG{err}{and} \PYG{err}{extended} \PYG{err}{such} \PYG{err}{as} \PYG{err}{the} \PYG{err}{Vim} \PYG{err}{integration} \PYG{err}{from} \PYG{err}{\PYGZbs{}url}\PYG{p}{\PYGZob{}}\PYG{err}{https://github.com/fidgetingbits/knausj\PYGZus{}talon}
+\PYG{p}{\PYGZcb{}}\PYG{err}{.}
+
+\PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{figure}\PYG{p}{\PYGZcb{}[}\PYG{err}{!ht}\PYG{p}{]}
+\PYG{err}{\PYGZpc{}}   \PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{distribution}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}}   \PYG{err}{\PYGZbs{}centering}
+\PYG{err}{\PYGZpc{}}   \PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}rule}\PYG{p}{\PYGZob{}}\PYG{err}{6.4cm}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{3.6cm}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}}   \PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}qquad}
+\PYG{err}{\PYGZpc{}}   \PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{tabular}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{|c|c|c|}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}}       \PYG{err}{\PYGZbs{}hline}
+\PYG{err}{\PYGZpc{}}       \PYG{err}{Language\PYGZam{}Files\PYGZam{}Lines\PYGZbs{}\PYGZbs{}}
+\PYG{err}{\PYGZpc{}}       \PYG{err}{\PYGZbs{}hline}
+\PYG{err}{\PYGZpc{}}       \PYG{err}{PureScript\PYGZam{}}\PYG{l+m+mi}{8}\PYG{err}{\PYGZam{}}\PYG{l+m+mi}{626}\PYG{err}{\PYGZbs{}\PYGZbs{}}
+\PYG{err}{\PYGZpc{}}       \PYG{err}{Python\PYGZam{}}\PYG{l+m+mi}{3}\PYG{err}{\PYGZam{}}\PYG{l+m+mi}{210}\PYG{err}{\PYGZbs{}\PYGZbs{}}
+\PYG{err}{\PYGZpc{}}       \PYG{err}{JavaScript\PYGZam{}}\PYG{l+m+mi}{6}\PYG{err}{\PYGZam{}}\PYG{l+m+mi}{32}\PYG{err}{\PYGZbs{}\PYGZbs{}}
+\PYG{err}{\PYGZpc{}}       \PYG{err}{VimScript\PYGZam{}}\PYG{l+m+mi}{1}\PYG{err}{\PYGZam{}}\PYG{l+m+mi}{31}\PYG{err}{\PYGZbs{}\PYGZbs{}}
+\PYG{err}{\PYGZpc{}}       \PYG{err}{\PYGZbs{}hline}
+\PYG{err}{\PYGZpc{}}       \PYG{err}{Total\PYGZam{}}\PYG{l+m+mi}{18}\PYG{err}{\PYGZam{}}\PYG{l+m+mi}{899}\PYG{err}{\PYGZbs{}\PYGZbs{}}
+\PYG{err}{\PYGZpc{}}       \PYG{err}{\PYGZbs{}hline}
+\PYG{err}{\PYGZpc{}}   \PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{tabular}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}}   \PYG{err}{\PYGZbs{}subfile}\PYG{p}{\PYGZob{}}\PYG{err}{chart}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}}   \PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}captionlistentry}\PYG{p}{[}\PYG{err}{table}\PYG{p}{]\PYGZob{}}\PYG{err}{A} \PYG{err}{table} \PYG{err}{beside} \PYG{err}{a} \PYG{err}{figure}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}}   \PYG{err}{\PYGZbs{}captionsetup}\PYG{p}{\PYGZob{}}\PYG{err}{labelformat=andtable}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}}   \PYG{err}{\PYGZbs{}caption}\PYG{p}{\PYGZob{}}\PYG{err}{Language} \PYG{err}{Distribution}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZpc{}} \PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{figure}\PYG{p}{\PYGZcb{}}
+
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{table}\PYG{p}{\PYGZcb{}[}\PYG{err}{htpb}\PYG{p}{]}
+    \PYG{err}{\PYGZbs{}centering}
+    \PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{tabular}\PYG{p}{\PYGZcb{}\PYGZob{}}\PYG{err}{|c|c|c|}\PYG{p}{\PYGZcb{}}
+        \PYG{err}{\PYGZbs{}hline}
+        \PYG{err}{Language\PYGZam{}Files\PYGZam{}Lines\PYGZbs{}\PYGZbs{}}
+        \PYG{err}{\PYGZbs{}hline}
+        \PYG{err}{PureScript\PYGZam{}}\PYG{l+m+mi}{8}\PYG{err}{\PYGZam{}}\PYG{l+m+mi}{626}\PYG{err}{\PYGZbs{}\PYGZbs{}}
+        \PYG{err}{Python\PYGZam{}}\PYG{l+m+mi}{3}\PYG{err}{\PYGZam{}}\PYG{l+m+mi}{210}\PYG{err}{\PYGZbs{}\PYGZbs{}}
+        \PYG{err}{JavaScript\PYGZam{}}\PYG{l+m+mi}{6}\PYG{err}{\PYGZam{}}\PYG{l+m+mi}{32}\PYG{err}{\PYGZbs{}\PYGZbs{}}
+        \PYG{err}{VimScript\PYGZam{}}\PYG{l+m+mi}{1}\PYG{err}{\PYGZam{}}\PYG{l+m+mi}{31}\PYG{err}{\PYGZbs{}\PYGZbs{}}
+        \PYG{err}{\PYGZbs{}hline}
+        \PYG{err}{Total\PYGZam{}}\PYG{l+m+mi}{18}\PYG{err}{\PYGZam{}}\PYG{l+m+mi}{899}\PYG{err}{\PYGZbs{}\PYGZbs{}}
+        \PYG{err}{\PYGZbs{}hline}
+    \PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{tabular}\PYG{p}{\PYGZcb{}}
+    \PYG{err}{\PYGZbs{}caption}\PYG{p}{\PYGZob{}}\PYG{err}{Files} \PYG{err}{and} \PYG{err}{lines} \PYG{err}{per} \PYG{err}{language}\PYG{p}{\PYGZcb{}}
+    \PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{tab:stats}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{table}\PYG{p}{\PYGZcb{}}
+
+
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{figure}\PYG{p}{\PYGZcb{}[}\PYG{err}{htpb}\PYG{p}{]}
+    \PYG{err}{\PYGZbs{}centering}
+    \PYG{err}{\PYGZbs{}subfile}\PYG{p}{\PYGZob{}}\PYG{err}{chart}\PYG{p}{\PYGZcb{}}
+    \PYG{err}{\PYGZbs{}caption}\PYG{p}{\PYGZob{}}\PYG{err}{Language} \PYG{err}{Distribution}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}}
+    \PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{fig:lang\PYGZus{}dist}\PYG{p}{\PYGZcb{}}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{figure}\PYG{p}{\PYGZcb{}}
+
+\PYG{err}{This} \PYG{err}{shows} \PYG{err}{that} \PYG{err}{the} \PYG{err}{server} \PYG{err}{is} \PYG{err}{by} \PYG{err}{far} \PYG{err}{the} \PYG{err}{biggest} \PYG{err}{part} \PYG{err}{of} \PYG{err}{the} \PYG{err}{project} \PYG{err}{(PureScript} \PYG{err}{+} \PYG{err}{JavaScript),}
+\PYG{err}{although} \PYG{err}{a} \PYG{err}{notable} \PYG{err}{portion} \PYG{err}{of} \PYG{err}{this} \PYG{err}{is} \PYG{err}{the} \PYG{err}{definition} \PYG{err}{of} \PYG{err}{the} \PYG{err}{foreign} \PYG{err}{function} \PYG{err}{interface} \PYG{err}{to} \PYG{err}{TreeSitter} \PYG{err}{(}\PYG{l+m+mi}{188} \PYG{err}{lines).}
+\PYG{err}{Most} \PYG{err}{notably} \PYG{err}{however} \PYG{err}{it} \PYG{err}{shows} \PYG{err}{that} \PYG{err}{the} \PYG{err}{editor} \PYG{err}{plug\PYGZhy{}in} \PYG{err}{for} \PYG{err}{Vim} \PYG{err}{was} \PYG{err}{a} \PYG{err}{very} \PYG{err}{small} \PYG{err}{part} \PYG{err}{of} \PYG{err}{the} \PYG{err}{work}
+\PYG{err}{which} \PYG{err}{should} \PYG{err}{serve} \PYG{err}{as} \PYG{err}{an} \PYG{err}{indicator} \PYG{err}{that} \PYG{err}{implementing} \PYG{err}{these} \PYG{err}{features} \PYG{err}{in} \PYG{err}{other} \PYG{err}{editors}
+\PYG{err}{it} \PYG{err}{will} \PYG{err}{be} \PYG{err}{quite} \PYG{err}{simple.}
+\PYG{err}{It} \PYG{err}{also} \PYG{err}{shows} \PYG{err}{that} \PYG{err}{the} \PYG{err}{total} \PYG{err}{amount} \PYG{err}{of} \PYG{err}{code} \PYG{err}{needed} \PYG{err}{to} \PYG{err}{implement} \PYG{err}{the} \PYG{err}{features} \PYG{err}{available} \PYG{err}{in} \PYG{err}{the} \PYG{err}{prototype}
+\PYG{err}{is} \PYG{err}{quite} \PYG{err}{low,} \PYG{err}{which} \PYG{err}{speaks} \PYG{err}{volumes} \PYG{err}{about} \PYG{err}{the} \PYG{err}{ease\PYGZhy{}of\PYGZhy{}use} \PYG{err}{of} \PYG{err}{both} \PYG{err}{Talon} \PYG{err}{and} \PYG{err}{TreeSitter.}
+
+
+\PYG{err}{\PYGZpc{}} \PYG{err}{===============================================================================}
+\PYG{err}{\PYGZpc{}}  \PYG{err}{Language}            \PYG{err}{Files}        \PYG{err}{Lines}         \PYG{err}{Code}     \PYG{err}{Comments}       \PYG{err}{Blanks}
+\PYG{err}{\PYGZpc{}} \PYG{err}{===============================================================================}
+\PYG{err}{\PYGZpc{}}  \PYG{err}{JavaScript}             \PYG{err}{\PYGZam{}}\PYG{l+m+mi}{6}          \PYG{err}{\PYGZam{}}\PYG{l+m+mi}{32}          \PYG{err}{\PYGZam{}}\PYG{l+m+mi}{26}           \PYG{err}{\PYGZam{}}\PYG{l+m+mi}{0}           \PYG{err}{\PYGZam{}}\PYG{l+m+mi}{6}
+\PYG{err}{\PYGZpc{}}  \PYG{err}{PureScript}              \PYG{l+m+mi}{8}          \PYG{l+m+mi}{626}          \PYG{l+m+mi}{442}           \PYG{l+m+mi}{82}          \PYG{l+m+mi}{102}
+\PYG{err}{\PYGZpc{}}  \PYG{err}{Python}                  \PYG{l+m+mi}{3}          \PYG{l+m+mi}{210}          \PYG{l+m+mi}{142}           \PYG{l+m+mi}{26}           \PYG{l+m+mi}{42}
+\PYG{err}{\PYGZpc{}}  \PYG{err}{VimScript}               \PYG{l+m+mi}{1}           \PYG{l+m+mi}{31}           \PYG{err}{\PYGZhy{}}             \PYG{err}{\PYGZhy{}}            \PYG{err}{\PYGZhy{}}
+\PYG{err}{\PYGZpc{}} \PYG{err}{===============================================================================}
+\PYG{err}{\PYGZpc{}}  \PYG{err}{Total}                  \PYG{l+m+mi}{18}          \PYG{l+m+mi}{899}          \PYG{l+m+mi}{610}          \PYG{l+m+mi}{108}          \PYG{l+m+mi}{150}
+\PYG{err}{\PYGZpc{}} \PYG{err}{===============================================================================}
+\PYG{err}{\PYGZbs{}section}\PYG{p}{\PYGZob{}}\PYG{err}{Prototype} \PYG{err}{Completeness}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}}
+\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{sec:prototype\PYGZus{}completeness}\PYG{p}{\PYGZcb{}}
+\PYG{err}{This} \PYG{err}{section} \PYG{err}{outlines} \PYG{err}{the} \PYG{err}{future} \PYG{err}{completeness} \PYG{err}{of} \PYG{err}{the} \PYG{err}{final} \PYG{err}{prototype} \PYG{err}{with} \PYG{err}{respect} \PYG{err}{to}
+\PYG{err}{the} \PYG{err}{features} \PYG{err}{discussed} \PYG{err}{previously} \PYG{err}{in} \PYG{err}{this} \PYG{err}{chapter.}
+\PYG{err}{The} \PYG{err}{source} \PYG{err}{code} \PYG{err}{for} \PYG{err}{the} \PYG{err}{prototype} \PYG{err}{is} \PYG{err}{publicly} \PYG{err}{available} \PYG{err}{at} \PYG{err}{\PYGZbs{}url}\PYG{p}{\PYGZob{}}\PYG{err}{https://github.com/Gauteab/talon\PYGZhy{}tree\PYGZhy{}sitter\PYGZhy{}service}\PYG{p}{\PYGZcb{}}\PYG{err}{.}
+
+\PYG{err}{\PYGZbs{}paragraph}\PYG{p}{\PYGZob{}}\PYG{err}{Identifier} \PYG{err}{Extraction:}\PYG{p}{\PYGZcb{}}
+\PYG{err}{The} \PYG{err}{current} \PYG{err}{implementation} \PYG{err}{only} \PYG{err}{uses} \PYG{err}{TreeSitter} \PYG{err}{and} \PYG{err}{is} \PYG{err}{only} \PYG{err}{able} \PYG{err}{to} \PYG{err}{work} \PYG{err}{with} \PYG{err}{a} \PYG{err}{single} \PYG{err}{file.}
+\PYG{err}{If} \PYG{err}{the} \PYG{err}{user} \PYG{err}{opens} \PYG{err}{a} \PYG{err}{different} \PYG{err}{file,} \PYG{err}{the} \PYG{err}{identifiers} \PYG{err}{will} \PYG{err}{be} \PYG{err}{overwritten.}
+\PYG{err}{Ideally,} \PYG{err}{the} \PYG{err}{system} \PYG{err}{would} \PYG{err}{have} \PYG{err}{one} \PYG{err}{namespace} \PYG{err}{further} \PYG{err}{identifiers} \PYG{err}{in} \PYG{err}{the} \PYG{err}{current} \PYG{err}{file}
+\PYG{err}{and} \PYG{err}{one} \PYG{err}{for} \PYG{err}{the} \PYG{err}{whole} \PYG{err}{project.}
+\PYG{err}{This} \PYG{err}{is} \PYG{err}{likely} \PYG{err}{the} \PYG{err}{biggest} \PYG{err}{limitation} \PYG{err}{of} \PYG{err}{the} \PYG{err}{current} \PYG{err}{implementation.}
+
+\PYG{err}{Currently} \PYG{err}{the} \PYG{err}{system} \PYG{err}{creates} \PYG{err}{Talon} \PYG{err}{lists} \PYG{err}{for} \PYG{err}{functions} \PYG{err}{and} \PYG{err}{type} \PYG{err}{declarations} \PYG{err}{as} \PYG{err}{well} \PYG{err}{as} \PYG{err}{one} \PYG{err}{for} \PYG{err}{all} \PYG{err}{identifiers} \PYG{err}{using} \PYG{err}{the} \PYG{err}{following} \PYG{err}{query:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{(lower\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@identifier}
+\PYG{err}{(upper\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@identifier}
+\PYG{err}{(function\PYGZus{}declaration\PYGZus{}left} \PYG{err}{(lower\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@function)}
+\PYG{err}{(exposed\PYGZus{}value)} \PYG{err}{@function}
+\PYG{err}{(lower\PYGZus{}pattern)} \PYG{err}{@function}
+\PYG{err}{(exposed\PYGZus{}type} \PYG{err}{(upper\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@type)}
+\PYG{err}{(type\PYGZus{}declaration} \PYG{err}{(upper\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@type)}
+\PYG{err}{(type\PYGZus{}alias\PYGZus{}declaration} \PYG{err}{(upper\PYGZus{}case\PYGZus{}identifier)} \PYG{err}{@type)}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{verbatim}\PYG{p}{\PYGZcb{}}
+\PYG{err}{More} \PYG{err}{queries} \PYG{err}{have} \PYG{err}{been} \PYG{err}{written,} \PYG{err}{but} \PYG{err}{due} \PYG{err}{to} \PYG{err}{an} \PYG{err}{issue} \PYG{err}{with} \PYG{err}{the} \PYG{err}{Windows} \PYG{err}{bindings} \PYG{err}{for} \PYG{err}{TreeSitter}
+\PYG{err}{that} \PYG{err}{causes} \PYG{err}{segmentation} \PYG{err}{faults} \PYG{err}{when} \PYG{err}{the} \PYG{err}{query} \PYG{err}{string} \PYG{err}{is} \PYG{err}{too} \PYG{err}{long,} \PYG{err}{some} \PYG{err}{of} \PYG{err}{the} \PYG{err}{queries}
+\PYG{err}{were} \PYG{err}{not} \PYG{err}{included} \PYG{err}{in} \PYG{err}{the} \PYG{err}{prototype.}
+\PYG{err}{This} \PYG{err}{can} \PYG{err}{be} \PYG{err}{fixed} \PYG{err}{by} \PYG{err}{splitting} \PYG{err}{up} \PYG{err}{the} \PYG{err}{query} \PYG{err}{string} \PYG{err}{and} \PYG{err}{running} \PYG{err}{it} \PYG{err}{as} \PYG{err}{multiple} \PYG{err}{queries.}
+
+\PYG{err}{\PYGZbs{}paragraph}\PYG{p}{\PYGZob{}}\PYG{err}{Structural} \PYG{err}{Navigation:}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Besides} \PYG{err}{only} \PYG{err}{being} \PYG{err}{able} \PYG{err}{to} \PYG{err}{navigate} \PYG{err}{within} \PYG{err}{a} \PYG{err}{single} \PYG{err}{file,} \PYG{err}{navigation} \PYG{err}{is} \PYG{err}{working} \PYG{err}{very} \PYG{err}{well.}
+\PYG{err}{Users} \PYG{err}{can} \PYG{err}{navigate} \PYG{err}{using} \PYG{err}{the} \PYG{err}{type} \PYG{err}{of} \PYG{err}{the} \PYG{err}{target} \PYG{err}{node} \PYG{err}{to} \PYG{err}{disambiguate} \PYG{err}{in} \PYG{err}{their} \PYG{err}{commands.}
+\PYG{err}{It} \PYG{err}{is} \PYG{err}{both} \PYG{err}{possible} \PYG{err}{to} \PYG{err}{navigate} \PYG{err}{to} \PYG{err}{nodes} \PYG{err}{with} \PYG{err}{and} \PYG{err}{without} \PYG{err}{associated} \PYG{err}{identifiers.}
+\PYG{err}{The} \PYG{err}{currently} \PYG{err}{available} \PYG{err}{navigation} \PYG{err}{targets} \PYG{err}{are:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{itemize}\PYG{p}{\PYGZcb{}}
+    \PYG{err}{\PYGZbs{}item} \PYG{err}{identifier}
+    \PYG{err}{\PYGZbs{}item} \PYG{err}{type} \PYG{err}{declaration}
+    \PYG{err}{\PYGZbs{}item} \PYG{err}{function/value} \PYG{err}{declaration}
+    \PYG{err}{\PYGZbs{}item} \PYG{err}{import} \PYG{err}{statement}
+    \PYG{err}{\PYGZbs{}item} \PYG{err}{string} \PYG{err}{literal}
+    \PYG{err}{\PYGZbs{}item} \PYG{err}{number} \PYG{err}{literal}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{itemize}\PYG{p}{\PYGZcb{}}
+
+
+\PYG{err}{\PYGZbs{}paragraph}\PYG{p}{\PYGZob{}}\PYG{err}{Structural} \PYG{err}{Editing:}\PYG{p}{\PYGZcb{}}
+\PYG{err}{The} \PYG{err}{prototype} \PYG{err}{only} \PYG{err}{supports} \PYG{err}{very} \PYG{err}{basic} \PYG{err}{structural} \PYG{err}{editing;}
+\PYG{err}{it} \PYG{err}{is} \PYG{err}{possible} \PYG{err}{to} \PYG{err}{select} \PYG{err}{and} \PYG{err}{delete} \PYG{err}{functions} \PYG{err}{and} \PYG{err}{type} \PYG{err}{declarations.}
+\PYG{err}{The} \PYG{err}{capabilities} \PYG{err}{of} \PYG{err}{the} \PYG{err}{server} \PYG{err}{however} \PYG{err}{should} \PYG{err}{be} \PYG{err}{enough} \PYG{err}{to} \PYG{err}{implement}
+\PYG{err}{more} \PYG{err}{complicated} \PYG{err}{editing} \PYG{err}{commands} \PYG{err}{such} \PYG{err}{as} \PYG{err}{moving} \PYG{err}{nodes.}
+
+\PYG{err}{\PYGZbs{}paragraph}\PYG{p}{\PYGZob{}}\PYG{err}{Voice} \PYG{err}{Command} \PYG{err}{Optimization:}\PYG{p}{\PYGZcb{}}
+\PYG{err}{This} \PYG{err}{chapter} \PYG{err}{outlined} \PYG{err}{three} \PYG{err}{optimizations} \PYG{err}{that} \PYG{err}{could} \PYG{err}{be} \PYG{err}{made} \PYG{err}{to} \PYG{err}{maximize} \PYG{err}{accuracy}
+\PYG{err}{and} \PYG{err}{minimize} \PYG{err}{verbosity:} \PYG{err}{\PYGZbs{}nameref}\PYG{p}{\PYGZob{}}\PYG{err}{automatic\PYGZus{}acronyms}\PYG{p}{\PYGZcb{}}\PYG{err}{,} \PYG{err}{\PYGZbs{}nameref}\PYG{p}{\PYGZob{}}\PYG{err}{prefix\PYGZus{}elimination}\PYG{p}{\PYGZcb{}}\PYG{err}{,} \PYG{err}{and} \PYG{err}{\PYGZbs{}nameref}\PYG{p}{\PYGZob{}}\PYG{err}{overrides}\PYG{p}{\PYGZcb{}}\PYG{err}{.}
+\PYG{err}{Overrides} \PYG{err}{has} \PYG{err}{been} \PYG{err}{fully} \PYG{err}{implemented,} \PYG{err}{while} \PYG{err}{the} \PYG{err}{other} \PYG{err}{two} \PYG{err}{are} \PYG{err}{not} \PYG{err}{implemented} \PYG{err}{at} \PYG{err}{all.}
+\PYG{err}{These} \PYG{err}{require} \PYG{err}{more} \PYG{err}{complicated} \PYG{err}{analysis,} \PYG{err}{but} \PYG{err}{are} \PYG{err}{realistically} \PYG{err}{achievable} \PYG{err}{given} \PYG{err}{a} \PYG{err}{bit} \PYG{err}{more} \PYG{err}{time.}
+
+\PYG{err}{\PYGZbs{}section}\PYG{p}{\PYGZob{}}\PYG{err}{Extending} \PYG{err}{the} \PYG{err}{System}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}}
+\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{sec:extending\PYGZus{}the\PYGZus{}system}\PYG{p}{\PYGZcb{}}
+\PYG{err}{The} \PYG{err}{most} \PYG{err}{important} \PYG{err}{motivation} \PYG{err}{for} \PYG{err}{using} \PYG{err}{TreeSitter} \PYG{err}{was} \PYG{err}{the} \PYG{err}{availability}
+\PYG{err}{of} \PYG{err}{parsers} \PYG{err}{for} \PYG{err}{many} \PYG{err}{different} \PYG{err}{languages.}
+\PYG{err}{This} \PYG{err}{section} \PYG{err}{outlines} \PYG{err}{the} \PYG{err}{steps} \PYG{err}{required} \PYG{err}{to} \PYG{err}{add} \PYG{err}{support} \PYG{err}{for} \PYG{err}{more} \PYG{err}{languages} \PYG{err}{and} \PYG{err}{editors.}
+\PYG{err}{Do} \PYG{err}{note} \PYG{err}{that} \PYG{err}{some} \PYG{err}{re\PYGZhy{}factoring} \PYG{err}{of} \PYG{err}{the} \PYG{err}{current} \PYG{err}{code} \PYG{err}{base} \PYG{err}{might} \PYG{err}{be} \PYG{err}{required}
+\PYG{err}{to} \PYG{err}{facilitate} \PYG{err}{these} \PYG{err}{changes.}
+
+\PYG{err}{\PYGZbs{}subsection}\PYG{p}{\PYGZob{}}\PYG{err}{Adding} \PYG{err}{Languages}\PYG{p}{\PYGZcb{}}
+\PYG{err}{The} \PYG{err}{steps} \PYG{err}{required} \PYG{err}{to} \PYG{err}{add} \PYG{err}{support} \PYG{err}{for} \PYG{err}{a} \PYG{err}{new} \PYG{err}{programming} \PYG{err}{language} \PYG{err}{are} \PYG{err}{as} \PYG{err}{follows:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{enumerate}\PYG{p}{\PYGZcb{}}
+    \PYG{err}{\PYGZbs{}item} \PYG{err}{Install} \PYG{err}{TreeSitter} \PYG{err}{Parser}
+    \PYG{err}{\PYGZbs{}item} \PYG{err}{Write} \PYG{err}{TreeSitter} \PYG{err}{Queries}
+    \PYG{err}{\PYGZbs{}item} \PYG{err}{Add} \PYG{err}{Language} \PYG{err}{Specific} \PYG{err}{Voice} \PYG{err}{Commands}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{enumerate}\PYG{p}{\PYGZcb{}}
+\PYG{err}{The} \PYG{err}{first} \PYG{err}{step} \PYG{err}{is} \PYG{err}{very} \PYG{err}{simple.}
+\PYG{err}{For} \PYG{err}{example,} \PYG{err}{to} \PYG{err}{add} \PYG{err}{Python} \PYG{err}{support} \PYG{err}{simply} \PYG{err}{use} \PYG{err}{npm} \PYG{err}{to} \PYG{err}{install} \PYG{err}{the} \PYG{err}{parser} \PYG{err}{from} \PYG{err}{\PYGZbs{}url}\PYG{p}{\PYGZob{}}\PYG{err}{https://www.npmjs.com/package/tree\PYGZhy{}sitter\PYGZhy{}python}\PYG{p}{\PYGZcb{}}\PYG{err}{.}
+
+\PYG{err}{Writing} \PYG{err}{queries} \PYG{err}{is} \PYG{err}{also} \PYG{err}{quite} \PYG{err}{simple,} \PYG{err}{but} \PYG{err}{requires} \PYG{err}{some} \PYG{err}{knowledge} \PYG{err}{of} \PYG{err}{the} \PYG{err}{internal} \PYG{err}{structure}
+\PYG{err}{of} \PYG{err}{the} \PYG{err}{parse} \PYG{err}{tree.}
+\PYG{err}{There} \PYG{err}{were} \PYG{err}{two} \PYG{err}{sets} \PYG{err}{of} \PYG{err}{queries:} \PYG{err}{one} \PYG{err}{for} \PYG{err}{extracting} \PYG{err}{identifiers,} \PYG{err}{and} \PYG{err}{a} \PYG{err}{separate} \PYG{err}{one}
+\PYG{err}{used} \PYG{err}{for} \PYG{err}{navigational} \PYG{err}{commands.}
+\PYG{err}{For} \PYG{err}{the} \PYG{err}{most} \PYG{err}{part} \PYG{err}{writing} \PYG{err}{these} \PYG{err}{queries} \PYG{err}{as} \PYG{err}{a} \PYG{err}{matter} \PYG{err}{of} \PYG{err}{mapping} \PYG{err}{the} \PYG{err}{names}
+\PYG{err}{in} \PYG{err}{from} \PYG{err}{the} \PYG{err}{parse} \PYG{err}{tree} \PYG{err}{to} \PYG{err}{the} \PYG{err}{name} \PYG{err}{you} \PYG{err}{want} \PYG{err}{users} \PYG{err}{to} \PYG{err}{dictate.}
+\PYG{err}{This} \PYG{err}{process} \PYG{err}{can} \PYG{err}{be} \PYG{err}{quite} \PYG{err}{iterative;} \PYG{err}{you} \PYG{err}{only} \PYG{err}{need} \PYG{err}{a} \PYG{err}{few} \PYG{err}{queries} \PYG{err}{to} \PYG{err}{start} \PYG{err}{using} \PYG{err}{the} \PYG{err}{system.}
+
+\PYG{err}{Step} \PYG{err}{three} \PYG{err}{is} \PYG{err}{technically} \PYG{err}{optional,} \PYG{err}{but} \PYG{err}{is} \PYG{err}{recommended} \PYG{err}{to} \PYG{err}{get} \PYG{err}{the} \PYG{err}{most} \PYG{err}{efficient} \PYG{err}{commands} \PYG{err}{set} \PYG{err}{for} \PYG{err}{the} \PYG{err}{new} \PYG{err}{language.}
+\PYG{err}{The} \PYG{err}{existing} \PYG{err}{commands} \PYG{err}{should} \PYG{err}{work} \PYG{err}{as} \PYG{err}{long} \PYG{err}{as} \PYG{err}{the} \PYG{err}{new} \PYG{err}{queries} \PYG{err}{uses} \PYG{err}{the} \PYG{err}{same} \PYG{err}{names} \PYG{err}{as} \PYG{err}{the} \PYG{err}{ones} \PYG{err}{currently} \PYG{err}{implemented.}
+
+\PYG{err}{\PYGZbs{}subsection}\PYG{p}{\PYGZob{}}\PYG{err}{Adding} \PYG{err}{Editors}\PYG{p}{\PYGZcb{}}\PYG{err}{\PYGZpc{}}
+\PYG{err}{\PYGZbs{}label}\PYG{p}{\PYGZob{}}\PYG{err}{sec:adding\PYGZus{}editors}\PYG{p}{\PYGZcb{}}
+\PYG{err}{As} \PYG{err}{stated} \PYG{err}{earlier,} \PYG{err}{the} \PYG{err}{vim} \PYG{err}{plug} \PYG{err}{in} \PYG{err}{is} \PYG{err}{very} \PYG{err}{small} \PYG{err}{should} \PYG{err}{be} \PYG{err}{easy} \PYG{err}{to} \PYG{err}{reproduce} \PYG{err}{in} \PYG{err}{a} \PYG{err}{different} \PYG{err}{editor.}
+\PYG{err}{There} \PYG{err}{are} \PYG{err}{two} \PYG{err}{steps} \PYG{err}{to} \PYG{err}{making} \PYG{err}{the} \PYG{err}{system} \PYG{err}{work} \PYG{err}{in} \PYG{err}{a} \PYG{err}{different} \PYG{err}{editor:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{enumerate}\PYG{p}{\PYGZcb{}}
+    \PYG{err}{\PYGZbs{}item} \PYG{err}{Notify} \PYG{err}{the} \PYG{err}{server} \PYG{err}{on} \PYG{err}{file} \PYG{err}{save}
+    \PYG{err}{\PYGZbs{}item} \PYG{err}{Implement} \PYG{err}{the} \PYG{err}{editor} \PYG{err}{actions} \PYG{err}{for} \PYG{err}{that} \PYG{err}{context}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{enumerate}\PYG{p}{\PYGZcb{}}
+\PYG{err}{Notifying} \PYG{err}{the} \PYG{err}{server} \PYG{err}{is} \PYG{err}{done} \PYG{err}{by} \PYG{err}{making} \PYG{err}{a} \PYG{err}{HTTP} \PYG{err}{call} \PYG{err}{to} \PYG{err}{the} \PYG{err}{\PYGZbs{}textit}\PYG{p}{\PYGZob{}}\PYG{err}{document\PYGZhy{}open}\PYG{p}{\PYGZcb{}} \PYG{err}{address} \PYG{err}{with} \PYG{err}{the} \PYG{err}{filename.}
+\PYG{err}{There} \PYG{err}{are} \PYG{err}{currently} \PYG{err}{three} \PYG{err}{editor} \PYG{err}{actions:}
+\PYG{err}{\PYGZbs{}begin}\PYG{p}{\PYGZob{}}\PYG{err}{itemize}\PYG{p}{\PYGZcb{}}
+    \PYG{err}{\PYGZbs{}item} \PYG{err}{editor\PYGZbs{}\PYGZus{}go\PYGZbs{}\PYGZus{}to\PYGZbs{}\PYGZus{}position(row:} \PYG{err}{int,} \PYG{err}{column:} \PYG{err}{int)}
+    \PYG{err}{\PYGZbs{}item} \PYG{err}{editor\PYGZbs{}\PYGZus{}select\PYGZbs{}\PYGZus{}range(line}\PYG{l+m+mi}{1}\PYG{err}{:} \PYG{err}{int,} \PYG{err}{column}\PYG{l+m+mi}{1}\PYG{err}{:} \PYG{err}{int,} \PYG{err}{line}\PYG{l+m+mi}{2}\PYG{err}{:} \PYG{err}{int,} \PYG{err}{column}\PYG{l+m+mi}{2}\PYG{err}{:} \PYG{err}{int)}
+    \PYG{err}{\PYGZbs{}item} \PYG{err}{editor\PYGZbs{}\PYGZus{}get\PYGZbs{}\PYGZus{}cursor\PYGZbs{}\PYGZus{}position()}
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{itemize}\PYG{p}{\PYGZcb{}}
+\PYG{err}{These} \PYG{err}{are} \PYG{err}{used} \PYG{err}{for} \PYG{err}{implementing} \PYG{err}{navigation,} \PYG{err}{editing} \PYG{err}{and} \PYG{err}{context} \PYG{err}{awareness} \PYG{err}{respectively.}
+\PYG{err}{It} \PYG{err}{is} \PYG{err}{not} \PYG{err}{necessary} \PYG{err}{to} \PYG{err}{implement} \PYG{err}{all} \PYG{err}{of} \PYG{err}{them.}
+
+
+
+
+
+
+
+\PYG{err}{\PYGZbs{}end}\PYG{p}{\PYGZob{}}\PYG{err}{document}\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

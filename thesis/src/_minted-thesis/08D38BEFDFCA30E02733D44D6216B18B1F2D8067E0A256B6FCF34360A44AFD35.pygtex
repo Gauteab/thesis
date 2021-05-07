@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+(program
+  (expression\PYGZus{}statement
+    (assignment\PYGZus{}expression
+      left: (identifier)
+      right: (number))))
+\end{Verbatim}

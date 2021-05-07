@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+search \PYGZlt{}user.identifier\PYGZgt{}:
+    edit.find()
+    insert(identifier)
+    key(enter)
+\end{Verbatim}

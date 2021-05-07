@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+go import: user.symbol\PYGZus{}navigate(\PYGZdq{}\PYGZdq{}, \PYGZdq{}import\PYGZdq{})
+go string: user.symbol\PYGZus{}navigate(\PYGZdq{}\PYGZdq{}, \PYGZdq{}string\PYGZdq{})
+go number: user.symbol\PYGZus{}navigate(\PYGZdq{}\PYGZdq{}, \PYGZdq{}number\PYGZdq{})
+\end{Verbatim}

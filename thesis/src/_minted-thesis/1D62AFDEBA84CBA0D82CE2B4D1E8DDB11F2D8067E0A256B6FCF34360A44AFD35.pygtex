@@ -1,0 +1,295 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYGZbs{}begin\PYGZob{}verbatim\PYGZcb{}
+go import: user.symbol\PYGZus{}navigate(\PYGZdq{}\PYGZdq{}, \PYGZdq{}import\PYGZdq{})
+go string: user.symbol\PYGZus{}navigate(\PYGZdq{}\PYGZdq{}, \PYGZdq{}string\PYGZdq{})
+go number: user.symbol\PYGZus{}navigate(\PYGZdq{}\PYGZdq{}, \PYGZdq{}number\PYGZdq{})
+\PYGZbs{}end\PYGZob{}verbatim\PYGZcb{}
+
+\PYGZbs{}paragraph\PYGZob{}Context aware navigation\PYGZcb{}
+can be achieved simply by exposing the cursor position to Talon.
+When a query is executed, the response from the server will be the node
+which is closest to the cursor. By also keeping track of
+the previous query and its results, you can also have
+the commands that cycle through results in order to quickly navigate
+when the query can capture multiple nodes.
+\PYGZbs{}begin\PYGZob{}verbatim\PYGZcb{}
+go to next: user.go\PYGZus{}to\PYGZus{}next\PYGZus{}result(\PYGZdq{}forward\PYGZdq{})
+go to last: user.go\PYGZus{}to\PYGZus{}next\PYGZus{}result(\PYGZdq{}backward\PYGZdq{})
+\PYGZbs{}end\PYGZob{}verbatim\PYGZcb{}
+\PYGZpc{} Given the following program snippet:
+\PYGZpc{} \PYGZbs{}begin\PYGZob{}minted\PYGZcb{}\PYGZob{}elm\PYGZcb{}
+\PYGZpc{} type Update
+\PYGZpc{}     = SoftwareUpdate
+\PYGZpc{}     | FirmwareUpdate
+
+\PYGZpc{} update : Msg \PYGZhy{}\PYGZgt{} Model \PYGZhy{}\PYGZgt{} Model
+\PYGZpc{} update msg model = ...
+\PYGZpc{} \PYGZbs{}end\PYGZob{}minted\PYGZcb{}
+
+
+\PYGZbs{}section\PYGZob{}Structural Editing\PYGZcb{}\PYGZpc{}
+\PYGZbs{}label\PYGZob{}sec:structural\PYGZus{}editing\PYGZcb{}
+Structural editing can easily be achieved by building upon the implementation of navigation.
+By implementing an action to select a given range in the editor, you can create commands
+that select nodes based on their type and associated identifiers in the same manner as with navigation.
+For example, to delete the typed declaration in Vim, you can create a command that captures the name of the type declaration,
+selects it, and presses ``d\PYGZsq{}\PYGZsq{} in order to delete it.
+\PYGZbs{}begin\PYGZob{}verbatim\PYGZcb{}
+delete type \PYGZob{}user.symbol\PYGZus{}type\PYGZcb{}:
+    user.symbol\PYGZus{}select(\PYGZdq{}\PYGZob{}symbol\PYGZus{}type\PYGZcb{}\PYGZdq{}, \PYGZdq{}type\PYGZdq{})
+    key(d)
+\PYGZbs{}end\PYGZob{}verbatim\PYGZcb{}
+Structural editing capabilities can be implemented either client\PYGZhy{}side, server\PYGZhy{}side, or in Talon.
+There are certainly trade\PYGZhy{}offs to each approach, but I will not go into detail on this issue.
+For the prototype the editing commands were implemented in Talon.
+
+
+\PYGZpc{} \PYGZbs{}section\PYGZob{}Design Goals\PYGZcb{}\PYGZpc{}
+\PYGZpc{} \PYGZbs{}label\PYGZob{}sec:design\PYGZus{}goals\PYGZcb{}
+\PYGZpc{} configurable, accuracy, intuitive/consistent (user should not have to look up the generated commands),
+\PYGZpc{} shortest commands possible
+
+\PYGZbs{}section\PYGZob{}Architecture\PYGZcb{}\PYGZpc{}
+\PYGZbs{}label\PYGZob{}sec:architecture\PYGZcb{}
+The system consists in total of three parts: Talon scripts, The Server and a Vim extension (Client).
+The server is responsible for parsing source files and extracting information using TreeSitter,
+as well as performing normalization on the extracted identifiers in order to make them
+more recognizable before sending them to Talon.
+The Vim extension manages the window title which is used by Talon to track information about the
+current editor state such as current mode and cursor position. Additionally, it will notify
+the server whenever an Elm document is either opened, closed or written to.
+The talon scripts defines voice commands that utilizes the information received from the server
+and defines actions to query the server for information about a given identifier.
+An overview of the system can be seen in Figure\PYGZti{}\PYGZbs{}ref\PYGZob{}fig:architecture\PYGZcb{}.
+
+\PYGZbs{}begin\PYGZob{}figure\PYGZcb{}[htpb]
+    \PYGZbs{}centering
+    \PYGZbs{}includegraphics[width=0.8\PYGZbs{}linewidth]\PYGZob{}images/architecture.png\PYGZcb{}
+    \PYGZbs{}caption\PYGZob{}System Architecture\PYGZcb{}\PYGZpc{}
+    \PYGZbs{}label\PYGZob{}fig:architecture\PYGZcb{}
+\PYGZbs{}end\PYGZob{}figure\PYGZcb{}
+
+\PYGZbs{}section\PYGZob{}Implementation Details\PYGZcb{}\PYGZpc{}
+\PYGZbs{}label\PYGZob{}sec:implementation\PYGZcb{}
+This section presents information about the prototype in it\PYGZsq{}s current state as well as reasoning behing the tools and techniques used.
+\PYGZpc{} implementation details such as programming language etc
+\PYGZbs{}subsection\PYGZob{}Tools\PYGZcb{}\PYGZpc{}
+\PYGZbs{}label\PYGZob{}sub:tools\PYGZcb{}
+For the purpose of this prototype I chose to use TreeSitter because it provides full information about the program
+being analyzed, whereas LSP only exposes information about symbols which does not enable the use of
+syntactic elements such as literals and if expressions as navigation targets.
+
+\PYGZbs{}subsection\PYGZob{}Programming Languages and Frameworks\PYGZcb{}
+The main consideration with regards to choice of programming language for the server of this project is the availability of high\PYGZhy{}level bindings to the TreeSitter library.
+Using the C library directly would also have been a possibility, but going with a higher level language will likely result in a more reliable result.
+Of the handful of languages that has this, the \PYGZbs{}textit\PYGZob{}Node.js\PYGZcb{} seems to be one of the most stable and mature.
+In order to get static type safety, PureScript was chosen over the dynamically typed JavaScript.
+TypeScript could also have been used to accomplish this, but PureScript has a stronger type system.
+Additionally, PureScript being a pure functional language similar to Haskell provides even stronger runtime guarantees.
+\PYGZbs{}textit\PYGZob{}HTTPure\PYGZcb{}, a HTTP framework for PureScript, was used to develop the server.
+
+\PYGZbs{}subsection\PYGZob{}Platforms\PYGZcb{}
+The prototype is multiplatform and has been tested on MacOS (Catalina and BigSur), Linux (Ubuntu) and Windows 10.
+
+\PYGZbs{}subsection\PYGZob{}Interprocess Communication\PYGZcb{}
+Talon does not currently have any officially recommended way of handling communication with external programs.
+There has been discussion of implementing some kind of RPC in Talon.
+Currently there are two ways the server can send commands to Talon.
+By using the \PYGZbs{}textit\PYGZob{}Node.ChildProcess\PYGZcb{} API, the server can spawn an instance of the Talon REPL (\PYGZbs{}textit\PYGZob{}\PYGZti{}/.talon/.venv/bin/repl\PYGZcb{}).
+This server can then simply pipe an action into the REPL as a string.
+The other method is to write the action to be executed to a file that is being watched by Talon using the \PYGZbs{}textit\PYGZob{}fs.watch\PYGZcb{}
+method. Whenever the file is written to, Talon will pick up on the change and execute action within that file.
+The latter is slower, but was used in the Windows implementation due to permissions issue executing the Talon REPL from within Windows Subsystem Linux (WSL).
+
+
+
+\PYGZbs{}subsection\PYGZob{}Project Statistics\PYGZcb{}\PYGZpc{}
+\PYGZbs{}label\PYGZob{}sub:project\PYGZus{}statistics\PYGZcb{}
+This section briefly present some data about the implementation of the prototype.
+Table\PYGZti{}\PYGZbs{}ref\PYGZob{}tab:stats\PYGZcb{} shows the amount of code written per programming language.
+This is worth noting because it shows how much of the system is implemented in the different parts
+(Editor, Server and Talon).
+The same information is presented in Figure\PYGZti{}\PYGZbs{}ref\PYGZob{}fig:lang\PYGZus{}dist\PYGZcb{}.
+Not included in these figures are the talon files that defines the grammar for the voice commands,
+and talon extensions written by other users that were slightly modified and extended such as the Vim integration from \PYGZbs{}url\PYGZob{}https://github.com/fidgetingbits/knausj\PYGZus{}talon
+\PYGZcb{}.
+
+\PYGZpc{} \PYGZbs{}begin\PYGZob{}figure\PYGZcb{}[!ht]
+\PYGZpc{}   \PYGZbs{}label\PYGZob{}distribution\PYGZcb{}
+\PYGZpc{}   \PYGZbs{}centering
+\PYGZpc{}   \PYGZpc{} \PYGZbs{}rule\PYGZob{}6.4cm\PYGZcb{}\PYGZob{}3.6cm\PYGZcb{}
+\PYGZpc{}   \PYGZpc{} \PYGZbs{}qquad
+\PYGZpc{}   \PYGZbs{}begin\PYGZob{}tabular\PYGZcb{}\PYGZob{}|c|c|c|\PYGZcb{}
+\PYGZpc{}       \PYGZbs{}hline
+\PYGZpc{}       Language\PYGZam{}Files\PYGZam{}Lines\PYGZbs{}\PYGZbs{}
+\PYGZpc{}       \PYGZbs{}hline
+\PYGZpc{}       PureScript\PYGZam{}8\PYGZam{}626\PYGZbs{}\PYGZbs{}
+\PYGZpc{}       Python\PYGZam{}3\PYGZam{}210\PYGZbs{}\PYGZbs{}
+\PYGZpc{}       JavaScript\PYGZam{}6\PYGZam{}32\PYGZbs{}\PYGZbs{}
+\PYGZpc{}       VimScript\PYGZam{}1\PYGZam{}31\PYGZbs{}\PYGZbs{}
+\PYGZpc{}       \PYGZbs{}hline
+\PYGZpc{}       Total\PYGZam{}18\PYGZam{}899\PYGZbs{}\PYGZbs{}
+\PYGZpc{}       \PYGZbs{}hline
+\PYGZpc{}   \PYGZbs{}end\PYGZob{}tabular\PYGZcb{}
+\PYGZpc{}   \PYGZbs{}subfile\PYGZob{}chart\PYGZcb{}
+\PYGZpc{}   \PYGZpc{} \PYGZbs{}captionlistentry[table]\PYGZob{}A table beside a figure\PYGZcb{}
+\PYGZpc{}   \PYGZbs{}captionsetup\PYGZob{}labelformat=andtable\PYGZcb{}
+\PYGZpc{}   \PYGZbs{}caption\PYGZob{}Language Distribution\PYGZcb{}
+\PYGZpc{} \PYGZbs{}end\PYGZob{}figure\PYGZcb{}
+
+\PYGZbs{}begin\PYGZob{}table\PYGZcb{}[htpb]
+    \PYGZbs{}centering
+    \PYGZbs{}begin\PYGZob{}tabular\PYGZcb{}\PYGZob{}|c|c|c|\PYGZcb{}
+        \PYGZbs{}hline
+        Language\PYGZam{}Files\PYGZam{}Lines\PYGZbs{}\PYGZbs{}
+        \PYGZbs{}hline
+        PureScript\PYGZam{}8\PYGZam{}626\PYGZbs{}\PYGZbs{}
+        Python\PYGZam{}3\PYGZam{}210\PYGZbs{}\PYGZbs{}
+        JavaScript\PYGZam{}6\PYGZam{}32\PYGZbs{}\PYGZbs{}
+        VimScript\PYGZam{}1\PYGZam{}31\PYGZbs{}\PYGZbs{}
+        \PYGZbs{}hline
+        Total\PYGZam{}18\PYGZam{}899\PYGZbs{}\PYGZbs{}
+        \PYGZbs{}hline
+    \PYGZbs{}end\PYGZob{}tabular\PYGZcb{}
+    \PYGZbs{}caption\PYGZob{}Files and lines per language\PYGZcb{}
+    \PYGZbs{}label\PYGZob{}tab:stats\PYGZcb{}
+\PYGZbs{}end\PYGZob{}table\PYGZcb{}
+
+
+\PYGZbs{}begin\PYGZob{}figure\PYGZcb{}[htpb]
+    \PYGZbs{}centering
+    \PYGZbs{}subfile\PYGZob{}chart\PYGZcb{}
+    \PYGZbs{}caption\PYGZob{}Language Distribution\PYGZcb{}\PYGZpc{}
+    \PYGZbs{}label\PYGZob{}fig:lang\PYGZus{}dist\PYGZcb{}
+\PYGZbs{}end\PYGZob{}figure\PYGZcb{}
+
+This shows that the server is by far the biggest part of the project (PureScript + JavaScript),
+although a notable portion of this is the definition of the foreign function interface to TreeSitter (188 lines).
+Most notably however it shows that the editor plug\PYGZhy{}in for Vim was a very small part of the work
+which should serve as an indicator that implementing these features in other editors
+it will be quite simple.
+It also shows that the total amount of code needed to implement the features available in the prototype
+is quite low, which speaks volumes about the ease\PYGZhy{}of\PYGZhy{}use of both Talon and TreeSitter.
+
+
+\PYGZpc{} ===============================================================================
+\PYGZpc{}  Language            Files        Lines         Code     Comments       Blanks
+\PYGZpc{} ===============================================================================
+\PYGZpc{}  JavaScript             \PYGZam{}6          \PYGZam{}32          \PYGZam{}26           \PYGZam{}0           \PYGZam{}6
+\PYGZpc{}  PureScript              8          626          442           82          102
+\PYGZpc{}  Python                  3          210          142           26           42
+\PYGZpc{}  VimScript               1           31           \PYGZhy{}             \PYGZhy{}            \PYGZhy{}
+\PYGZpc{} ===============================================================================
+\PYGZpc{}  Total                  18          899          610          108          150
+\PYGZpc{} ===============================================================================
+\PYGZbs{}section\PYGZob{}Prototype Completeness\PYGZcb{}\PYGZpc{}
+\PYGZbs{}label\PYGZob{}sec:prototype\PYGZus{}completeness\PYGZcb{}
+This section outlines the future completeness of the final prototype with respect to
+the features discussed previously in this chapter.
+The source code for the prototype is publicly available at \PYGZbs{}url\PYGZob{}https://github.com/Gauteab/talon\PYGZhy{}tree\PYGZhy{}sitter\PYGZhy{}service\PYGZcb{}.
+
+\PYGZbs{}paragraph\PYGZob{}Identifier Extraction:\PYGZcb{}
+The current implementation only uses TreeSitter and is only able to work with a single file.
+If the user opens a different file, the identifiers will be overwritten.
+Ideally, the system would have one namespace further identifiers in the current file
+and one for the whole project.
+This is likely the biggest limitation of the current implementation.
+
+Currently the system creates Talon lists for functions and type declarations as well as one for all identifiers using the following query:
+\PYGZbs{}begin\PYGZob{}verbatim\PYGZcb{}
+(lower\PYGZus{}case\PYGZus{}identifier) @identifier
+(upper\PYGZus{}case\PYGZus{}identifier) @identifier
+(function\PYGZus{}declaration\PYGZus{}left (lower\PYGZus{}case\PYGZus{}identifier) @function)
+(exposed\PYGZus{}value) @function
+(lower\PYGZus{}pattern) @function
+(exposed\PYGZus{}type (upper\PYGZus{}case\PYGZus{}identifier) @type)
+(type\PYGZus{}declaration (upper\PYGZus{}case\PYGZus{}identifier) @type)
+(type\PYGZus{}alias\PYGZus{}declaration (upper\PYGZus{}case\PYGZus{}identifier) @type)
+\PYGZbs{}end\PYGZob{}verbatim\PYGZcb{}
+More queries have been written, but due to an issue with the Windows bindings for TreeSitter
+that causes segmentation faults when the query string is too long, some of the queries
+were not included in the prototype.
+This can be fixed by splitting up the query string and running it as multiple queries.
+
+\PYGZbs{}paragraph\PYGZob{}Structural Navigation:\PYGZcb{}
+Besides only being able to navigate within a single file, navigation is working very well.
+Users can navigate using the type of the target node to disambiguate in their commands.
+It is both possible to navigate to nodes with and without associated identifiers.
+The currently available navigation targets are:
+\PYGZbs{}begin\PYGZob{}itemize\PYGZcb{}
+    \PYGZbs{}item identifier
+    \PYGZbs{}item type declaration
+    \PYGZbs{}item function/value declaration
+    \PYGZbs{}item import statement
+    \PYGZbs{}item string literal
+    \PYGZbs{}item number literal
+\PYGZbs{}end\PYGZob{}itemize\PYGZcb{}
+
+
+\PYGZbs{}paragraph\PYGZob{}Structural Editing:\PYGZcb{}
+The prototype only supports very basic structural editing;
+it is possible to select and delete functions and type declarations.
+The capabilities of the server however should be enough to implement
+more complicated editing commands such as moving nodes.
+
+\PYGZbs{}paragraph\PYGZob{}Voice Command Optimization:\PYGZcb{}
+This chapter outlined three optimizations that could be made to maximize accuracy
+and minimize verbosity: \PYGZbs{}nameref\PYGZob{}automatic\PYGZus{}acronyms\PYGZcb{}, \PYGZbs{}nameref\PYGZob{}prefix\PYGZus{}elimination\PYGZcb{}, and \PYGZbs{}nameref\PYGZob{}overrides\PYGZcb{}.
+Overrides has been fully implemented, while the other two are not implemented at all.
+These require more complicated analysis, but are realistically achievable given a bit more time.
+
+\PYGZbs{}section\PYGZob{}Extending the System\PYGZcb{}\PYGZpc{}
+\PYGZbs{}label\PYGZob{}sec:extending\PYGZus{}the\PYGZus{}system\PYGZcb{}
+The most important motivation for using TreeSitter was the availability
+of parsers for many different languages.
+This section outlines the steps required to add support for more languages and editors.
+Do note that some re\PYGZhy{}factoring of the current code base might be required
+to facilitate these changes.
+
+\PYGZbs{}subsection\PYGZob{}Adding Languages\PYGZcb{}
+The steps required to add support for a new programming language are as follows:
+\PYGZbs{}begin\PYGZob{}enumerate\PYGZcb{}
+    \PYGZbs{}item Install TreeSitter Parser
+    \PYGZbs{}item Write TreeSitter Queries
+    \PYGZbs{}item Add Language Specific Voice Commands
+\PYGZbs{}end\PYGZob{}enumerate\PYGZcb{}
+The first step is very simple.
+For example, to add Python support simply use npm to install the parser from \PYGZbs{}url\PYGZob{}https://www.npmjs.com/package/tree\PYGZhy{}sitter\PYGZhy{}python\PYGZcb{}.
+
+Writing queries is also quite simple, but requires some knowledge of the internal structure
+of the parse tree.
+There were two sets of queries: one for extracting identifiers, and a separate one
+used for navigational commands.
+For the most part writing these queries as a matter of mapping the names
+in from the parse tree to the name you want users to dictate.
+This process can be quite iterative; you only need a few queries to start using the system.
+
+Step three is technically optional, but is recommended to get the most efficient commands set for the new language.
+The existing commands should work as long as the new queries uses the same names as the ones currently implemented.
+
+\PYGZbs{}subsection\PYGZob{}Adding Editors\PYGZcb{}\PYGZpc{}
+\PYGZbs{}label\PYGZob{}sec:adding\PYGZus{}editors\PYGZcb{}
+As stated earlier, the vim plug in is very small should be easy to reproduce in a different editor.
+There are two steps to making the system work in a different editor:
+\PYGZbs{}begin\PYGZob{}enumerate\PYGZcb{}
+    \PYGZbs{}item Notify the server on file save
+    \PYGZbs{}item Implement the editor actions for that context
+\PYGZbs{}end\PYGZob{}enumerate\PYGZcb{}
+Notifying the server is done by making a HTTP call to the \PYGZbs{}textit\PYGZob{}document\PYGZhy{}open\PYGZcb{} address with the filename.
+There are currently three editor actions:
+\PYGZbs{}begin\PYGZob{}itemize\PYGZcb{}
+    \PYGZbs{}item editor\PYGZbs{}\PYGZus{}go\PYGZbs{}\PYGZus{}to\PYGZbs{}\PYGZus{}position(row: int, column: int)
+    \PYGZbs{}item editor\PYGZbs{}\PYGZus{}select\PYGZbs{}\PYGZus{}range(line1: int, column1: int, line2: int, column2: int)
+    \PYGZbs{}item editor\PYGZbs{}\PYGZus{}get\PYGZbs{}\PYGZus{}cursor\PYGZbs{}\PYGZus{}position()
+\PYGZbs{}end\PYGZob{}itemize\PYGZcb{}
+These are used for implementing navigation, editing and context awareness respectively.
+It is not necessary to implement all of them.
+
+
+
+
+
+
+
+\PYGZbs{}end\PYGZob{}document\PYGZcb{}
+\end{Verbatim}

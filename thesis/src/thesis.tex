@@ -4,16 +4,18 @@
 \usepackage{babel,duomasterforside}
 \usepackage{hyperref}
 \usepackage[backend=biber,style=authoryear,bibencoding=utf8]{biblatex}
-\usepackage{minted}
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
 \usepackage{booktabs}
 \usepackage[utf8]{inputenc}
-\usepackage{minted}
+\usepackage[chapter]{minted}
 \usepackage{subfiles}
 \usepackage[toc,page]{appendix}
 \usepackage{xcolor}
 \usepackage{tikz}
+\usepackage{listings}
+\usepackage{varioref}
+\usepackage{multicol}
 
 \usepackage{xcolor,pifont}
 \usepackage{amsmath}
@@ -40,6 +42,18 @@
 \nonstopmode{}
 \addbibresource{citations.bib}
 
+\newenvironment{code}[4][]
+{\VerbatimEnvironment
+    \begin{listing}[h]
+        \caption{#3}\label{#4}
+    \begin{minted}[
+        frame=lines,
+        #1]{#2}}
+ {\end{minted}\end{listing}}
+
+\AtBeginEnvironment{minted}{%
+    \renewcommand{\fcolorbox}[4][]{#4}}
+
 \title{Master Thesis}
 \subtitle{Leveraging Language Tooling for Better Voice Coding}
 \author{Gaute Berge}
@@ -52,7 +66,8 @@
 \tableofcontents{}
 \listoffigures{}
 \listoftables{}
-% \chapter*{Preface}
+\listoflistings{}
+\chapter*{Preface}
 \mainmatter{}
 
 \subfile{chapters/introduction}

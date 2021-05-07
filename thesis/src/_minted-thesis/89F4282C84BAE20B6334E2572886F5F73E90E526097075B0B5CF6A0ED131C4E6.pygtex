@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kr}{type} \PYG{k+kr}{alias} \PYG{k+kt}{HasId} \PYG{n+nv}{r} \PYG{n+nf}{=} \PYG{p}{\PYGZob{}} \PYG{n+nv}{r} \PYG{n+nf}{|} \PYG{n+nv}{id} \PYG{n+nf}{:} \PYG{k+kt}{Int} \PYG{p}{\PYGZcb{}}
+\end{Verbatim}

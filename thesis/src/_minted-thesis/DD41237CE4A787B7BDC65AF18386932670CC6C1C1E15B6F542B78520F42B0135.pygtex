@@ -5,7 +5,7 @@
     \PYG{n+nt}{\PYGZdq{}unions\PYGZdq{}}\PYG{p}{:} \PYG{p}{[}
       \PYG{p}{\PYGZob{}}
         \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Array\PYGZdq{}}\PYG{p}{,}
-        \PYG{n+nt}{\PYGZdq{}comment\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{} Representation of fast immutable arrays. (...)\PYGZdq{}}\PYG{p}{,}
+        \PYG{n+nt}{\PYGZdq{}comment\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Representation of fast immutable arrays.\PYGZdq{}}\PYG{p}{,}
         \PYG{n+nt}{\PYGZdq{}args\PYGZdq{}}\PYG{p}{:} \PYG{p}{[}\PYG{l+s+s2}{\PYGZdq{}a\PYGZdq{}}\PYG{p}{],}
         \PYG{n+nt}{\PYGZdq{}cases\PYGZdq{}}\PYG{p}{:} \PYG{p}{[]}
       \PYG{p}{\PYGZcb{}}
@@ -14,8 +14,9 @@
     \PYG{n+nt}{\PYGZdq{}values\PYGZdq{}}\PYG{p}{:} \PYG{p}{[}
       \PYG{p}{\PYGZob{}}
         \PYG{n+nt}{\PYGZdq{}name\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}append\PYGZdq{}}\PYG{p}{,}
-        \PYG{n+nt}{\PYGZdq{}comment\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{} Append two arrays to a new one. (...)\PYGZdq{}}\PYG{p}{,}
-        \PYG{n+nt}{\PYGZdq{}type\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Array.Array a \PYGZhy{}\PYGZgt{} Array.Array a \PYGZhy{}\PYGZgt{} Array.Array a\PYGZdq{}}
+        \PYG{n+nt}{\PYGZdq{}comment\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Append two arrays to a new one. (...)\PYGZdq{}}\PYG{p}{,}
+        \PYG{n+nt}{\PYGZdq{}type\PYGZdq{}}\PYG{p}{:}
+            \PYG{l+s+s2}{\PYGZdq{}Array.Array a \PYGZhy{}\PYGZgt{} Array.Array a \PYGZhy{}\PYGZgt{} Array.Array a\PYGZdq{}}
       \PYG{p}{\PYGZcb{},}
       \PYG{err}{...}
     \PYG{p}{],}

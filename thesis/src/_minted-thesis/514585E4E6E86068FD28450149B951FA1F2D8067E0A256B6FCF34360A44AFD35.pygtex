@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+(
+ (assignment\PYGZus{}expression left: (identifier) @declared\PYGZhy{}variable)
+ (\PYGZsh{}eq? @declared\PYGZhy{}variable \PYGZdq{}x\PYGZdq{})
+)
+\end{Verbatim}

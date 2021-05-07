@@ -1,0 +1,10 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+(lower\PYGZus{}case\PYGZus{}identifier) @identifier
+(upper\PYGZus{}case\PYGZus{}identifier) @identifier
+(function\PYGZus{}declaration\PYGZus{}left (lower\PYGZus{}case\PYGZus{}identifier) @function)
+(exposed\PYGZus{}value) @function
+(lower\PYGZus{}pattern) @function
+(exposed\PYGZus{}type (upper\PYGZus{}case\PYGZus{}identifier) @type)
+(type\PYGZus{}declaration (upper\PYGZus{}case\PYGZus{}identifier) @type)
+(type\PYGZus{}alias\PYGZus{}declaration (upper\PYGZus{}case\PYGZus{}identifier) @type)
+\end{Verbatim}

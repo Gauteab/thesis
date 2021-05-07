@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+go to \PYGZob{} user.symbol\PYGZus{}identifier \PYGZcb{}:
+    user.symbol\PYGZus{}navigate(\PYGZdq{}\PYGZob{}symbol\PYGZus{}identifier\PYGZcb{}\PYGZdq{}, \PYGZdq{}identifier\PYGZdq{})
+go type \PYGZob{}user.symbol\PYGZus{}type\PYGZcb{}:
+    user.symbol\PYGZus{}navigate(\PYGZdq{}\PYGZob{}symbol\PYGZus{}type\PYGZcb{}\PYGZdq{}, \PYGZdq{}type\PYGZdq{})
+go fun \PYGZob{}user.symbol\PYGZus{}function\PYGZcb{}:
+    user.symbol\PYGZus{}navigate(\PYGZdq{}\PYGZob{}symbol\PYGZus{}function\PYGZcb{}\PYGZdq{}, \PYGZdq{}function\PYGZdq{})
+\end{Verbatim}
