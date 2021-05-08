@@ -17,7 +17,7 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {listing}{\numberline {2.9}{\ignorespaces Record Alias\relax }}{15}{listing.2.9}%
 \defcounter {refsection}{0}\relax 
-\contentsline {listing}{\numberline {2.10}{\ignorespaces There \textit {Maybe} Union Type\relax }}{16}{listing.2.10}%
+\contentsline {listing}{\numberline {2.10}{\ignorespaces There \textit {Maybe} Union Type\relax }}{15}{listing.2.10}%
 \defcounter {refsection}{0}\relax 
 \contentsline {listing}{\numberline {2.11}{\ignorespaces Polymorphic Function\relax }}{16}{listing.2.11}%
 \defcounter {refsection}{0}\relax 

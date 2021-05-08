@@ -19,9 +19,8 @@ of the experiments presented in Chapter~\ref{the_project}.
 \section{Vocal Programming}
 
 Vocal programming is a complex field with many interesting challenges.
-Users Need to be able to dictate and edit code, navigate files
-, as well as being able to performed a plethora
-of other tasks such as compiling and running the code in using version control.
+Users need to be able to dictate and edit code, navigate files, as well as being able to performe a plethora
+of other tasks such as compiling and running the code, and use version control.
 This section provides a brief introduction, while Chapter~\ref{talon}
 provides a more in-depth explanation to how people are using Talon to program.
 
@@ -31,16 +30,18 @@ provides a more in-depth explanation to how people are using Talon to program.
 was the worlds first large-vocabulary general purpose dictation system.
 Dragon is in many ways the foundation for many of tools like Talon.
 Some voice systems use it as just a speach engine, but it also provides other functionality like mouse control.
-Available for mac and windows, but discontinued for mac.% when??
-The mac version is still available on eBay, and still works. % maybe something here about the download stuff.
+It is available for Mac and Windows, but the product has been discontinued for Mac.% when??
+Mac users who would like to use Dragon can still purchase it online, and it still works.
+% The mac version is still available on eBay, and still works. % maybe something here about the download stuff.
 
 \paragraph{NatLink:}
-While dragon alone is a very powerful dictation system, it's customization ability is limited.
+While Dragon alone is a very powerful dictation system, it's customization ability is limited.
 Dragon does provide a simple scripting language in the pro edition, but it has very limited capabilities compared to
 moden general purpose scripting languages.
-In 1999, NatLink was developed to solve this problem. It is a macro system for dragon which lets the user write macros that can be triggered by voice commands
+In 1999, NatLink was developed to address this problem. 
+It is a macro system for Dragon which lets the user write scripts that can be triggered by voice commands
 in Python~\parencite{gould2001implementation}.
-Later on, more high level APIs were built on top on natlink such as Dragonfly. % Not really precise. Need to look into history here.
+Later on, more high-level APIs were built on top on NatLink such as Dragonfly. % Not really precise. Need to look into history here.
 
 \paragraph{}
 These technologies heavily influenced modern voice control systems such as Talon,
@@ -67,8 +68,8 @@ Dictation, in this context, is the act of speaking phrases into a microphone and
 This is made possible by a technique called \textit{Speech Recognition} which combines techniques from natural language processing
 and signal processing. The soundwaves from the user is captured by the microphone, processed, and sent off to a machine learning algorithm
 that will try to fit the input into a sequence of words, or a sentence, in the target language (i.e English). Speech recognition
-has been around for a while, but has just in the past decade seeing huge boosts in accuracy, partly due to the Discovery of deep learning.
-Voice controlled applications are built on top of programs implementing the speech recognition, often referred to as ``Speech Recognition Engines''.
+has been around for a while, but has just in the past decade seeing huge boosts in accuracy, partly due to the advancements in deep learning.
+Voice controlled applications are built on top of programs implementing the speech recognition, often referred to as \textit{Speech Recognition Engines}.
 
 Beyond the technical aspect, efficient dictation also requires a great deal of attention from the user.
 To achieve high accuracy while dictating, it is not sufficient, or at least not optimal, to simply speak as one normally would.
@@ -80,7 +81,7 @@ having a hard time getting recognized. This process is often very incremental, a
 use the system for a while.
 
 People not used to dictating will also experience a high degree of cognitive load in the beginning, which will slow down their work.
-Dictation works better when the user speaks in full sentences, as opposed to single words, or even short phrases.
+Dictation is usually more accurate when the user speaks in full sentences, as opposed to single words, or even short phrases.
 Users will therefore have to learn to plan out their sentences before starting to speak.
 This can feel very different from the experience of typing on a keyboard, but it is a challenge that is surmountable by practice.
 
@@ -98,18 +99,20 @@ The word ``pair'' is \textit{homophonic} to ``pear'', and ``pare''.
 Homophones that are also spelled the same are also known as homographs, whereas the ones spelled differently are called heterographs.
 In the context of vocal programming, and speech recognition in general, we are only interested in heterographs as we do not consider
 the underlying meaning of a phrase beyond whether or not it was what the user intended to input.
-Although we are only considering this subset, I will be using the more general term homophone as this is more widely used in the documentation
-of the system I will be discussing.
+Although we are only considering this subset, I will be using the more general term homophone as this is more widely used in the 
+Talon community.
+% documentation
+% of the system I will be discussing.
 
-Homophones are a very big challenge for vocal programming.
-Speech recognition engines are not able to reliably distinguish between homophones.
+Homophones are a very big challenge for vocal programming,
+as speech recognition engines are not able to reliably distinguish between them.
 Often they can still infer the correct word based on the context in which it was used.
-For example, Dragon can reliably recognize the phrase ``I saw that with my eye'' correctly despite the fact that ``I'' and ``eye'' are homophones.
+For example, Dragon can reliably recognize the phrase ``I saw that with my eye'' correctly despite the fact that ``I'' and ``eye'' are homophonic.
 However, if they are not spoken within a sentence, they cannot be distinguished on the user will likely see only one of the options every time.
 This problem is a bigger challenge for vocal programing than prose dictation because program text is not formed by English sentences, and more words needs to be
 spoken one at a time.
 
-There are however techniques for alleviating this problem, which will be discussed in the section on~\nameref{dealing_with_homophones}
+There are however techniques for alleviating this problem, which will be discussed in \Vref{dealing_with_homophones}.
 
 
 \section{Structural Editing}
@@ -117,7 +120,7 @@ Structural editing is a technique used by some code editors to allow users to di
 Computer programs typically have a textual representation that is readable both by humans and compilers.
 When a compiler reads a program, the text is converted to a datatype known as the Abstract Syntax Tree (AST), during the parsing phase.
 The AST contains all the information about the program necessary to produce the executable output program.
-When modifying a program the desired outcome is always the correct change in the underlying AST, however it is not always
+When modifying a program the desired outcome is always a correct change in the underlying AST, however it is not always
 trivial to map of single text transformation to a transformation on the AST.
 One of the goals of structural editing is to allow users to work on a higher abstraction level.
 Another is to reduce the amount of invalid states the program needs to go through
@@ -127,7 +130,7 @@ One very well-known example is ``Scratch'' which is an educational tool for teac
 It provides a drag-and-drop interface enriched with visual cues that makes it easy to
 put together structurally valid programs.
 Scratch is an example of a purely structure oriented code editor.
-It does not provide enter text based interface to the language.
+It does not provide a text based interface to the language.
 There are also hybrid approaches that adds a structural layer on top of a normal textbased editor.
 These editors are sometimes referred to as structure-aware editors.
 
@@ -190,9 +193,9 @@ Content-Length: ...\r\n
     \label{fig:lsp-communication}
 \end{figure}
 
-\subsection{Editor Plugins}%
-\label{sub:editor_plugins}
-
+% \subsection{Editor Plugins}%
+% \label{sub:editor_plugins}
+% TODO
 
 
 % Client-server based approach to reuable language IDE features.
@@ -200,17 +203,17 @@ Content-Length: ...\r\n
 % and discuss how this can be used by other tools than editors.
 
 \section{TreeSitter}
-Tree-sitter is a parser generator tool and an incremental parsing library developed by GitHub.~\parencite{WinNT}
+Tree-sitter is a parser generator tool and an incremental parsing library~\parencite{WinNT}.
 It was conceived as a solution to the problem of quick semantic syntax highlighting,
 but is also used in the implementation of some language servers.
 An incremental parser is one that can update the parse tree without having to re-parse the entire
-file with each modification.~\parencite{incremental}.
+file with each modification~\parencite{incremental}.
 Parser produced by TreeSitter are failure tolerant, which means that the parser will not instantly reject
 programs with syntax errors.
 This is a crucial feature for editors because the programs being analyzed
 are in an incomplete state a large portion of the time.
 
-There currently parsers written for many different languages.
+There are currently parsers written for many different languages.
 Because TreeSitter provides such excellent syntax highlighting, developers are incentivized
 to create and maintain parser for their language, even if the language
 uses a different parser for the compiler.
@@ -222,7 +225,7 @@ handle many different programming languages.
 TreeSitter produces parsers in pure \textit{C}.
 Documentation for the C API can be found on the official website.
 There are also bindings to the C API for a few different languages.
-The official TreeSitter repository include bindings for \textit{Rust}, as well as
+The official TreeSitter repository include bindings for Rust, as well as
 JavaScript (Web Assembly and NodeJS), Python, Ruby and Haskell.
 The bindings for Rust are the most mature and well-documented.
 Out of the other bindings, the ones for JavaScript and Python are the most complete.
@@ -231,7 +234,7 @@ Out of the other bindings, the ones for JavaScript and Python are the most compl
 \subsection{Using Parsers}%
 \label{sub:using_parsers}
 To use TreeSitter, simply install the library along the individual parsers for each language you would like to parse.
-This process varies depending on which bindings that are being used.
+This process varies depending on which bindings are being used.
 For the NodeJS bindings, both the library and parser can be installed via NPM:
 \begin{minted}{bash}
 npm install tree-sitter
@@ -240,11 +243,6 @@ npm install tree-sitter-javascript
 Listing~\ref{listing:tsexample} shows a JavaScript program that uses TreeSitter to parse a JavaScript program and simply print the parse tree
 as an S-expression.
 The result of running the above program can be seen in Listing~\ref{listing:tsexresult}.
-
-% \begin{code}{Text}{}{}
-% x = "s"
-%     d
-% \end{code}
 
 \begin{code}{JavaScript}{Simple TreeSitter Example}{listing:tsexample}
     
@@ -310,7 +308,7 @@ Predicates allow query results to be filtered based on the value of the captured
 This makes TreeSitter queries a convenient way of searching for specific nodes in a program.
 In addition to the \textit{\#eq?} predicate for checking equality, there is the \textit{\#match?} predicate
 to match by regular expressions.
-Listing~\ref{listing:queryX} shows a query that will find all occurrences of assigning a value to the a variable ``x'':
+Listing~\ref{listing:queryX} shows a query that will find all occurrences of assigning a value to the a variable named ``x'':
 \begin{code}{text}{Query for Declarations of ``x''}{listing:queryX}
 (
  (assignment_expression left: (identifier) @declared-variable)
@@ -377,14 +375,14 @@ The language has a few basic types such as \textit{Int}, \textit{Float}, \textit
 which represents integers, floating-point numbers, characters and sequences of characters respectively.
 Additionally there are a few special types.
 \textit{Never} is a type that has no values.
-\textit{()} is the unit type which has exactly one value, also denoted \textit{()}.
+\textit{()} is the unit type which has exactly one value.
 Function types are denoted by an arrow (\textit{->}).
-If A and B are both types, a function that takes in A and returns a B would have the type (\textit{A -> B})
+If A and B are both types, a function that takes an A and returns a B would have the type (\textit{A -> B})
 which is commonly pronounced ``from A to B''.
 The function arrow is right associative, meaning that \textit{A -> B -> C} is the same as \textit{A -> (B -> C)}.
 There is also syntax for tuple types such as \textit{(A, B)} or \textit{(A, B, C)}
 which represents pairs and triples.
-Unlike other ML languages like Haskell, Elm does not support tuples of lengths greater than three.
+% Unlike other ML languages like Haskell, Elm does not support tuples of lengths greater than three.
 
 \subsubsection{Record Types}
 Elm supports record types which are product types with named fields, similar to \textit{structs} in languages like \textit{C}.
@@ -426,7 +424,7 @@ moveNorth : Position -> Position
 moveNorth (x, y) = (x, y + 1)
 \end{code}
 Type aliases has a special property when interacting with records in Elm.
-If a type alias is credited for a record, a function with the same name as the type
+If a type alias is created for a record, a function with the same name as the type
 is automatically created to act as a constructor for this record.
 Given the declaration in Listing~\ref{record_alias}, a function \textit{Person}
 would be introduced with the type \textit{String -> Int -> Person}.
@@ -498,9 +496,9 @@ swap (a, b) = (b, a)
 \subsection{Modules and Imports}
 Elm code is organized into modules which are used to organize projects
 and separate code into different name spaces.
-Each file starts with a modeled declaration which contains the name of the module (which must start with an uppercase letter)
+Each file starts with a module declaration which contains the name of the module (which must start with an uppercase letter)
 and the list of members to be exposed.
-Elm does not use visibility modifiers such as the \textit{public/private} etc of languages
+Elm does not use visibility modifiers such as \textit{public/private}, as they do in languages
 like Java, but elements of the exposing list are available to other modules through imports.
 An example of a module declaration and import statements can be seen in the first few lines of \Vref{listing:elm_simple}.
 When importing a module you can optionally provide an alias with the \textit{as}-keyword
@@ -523,7 +521,7 @@ An uppercase identifier followed by a double dot refers to a type as well as all
 Most programming languages store identifiers in different name spaces, which allows a single name
 to refer to multiple constructs in the language.
 Elm has separate name spaces for modules, functions, and types.
-As a consequence, the identifier ``String'' may refer to the \textit{String} module in \textit{elm/core}, the \textit{String} type.
+As a consequence, the identifier ``String'' may refer to the \textit{String} module in \textit{elm/core}, or the \textit{String} type.
 
     
 \begin{code}{elm}{Simple Elm Program}{listing:elm_simple}
