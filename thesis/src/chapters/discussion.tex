@@ -4,7 +4,7 @@
 \label{cha:discussion}
 This chapter discusses the results presented in Chapter~\ref{results}.
 First, the results will be discussed and used to answer the research question.
-Then there will be a discussion have implications for theory and practice, followed by
+Then there will be a discussion on the implications for theory and practice, followed by
 a section on the limitations of this study.
 
 \section{Increase in programming efficiency}%
@@ -23,9 +23,9 @@ can be divided into two groups:
     \item Improvements to accuracy
     \item Improvements to interactions
 \end{enumerate}
-Improvements to accuracy reduces the amount of misrecognition, which in turn
-reduces the amount of time the user has to spend correcting those errors.
-Improvements to interactions allows users to less to do more.
+Improvements to accuracy (a reduction in the amount of misrecognition)
+reduces the amount of time the user has to spend correcting errors.
+Improvements to interactions allows users to accomplish more with fewer and shorter voice commands.
 The rest of this section will discuss how the prototype
 achieved this using modern language tooling.
 
@@ -39,7 +39,7 @@ the normal dictation captures in voice commands.
 The process of extracting identifiers was made very simple
 due to the modern tools available.
 For this task, TreeSitter Queries was used in the prototype, but Chapter~\ref{the_project}
-also outlines how to do with using LSP.
+also outlines how to do it using LSP.
 % These tools are designed to work well with any programming language.
 
 
@@ -69,11 +69,10 @@ This section aims to answer the following research question:\newline
 
 \paragraph{}
 
-The structural editing capabilities of the prototypes were quite rudimentary
-, but is already showing great promise.
+The structural editing capabilities of the prototypes were quite rudimentary, but is already showing great promise.
 The integration with TreeSitter makes it very easy to operate on the parse tree,
 and enables complex transformations for many languages.
-Integrating with TreeSitter can be done the regular plug-ins
+Integrating with TreeSitter can be done iva regular plug-ins
 for editors support TreeSitter such as VSCode, or in an external program
 as was done in the prototype.
 
@@ -83,7 +82,7 @@ is often much more convenient then navigating to the node and then performing th
 
 
 Structural editing was achieved in the prototype by simply providing an
-API for acquiring the locations of node given a name and/or type that can be
+API for acquiring the locations of nodes given a name and/or type that can be
 called from Talon scripts.
 Once the location was obtained, editing was performed by emulating keystrokes in the editor.
 
@@ -128,7 +127,7 @@ There are several elements of the study that could be improved.
 
 \paragraph{}
 
-When conducting interviews the captured experience of users it is recommended to have
+When conducting interviews to capture the experience of users it is recommended to have
 between 10 and 30 participants~\parencite{griffin1993voice}.
 My study only had 6 participants.
 It should however be noted that many of the interviews yielded very similar results

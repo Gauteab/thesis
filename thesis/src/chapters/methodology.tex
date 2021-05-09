@@ -5,7 +5,7 @@
 \chapter{Methodology and Evaluation}\label{methodology_and_evaluation}
 This chapter outlines the research methods used in this project,
 and how the study was designed and executed in order to evaluate effectiveness of the prototype.
-The results of the study will then be presented and analyzed, followed by
+The details of the study will then be presented, followed by
 discussion of alternative methods that could have been used.
 
 % I might use a mix of quantitative and qualitative methods. (multi- strategy) % read creswell,2018
@@ -14,11 +14,11 @@ discussion of alternative methods that could have been used.
 \section{Research Methods}
 Quantitative research is an approach for ``testing objective theories by examining the relations between variables'', whereas qualitative research is concerned with ``exploring and understanding the meaning of individuals or groups in the context of a social or human problem''. \parencite{creswell2018}
 
-When choosing a research approach it is important to keep in mind the goal of the survey.
+When choosing a research approach it is important to keep in mind the goal of the study.
 The overall goal of the project is to improve the effectiveness of vocal programming by the use of modern programming language tooling.
 The prototype should serve as proof of the effectiveness of the tools chosen to achieve this task.
 In order to validate that this is in fact achieved, the system will have to be tested with actual users.
-As will be discussed in the section on~\nameref{alternative_methods}, there are quantitative measures that could be used which would make a Multi-strategy approach suitable.
+As will be discussed in \Vref{alternative_methods}, there are quantitative measures that could be used which would make a Multi-strategy approach suitable.
 The challenges with these however lead me to implement a more qualitative approach where I will try to understand the experiences of users attempting to use system for the first time.
 
 
@@ -31,9 +31,9 @@ Developting a prototype for the project servers two main purposes.
 Firstly, the prototype should show that the tools chosen for the implementation has the capabilities needed to achieve the desired results.
 Secondly, it will be used to determine the usefulness of the ideas presented in this paper.
 To achieve the latter, the prototype needs to reach a certain level of completeness in order to faithfully represent the concept.
-Therefore I will aim to develop a Functional prototype.
-A Functional prototype, also known as a Technical prototype, ``demonstrates user and computer interactions'' and it 
-``may be syntactically complete or incomplete''~\parencite{jones2000rapid}
+Therefore I will aim to develop a \textit{functional prototype}.
+A functional prototype, also known as a \textit{technical prototype}, ``demonstrates user and computer interactions'' and it 
+``may be syntactically complete or incomplete''~\parencite{jones2000rapid}.
 
 \subsection{Usability Testing}
 Usability testing is ``any of those
@@ -44,7 +44,7 @@ some behavioural data are collected''~\parencite{wichansky2000usability}.
 The goal of these tests will be to verify that users will be able to install the prototype
 on their own systems and to see if it behaves as expected in their Talon environment, which will be different from
 the one the prototype is developed in.
-Additionally, I want to observe to what extent the user grasps, and resonates with, the concepts introduced by the system.
+Additionally, I want to observe to what extent the user grasps, and resonates with the concepts introduced by the system.
 
 To this end I will be conducting moderated and exploratory user tests.
 Exploratory tests validate the product and determine users mental models~\parencite{vasalou2004human}.
@@ -56,14 +56,14 @@ This is partly necessary due to the ongoing COVID-19 pandemic, but it also has t
 benefit of being able to test the system in the user natural environment~\parencite{vasalou2004human}.
 
 \subsection{Interviews}
-Semi-structured interviews were chosen as a mothod bcause they are  well  suited  for  the  exploration  of  the perceptions and opinions of  respondents regarding complex issues and enable probing for more information and clarification.~\parencite{louise1994collecting}
+Semi-structured interviews were chosen as a mothod bcause they are  well  suited  for  the  exploration  of  the perceptions and opinions of  respondents regarding complex issues, and enable probing for more information and clarification~\parencite{louise1994collecting}.
 The interviews I will be conducting will have a list of questions, some of which deal with background and practical information for the interview and subsequent user test.
 Interviewees should have the opportunity to bring up any other related issues they might want to talk about and I will be asking follow-up questions
 if I deem it relevant to the study.
 
 \section{Participants and Recruitment}
 Participants for this study was chosen based on the following inclusion criteria:
-\textit{Participants must be somewhat experienced with using Talon (> 6 months)}.
+\textit{Participants must be somewhat experienced with using Talon}.
 Testing the system with people who already use talon should give a clearer impression
 about the benefits of the system as unexperienced users will make more mistakes that are not 
 related to the performance of the system.
@@ -85,7 +85,7 @@ We will then go on to install the system and start using it.
 % \subsection{Part 2: User Tests}
 Participants are given a list of commands to try, while I will be observing
 the output of the system on taking note of any unexpected behavior or errors.
-It's not necessary that participants did the commands in the exact order suggested and they are free to experiment as the please.
+It's not necessary that participants do the commands in the exact order suggested and they are free to experiment as the please.
 I will however make sure that in the end they have tested all the functionality of the prototype.
 
 Once the participant is finished experimenting with the system, I will begin the second round of questions
@@ -135,8 +135,8 @@ They could then install the system using NPM and run it using Node.
 \label{sec:ethical_considerations}
 % did not ask about health, users are often disabled
 All participants volunteered after seeing the post I made in the Talon Slack without being individually addressed.
-As they were made aware, all responses were anonymized and no direct quotes will be used in the study.
-While I did ask questions relating to their reliance on Talon (how much they use it compared standard peripherals), 
+As they were made aware, all responses were anonymized. % and no direct quotes will be used in the study.
+While I did ask questions relating to their reliance on Talon (how much they use it compared to standard peripherals), 
 I did not ask about \textit{why} they are using Talon as that might prompt them to share information about their health.
 At no point did I store any personal information about participants, and they did have the opportunity to stay completely anonymous
 as Slack does not require users to use their actual names as display names.
@@ -147,13 +147,13 @@ as Slack does not require users to use their actual names as display names.
 This section presents a few alternative methods that could have been used for this project.
 Ultimately these methods were not chosen due to practical limitations within the scope of this thesis,
 but could hopefully be used in future studies.
-\subsection{Coding Speed}
+\paragraph{Coding Speed:}
 As the goal of the project is to increase overall programming efficiency, measuring an increase in time to complete
 certain coding tasks would provide the most reliable proof.
 In such a study there are many factors to consider.
 For example, the programs subjects would be asked to dictate would have to be carefully crafted in order to have a consistent difficulty level across the test.
 Performance anxiety would also have to be considered when evaluating the results.
-This could potentially effect a survey of vocal programming more so than others due to some users being self-conscious while dictating.
+This could potentially effect a study of vocal programming more so than others due to some users being self-conscious while dictating.
 The main reason this metric was not used in this study is the time required to make sure that users
 are adequately competent using the new system with a high degree of proficiency.
 
@@ -164,12 +164,12 @@ are adequately competent using the new system with a high degree of proficiency.
 % Should I change the order of the two tests?
 % This might well be a good measurement. I'll discuss why this paragraph.
 
-\subsection{Evaluating Grammar Efficiency}
-One quantitative method I considered using was to analyze larger code bases
+\paragraph{Evaluating Grammar Efficiency:}
+Another quantitative method I considered using was to analyze larger code bases
 to see if one can estimate with some degree of certainty how much better the voice grammar
 produced by the system is compared to the base commands set.
 This problem is however nontrivial, and could potentially
-required the formalization of a somewhat sophisticated cost model for vocal programming grammars (see \Vref{sec:future_work}).
+required the formalization of a somewhat sophisticated cost model for vocal programming grammars. %  (see \Vref{sec:future_work}).
 Another practical issue with this approach is that it would require a much higher degree of completeness for the prototype
 in order to give meaningful results.
 

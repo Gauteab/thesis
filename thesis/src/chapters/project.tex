@@ -5,11 +5,11 @@
 
 \chapter{The Prototype}\label{the_project}
 The goal of this project is to create a prototype of a system that can generate voice commands
-for talon from a source file in a given program language to the increase accuracy and efficiency of programming.
+for Talon from a source file in a given program language to the increase accuracy and efficiency of programming.
 The result should take the form of a server that can be easily integrated into any editor as a plug-in
 which handles the generation of voice commands and the communication with talon.
 While the final version of the system should be general enough to handle any language, and be integratable with any the editor,
-the prototype only aims to handle the \textit{Elm} programming language in the \textit{Neo-vim} editor.
+the prototype only aims to handle the \textit{Elm} programming language in the \textit{Neovim} editor.
 This chapter will describe the design and architecture of the system.
 
 \section{System Overview}%
@@ -22,7 +22,7 @@ each of which will be discussed in more detail in their own sections.
 The primary feature of the system is to expose information about the code being edited
 to Talon such that the user can dictate high-level commands with a limited vocabulary
 specific to the code being edited with high accuracy.
-Perhaps the most important feature is the ability to keep updated talon lists
+Perhaps the most important feature is the ability to keep updated Talon lists
 of identifiers in different classes. For example, you might have a list \textit{user.functions} which would contain
 all the functions that are in scope in the file being edited.
 Then you could define a voice command such as 
@@ -30,8 +30,8 @@ Then you could define a voice command such as
 function {user.functions}: insert(functions)
 \end{verbatim} 
 which would provide the user with a way to insert a known function from a limited vocabulary which would increase the accuracy.
-Given the code in \Vref{listing:elm_simple}, the list \textit{user.functions} might contain ``update'' and ``view''
-(which were defined in this file), as well as ``onClick'', ``button'', ``text'' and ``div'' (from the import statements).
+Given the code in \Vref{listing:elm_simple}, the list \textit{user.functions} might contain \textit{update} and \textit{view}
+(which were defined in this file), as well as \textit{onClick}, \textit{button}, \textit{text} and \textit{div} (from the import statements).
 As we saw in the section on~\nameref{sec:elm}, there are other ways functions can be introduced
 besides explicit declaration and imports, so some extra work is required define all relevant functions.
 % Additionally, not all function names are pronounceable, so this must also be handled as discussed in Section~\ref{spoken_identifier_algorithm}.
@@ -75,14 +75,14 @@ as well as providing a more pleasant and natural user experience.
 \label{sec:classified_identifier_extraction}
 This section should cover in detail what identifies should be extracted
 and how this is accomplished. \Vref{tab:constructs_of_interest} shows
-what identifiers should be tracked, and which constructs they can be found in.
+what identifiers should be tracked, and which node types they can be found in.
 For example, a function can be declared directly, imported from another module, are generated
 from type declarations. The notation \textit{Type [Alias] Declaration} is a shorthand
 for writing both \textit{Type Declaration} and \textit{Type Alias Declaration}.
-Tracking these classes of identifiers should be sufficient for Elm, but more
-might be added to how do more programming languages in the future.
-The following section will explain in detail how each of these classes of identifiers
-are extracted, and how they might be used in voice commands.
+% Tracking these classes of identifiers should be sufficient for Elm, but more
+% might be added to how do more programming languages in the future.
+The following sections will explain in detail how each of these classes of identifiers
+might be extracted using a few different methods, and how they might be used in voice commands.
 % As all of the identifer classes may be found in import statements, imports will be covered
 % separately in Section~\ref{imports}.
 
@@ -90,7 +90,7 @@ are extracted, and how they might be used in voice commands.
     % \centering
     \begin{tabular}{|c|c|}
         \hline
-        Construct & Found In \\
+        Node Type & Found In \\
         \hline
         % add a column for reference
         Function & Function Declaration, Import, Type [Alias] Declaration \\
@@ -101,7 +101,7 @@ are extracted, and how they might be used in voice commands.
         Record Field & Record Type, Record Literal \\
         \hline
     \end{tabular}
-    \caption{Constructs of Interest}
+    \caption{Node Types of Interest}
     \label{tab:constructs_of_interest}
 \end{table}
 
@@ -114,20 +114,20 @@ This section will provide a more in-depth explanation of the different identifer
 Functions, variables and constructors are all normal ``values'' in Elm, but have some properties
 that needs to be taken care of in this context.
 There is no way to differentiate between functions and variables syntactically due to the higher order nature of the language.
-The only way to tell if a value is a function is to protect its type, which is not always available easily.
-It is debatable whether or not it is necessary to separate these two classes for the particular use case we have in mind,
+The only way to tell if a value is a function is to consider its type, which is not always easily available.
+It is debatable whether or not it is necessary to separate these two classes for the particular use case in question,
 but we mention it as a possible capability of the system.
 The advantage is that we can further limit the vocabulary in commands such as:
 \begin{verbatim}
 call <user.function>: user.call_function(function)
 \end{verbatim}
 More important however is the difference between constructors and other values.
-In elm it is not possible to declare a function with an uppercase first letter.
+In Elm it is not possible to declare a function with an uppercase first letter.
 This is to make it easier to distinguish constructors from regular functions.
 It is however possible to have a function with the same name as a constructor, only with different formatting.
 Because we would like to have a way of distinguishing between declarations like the one seen in \Vref{box_example},
 we need to track constructors separately.
-\begin{code}{elm}{}{box_example}
+\begin{code}{elm}{Type, Constructor and Function with same name}{box_example}
 type Box = Box Int
 
 box i = Box (i + 1) 
@@ -137,9 +137,11 @@ box i = Box (i + 1)
 \label{par:types}
 As in most ML-style languages, types play an central role in Elm programming.
 Since Elm has global type inference, and the type system is simple enough that
-well-typed expressions are usually unambiguous, type signatures can be generated
-automatically which seemingly would make the ability to dictate signatures unnecessary.
-Automatically generating tab signatures is possible in IntelliJ, but the Elm LSP does not have this feature. 
+% well-typed expressions are usually unambiguous, 
+type signatures can be generated
+automatically.
+This would seemingly make the ability to dictate signatures unnecessary.
+Automatically generating type signatures is possible in IntelliJ, but the Elm LSP does not have this feature. 
 It will probably be implemented in the future.
 Regardless, programmers would often want to type out the signatures manually for a few reasons.
 Adding the type signature before writing the function body helps the compiler provide better
@@ -151,12 +153,12 @@ By tracking the known types, dictating type signatures can be made extremely eff
 \subsubsection{Modules}%
 \label{par:modules}
 The two main use cases for keeping a list of modules is to dictate imports, and referencing functions in those modules.
-The full list of modules available to the user can be found by retrieving the packages using the project, as described in Section~\ref{sub:dependencies}.
+The full list of modules available to the user can be found by retrieving the packages using the project, as described in \Vref{sub:dependencies}.
 % check if core is listed here
 % also user-defined modules
 Given a module \textit{Array} with a function called \textit{append}, the user should be able to
 reference this function with the phrase ``array append'', which would produce the output \textbf{Array.append}.
-Explicitly dictating the \textbf{.} can optionally be done to disambiguate in certain scenarios, but should usually not be necessary.
+Explicitly dictating the dot (\textbf{.}) can optionally be done to disambiguate in certain scenarios, but should usually not be necessary.
 
 Voice commands should also be aware of import aliases.
 If the Array module instead was imported as
@@ -168,20 +170,19 @@ It should also be possible to reference the function using the alias (i.e ``A ap
 
 \subsubsection{Record Fields}
 Record fields should be tracked for the same reason we track functions.
-Given the following decorations:
-\begin{minted}{elm}
-type alias Person = { name : String }
-
-john : Person
-john = ...
-\end{minted}
+Given the declaration of a value \textit{john} with the type \textit{Person} in \Vref{record_alias},
+% \begin{minted}{elm}
+% type alias Person = { name : String }
+% john : Person
+% john = ...
+% \end{minted}
 it should be possible to enter \textit{john.name} by saying ``John dot name''.
 Elm also has syntax for record access functions, so the phrase ``dot name'' can be used to
 refer to the function \textit{.name}.
 Since Elm support anonymous records, to find all possible record fields we also need to check
 any record literal and destructuring declaration.
 Note that the type of the value \textit{john} is not necessarily relevant unless we
-aim to make the voice commands aware of the types as well.% referred to discussion on this in general
+aim to make the voice commands aware of the types as well. % referred to discussion on this in general
 This can be achieved with the following voice commands:
 \begin{verbatim}
 <user.value> [dot] <user.record_field>: "{value}.{record_field}"
@@ -275,7 +276,7 @@ The contents of these module objects along with an explanation can be seen in ta
     "binops": []
   }
 \end{code}
-The rest of this sections will explain each of these fields in more detail.
+The rest of this section will explain each of these fields in more detail.
 All of the following examples will be from \textit{elm/core}.
 
 \subsubsection{Unions}\label{unions}
@@ -301,7 +302,7 @@ A type declaration like in the one in \Vref{maybe} would produce the union field
 \end{code}
 The \textit{args} field is a list of the names of the type parameters.
 A nonempty args indicates a polymorphic data type.
-There might be something to do with the name of these type arguments, but for now they will be ignored.
+There might be some potential for use of the name of these type arguments, but for now they will be ignored.
 The \textit{cases} field is a list of constructors for the type.
 Each entry is a pair of the name of the constructor and list of the types of the arguments to that constructor.
 Constructors with no arguments are constants, otherwise they are functions.
@@ -311,11 +312,14 @@ Constructors with no arguments are constants, otherwise they are functions.
 This entry is very simple.
 There is a \textit{type} field, which indicates which type is being aliased, and the name.
 We are only interested in the name field.
-A type alias like
-\begin{minted}{elm}
-type alias Id = Platform.ProcessId
-\end{minted}
+A type alias like the one in \Vref{processid_declaration}
 would produce the alias field in \Vref{processid}.
+
+\begin{code}{elm}{ProcessId Type Alias}{processid_declaration}
+type alias Id = Platform.ProcessId
+\end{code}
+
+
 \begin{code}{json}{Platform.ProcessId JSON}{processid}
 {
   "name": "Id",
@@ -360,12 +364,12 @@ These entries are similar to \textit{values}, but also contain \textit{precedenc
 \end{code}
 In some languages, such as PureScript, infix operators are defined as aliases
 for regular functions which ensures that each operator has a canonical way of referencing it vocally.
-Since elm does not have this property, this connection is to be made another way.
+Since Elm does not have this property, this connection is to be made another way.
 The operator in this example is historically referred to as \textit{cons}, but it could also be called
 \textit{prepend} if you want the name to be more descriptive.
 Elm support declaring infix operators, but normal users can not define operators as of version 0.19, so this might not be a problem in practice.
 Most operators are defined in \textit{elm/core}, but not all.% |., |=
-A reasonable way to this might be to checked operators found in packages against the talon list
+A reasonable way to handle this might be to check operators found in packages against the Talon list
 and warn the user if an operator is found, but has no way to be dictated.
 
 \subsection{Extracting From Language Server}%
@@ -389,9 +393,9 @@ and what kind of symbol it is. \Vref{document_symbols_entry} shows the entry for
 } 
 \end{code}
 
-\paragraph{Workspace Symbols} retrieves information about symbols and entire project.
+\paragraph{Workspace Symbols} retrieves information about symbols in the entire project.
 This also includes symbols in packages the project depends on.
-Because of this, LSB might eliminate the need to analyze documentation directly for some use cases.
+Because of this, LSP might eliminate the need to analyze documentation directly for some use cases.
 This is however not always the case as the workspace entries provides less information than the documentation.
 The entries are similar to those of the document symbols, but because there will be a lot more entries some
 information is left out (such as line number), and the kind uses an ID instead of the name.
@@ -401,7 +405,8 @@ This can be used to determine the package and module the symbol is from.
 { 
   "location": {
   "uri":
-    "file:///<HOME>/.elm/0.19.1/packages/elm/json/1.1.3/src/Json/Encode.elm",
+    "file:///<HOME>/.elm/0.19.1/packages/elm/json/1.1.3/
+                                    src/Json/Encode.elm",
   "range": {
     "end": { "character": 93, "line": 169 },
     "start": { "character": 0, "line": 167 }
@@ -443,13 +448,13 @@ Being a general purpose parsing system, TreeSitter easily enables arbitrary synt
 Once the parser for the given programming language has been acquired, getting the parse tree
 is very simple.
 Then one could simply traverse the tree and extract identifiers from the nodes directly.
-This approach is straightforward, but manually defining the traversal take some extra work.
+This approach is straightforward, but manually defining the traversal takes some work.
 Using the Query API of TreeSitter, this can be greatly simplified.
 % This section shows how TreeSitter Queries can be used to extract identifiers from a Elm source file.
 
 \subsubsection{Using TreeSitter with Elm}
 The parser for Elm is available at \url{https://github.com/elm-tooling/tree-sitter-elm}
-and is also available as a npm package at \url{https://www.npmjs.com/package/tree-sitter-elm} for simple installation
+and is also available as a NPM package at \url{https://www.npmjs.com/package/tree-sitter-elm} for simple installation
 for projects using the \textit{Node.js} bindings.
 A simple Elm declaration like
 \begin{minted}{elm}
@@ -501,7 +506,7 @@ If one were only interested in the name of the contractor that could be extracte
 \subsubsection{Values}
 As TreeSitter only enable syntactic analysis we cannot distinguish between functions and other values
 without implementing the Elm type system as part of that analysis.
-Due to the variable naming rules of elm, the values in the program can be extracted with a very simple query:
+Due to the variable naming rules of Elm, the values in the program can be extracted with a very simple query:
 \begin{verbatim}
 (lower_case_identifier) @value
 \end{verbatim}
@@ -562,7 +567,7 @@ Extracting record fields from record types is very simple:
 \begin{verbatim}
 (field_type (lower_case_identifier) @record-field)
 \end{verbatim}
-Since elm has anonymous record types, there might be situations where record fields are used
+Since Elm has anonymous record types, there might be situations where record fields are used
 without having been declared or imported.
 For example in the declaration
 \begin{minted}{elm}
@@ -651,7 +656,7 @@ from the users Talon configuration files.
 \section{Code Navigation}%
 \label{sec:code_navigation}
 Once information has been extracted from the program, enabling high-level navigation commands is quite simple.
-\Vref{symbol_navigation} shows how you could create talon commands that uses the classified identifiers
+\Vref{symbol_navigation} shows how you could create Talon commands that uses the classified identifiers
 to implement a simple grammar that allows for navigation that takes the type of the navigation target
 into account.
 \begin{code}{text}{Navigational Commands for Symbols}{symbol_navigation}
@@ -664,10 +669,10 @@ go fun {user.symbol_function}:
 \end{code}
 The action \textit{symbol\_navigate} queries the server
 for the position of the identifier with name matching the first parameter, and type matching the second.
-It will then trigger \textit{editor\_go\_to\_position} which in the context of the current editor
-to the beginning of that symbol.
+It will then trigger \textit{editor\_go\_to\_position}, which will be implemented in the context of each editor,
+to navigate to the beginning of that symbol.
 
-Since we have access to the entire parse tree, it is also possible to navigate two nodes that
+Since we have access to the entire parse tree, it is also possible to navigate to nodes that
 are not associated with any given identifier.
 This would not be possible with an implementation that only uses LSP.
 \begin{code}{text}{Navigational Commands for Non-symbols}{literal_navigation}
@@ -703,7 +708,7 @@ go to last: user.go_to_next_result("backward")
 Structural editing can easily be achieved by building upon the implementation of navigation.
 By implementing an action to select a given range in the editor, you can create commands
 that select nodes based on their type and associated identifiers in the same manner as with navigation.
-For example, to delete the typed declaration in Vim, you can create a command that captures the name of the type declaration,
+For example, to delete a type declaration in Vim, you can create a command that captures the name of the type declaration,
 selects it, and presses ``d'' in order to delete it.
 \begin{verbatim}
 delete type {user.symbol_type}: 
@@ -722,16 +727,16 @@ For the prototype the editing commands were implemented in Talon.
 
 \section{Architecture}%
 \label{sec:architecture}
-The system consists in total of three parts: Talon scripts, The Server and a Vim extension (Client).
+The system consists in total of three parts: Talon scripts, the server, and a Vim extension (Client).
 The server is responsible for parsing source files and extracting information using TreeSitter,
 as well as performing normalization on the extracted identifiers in order to make them
 more recognizable before sending them to Talon.
 The Vim extension manages the window title which is used by Talon to track information about the
 current editor state such as current mode and cursor position. Additionally, it will notify
-the server whenever an Elm document is either opened, closed or written to.
-The talon scripts defines voice commands that utilizes the information received from the server
+the server whenever an Elm document is either opened, closed, or written to.
+The Talon scripts defines voice commands that utilizes the information received from the server
 and defines actions to query the server for information about a given identifier.
-An overview of the system can be seen in Figure~\ref{fig:architecture}.
+An overview of the system can be seen in \Vref{fig:architecture}.
 
 \begin{figure}[htpb]
     \centering
@@ -753,14 +758,14 @@ syntactic elements such as literals and if expressions as navigation targets.
 \subsection{Programming Languages and Frameworks}
 The main consideration with regards to choice of programming language for the server of this project is the availability of high-level bindings to the TreeSitter library.
 Using the C library directly would also have been a possibility, but going with a higher level language will likely result in a more reliable result.
-Of the handful of languages that has this, the \textit{Node.js} seems to be one of the most stable and mature.
+Of the handful of findings that has this, the \textit{Node.js} bindings seems to be one of the most stable and mature.
 In order to get static type safety, PureScript was chosen over the dynamically typed JavaScript.
 TypeScript could also have been used to accomplish this, but PureScript has a stronger type system.
 Additionally, PureScript being a pure functional language similar to Haskell provides even stronger runtime guarantees.
 \textit{HTTPure}, a HTTP framework for PureScript, was used to develop the server.
 
 \subsection{Platforms}
-The prototype is multiplatform and has been tested on MacOS (Catalina and BigSur), Linux (Ubuntu) and Windows 10.
+The prototype is multiplatform and has been tested on MacOS (Catalina and BigSur), Linux (Arch, Ubuntu) and Windows 10.
 
 \subsection{Interprocess Communication}
 Talon does not currently have any officially recommended way of handling communication with external programs.
@@ -770,19 +775,19 @@ By using the \textit{Node.ChildProcess} API, the server can spawn an instance of
 This server can then simply pipe an action into the REPL as a string.
 The other method is to write the action to be executed to a file that is being watched by Talon using the \textit{fs.watch}
 method. Whenever the file is written to, Talon will pick up on the change and execute action within that file.
-The latter is slower, but was used in the Windows implementation due to permissions issue executing the Talon REPL from within Windows Subsystem Linux (WSL).
+The latter is slower, but was used in the Windows implementation due to a permissions issue executing the Talon REPL from within Windows Subsystem Linux (WSL).
 
 
 
 \subsection{Project Statistics}%
 \label{sub:project_statistics}
 This section briefly present some data about the implementation of the prototype.
-Table~\ref{tab:stats} shows the amount of code written per programming language.
+\Vref{tab:stats} shows the amount of code written per programming language.
 This is worth noting because it shows how much of the system is implemented in the different parts
 (Editor, Server and Talon).
-The same information is presented in Figure~\ref{fig:lang_dist}.
-Not included in these figures are the talon files that defines the grammar for the voice commands,
-and talon extensions written by other users that were slightly modified and extended such as the Vim integration from \url{https://github.com/fidgetingbits/knausj_talon
+The same information is presented in \Vref{fig:lang_dist}.
+Not included in these figures are the Talon files that defines the grammar for the voice commands,
+and Talon extensions written by other users that were slightly modified and extended such as the Vim integration from \url{https://github.com/fidgetingbits/knausj_talon
 }.
 
 % \begin{figure}[!ht]
@@ -837,8 +842,7 @@ and talon extensions written by other users that were slightly modified and exte
 This shows that the server is by far the biggest part of the project (PureScript + JavaScript),
 although a notable portion of this is the definition of the foreign function interface to TreeSitter (188 lines).
 Most notably however it shows that the editor plug-in for Vim was a very small part of the work
-which should serve as an indicator that implementing these features in other editors
-it will be quite simple.
+which should serve as an indicator that implementing these features in other editors will be quite simple.
 It also shows that the total amount of code needed to implement the features available in the prototype
 is quite low, which speaks volumes about the ease-of-use of both Talon and TreeSitter.
 
@@ -855,14 +859,14 @@ is quite low, which speaks volumes about the ease-of-use of both Talon and TreeS
 % ===============================================================================
 \section{Prototype Completeness}%
 \label{sec:prototype_completeness}
-This section outlines the future completeness of the final prototype with respect to
+This section outlines the completeness of the final prototype with respect to
 the features discussed previously in this chapter.
 The source code for the prototype is publicly available at \url{https://github.com/Gauteab/talon-tree-sitter-service}.
 
 \paragraph{Identifier Extraction:}
 The current implementation only uses TreeSitter and is only able to work with a single file.
 If the user opens a different file, the identifiers will be overwritten.
-Ideally, the system would have one namespace further identifiers in the current file
+Ideally, the system would have one name space for the identifiers in the current file,
 and one for the whole project.
 This is likely the biggest limitation of the current implementation.
 
@@ -954,7 +958,7 @@ There are currently three editor actions:
     \item editor\_get\_cursor\_position()
 \end{itemize}
 These are used for implementing navigation, editing and context awareness respectively.
-It is not necessary to implement all of them.
+It is not strictly necessary to implement all of them.
 
 
 

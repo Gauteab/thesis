@@ -14,7 +14,7 @@ vocal programming more efficient.
 \label{sub:prior_experience}
 Participants were asked about their level of experience with programming in general, Talon, 
 as well as the tools that were the targets for the prototype (Elm and Vim),
-see Table~\ref{tab:experience}.
+see \Vref{tab:experience}.
 
 It should be noted that the amount of time they had been using Talon
 does not necessarily correspond with their level of proficiency.
@@ -22,7 +22,7 @@ How fast users become proficient with Talon depends on many factors
 such as employment status and how much their health allows them to invest time into learning it.
 P4 have been using Talon for the shortest amount of time (3 month), but was among the most proficient
 out of the six participants.
-P3 was only one that was using Dragon before it started using Talon.
+P3 was the only one that was using Dragon before they started using Talon.
 
 None of the participants had an experience with Elm, although two knew Haskell.
 This did not have any effect on the study beyond one participant
@@ -44,13 +44,16 @@ understanding the ideas behind the system.
 \begin{table}[htpb]
     \centering
     \begin{tabular}{|c|c|c|c|c}
+           \hline 
            & Programming&Talon&Elm&Vim\\
+           \hline 
         P1 & 16 years&1 year&Knows Haskell&No Experience\\
         P2 & 1-2 years&1-2 years&No Experience&Little Experience\\
         P3 & 14 years&1 year*&No Experience&No Experience\\
         P4 & 25 years&3 months&No Experience&Very Experienced\\
         P5 & 20 years&1 year&Knows Haskell&Somewhat Experienced\\
         P6 & 25 years&1 year&No Experience&Very Experienced\\
+           \hline 
     \end{tabular}
     \caption{Participants Experience}
     \label{tab:experience}
@@ -59,14 +62,17 @@ understanding the ideas behind the system.
 
 \begin{table}[htpb]
     \centering
-    \begin{tabular}{|c|c|c|c|c}
+    \begin{tabular}{|c|c|c|c|c|}
+           \hline 
         & Talon Usage&Speech Engine&Command Set&Platform\\
+           \hline 
         P1 &80\%&Conformer&knausj&Linux\\
         P2 &80\%*&Dragon&knausj&Mac\\
         P3 &90\%*&Dragon&knausj&Windows\\
         P4 &60\%&Conformer&knausj*&Mac\\
         P5 &50\%&Conformer&knausj*&Mac\\
         P6 &99\%&Conformer&knausj&Linux\\
+           \hline 
     \end{tabular}
     \caption{Participants Setup}
     \label{tab:setup}
@@ -76,7 +82,7 @@ understanding the ideas behind the system.
 \label{sub:issues_with_talon}
 Before having them try the prototype, participants were asked about what they perceived to be the most significant challenge
 with using Talon currently.
-The issues mentioned are visualized in Figure~\ref{fig:challenges_cloud}.
+The issues mentioned are visualized in \Vref{fig:challenges_cloud}.
 
 The most common issue that is directly related to the task of programming was navigating within a single file.
 Participants expressed some frustration with the way they were navigating
@@ -99,7 +105,7 @@ which is repetitive and make the voice control feel low-level and verbose.
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=0.8\linewidth]{images/word_cloud.png}
-    \caption{Word Cloud of Challenges}%
+    \caption{Challenges of Talon Users}%
     \label{fig:challenges_cloud}
 \end{figure}
 
@@ -111,7 +117,7 @@ The usability test showed that the system worked very well.
 Participants were able to navigate and edit code
 seamlessly after less than fifteen minutes of usage.
 Dictation capabilities were somewhat limited in the current prototype,
-but dictation of type signatures worked quite well aside from the issue discussed in Section~\ref{sub:engine_differences}.
+but dictation of type signatures worked quite well aside from the issue discussed in \Vref{sub:engine_differences}.
 
 \subsection{How Well Did Participants Understand the System?}%
 \label{sub:how_well_did_participants_understand_the_system_}
@@ -128,13 +134,13 @@ understanding the concepts once pointed out to them.
 
 \subsection{Engine Differences}%
 \label{sub:engine_differences}
-Users of the \textit{Conformer} speech engine ran into an issue when dictating the
+Users of \textit{Conformer}, a new model for the \textit{wev2letter} speech engine, ran into an issue when dictating the
 \textit{Msg} type.
 The system had only been tested with \textit{Dragon} which happened to be able to
 recognize ``msg'' as ``message''.
 This could have been avoided by adding (msg, message) to the list of overrides,
 as was done with \textit{init}.
-When generating voice commands for talon it is important to
+When generating voice commands for Talon it is important to
 test with multiple speech engines to make sure that the system is not relying
 on any special features of any particular engine.
 
@@ -144,9 +150,9 @@ P6 brought up a potential issue with deleting nodes that are currently off scree
 The execution of the command happens very fast and involves multiple actions
 that caused the text on screen to shift.
 This can be surprising to new users, but most importantly
-it is difficult to verify visually that the commanded what it was supposed to do.
+it is difficult to verify visually that the command did what it was supposed to do.
 With voice control the risk of commands being misrecognized is always present, 
-so this must be accounted for by making sure the user can see what's going on.
+so this must be accounted for by making sure the user can clearly see what's going on.
 The participants suggests adding a delay between navigating to, and deleting
 a node that is far away.
 
@@ -204,7 +210,7 @@ This is a feature that can be implemented user level
 and does not require any extensions to the backend.
 
 P6 requested the ability to dictate identifiers containing abbreviations, which was discussed in
-Section~\ref{overrides}.
+\Vref{overrides}.
 
 \subsection{System Relevance}%
 \label{sub:system_relevance}
@@ -221,7 +227,7 @@ in their editor through a plug-in that have not yet been released.
 Some of the features of this system therefore overlap with their solution, but
 my solution might be better for global navigation.
 
-P2 answered that for their particular use case, there issues was not
+P2 answered that for their particular use case, their issues was not
 addressed as directly, but they still think it's a useful addition.
 The navigational features were again mentioned as being particularly useful.
 
