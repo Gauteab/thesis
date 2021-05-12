@@ -1,0 +1,20 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+go fun update
+go type update
+go to sandbox
+
+go to text
+go to next
+go to last
+
+go string
+go number
+go import
+
+select type person
+select fun view
+
+delete type message
+save it
+delete fun main
+\end{Verbatim}

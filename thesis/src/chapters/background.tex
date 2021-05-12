@@ -8,7 +8,7 @@ Second, the tools and techniques that will be used
 to address these challenges will be presented.
 Lastly, there will be an introduction to the Elm
 programming language, which will be the subject
-of the experiments presented in Chapter~\ref{the_project}.
+of the experiments presented in \Vref{the_project}.
 % In this section I will cover the history of voice coding (Dragon, NatLink, Dragonfly, Caster etc\ldots)
 % as well as the state of the art language tooling. (LSP and TreeSitter).
 % I will also cover something about the Elm programming language, as I will be using that in my analysis.
@@ -163,8 +163,8 @@ The Language Server Protocol defines how these servers communicate with code edi
 \label{sub:client_server_communication}
 Clients (editors) and servers communicate over JSON-RPC, which is a remote procedure call protocol encoded in JSON.
 This allows clients to notify servers without having to wait for a response, on the server can respond to multiple requests asynchronously.
-The format of the messages sent between server and client can be seen in Listing~\ref{listing:jsonrpc}, and
-an illustration of how clients and servers communicate during a normal editing session can be seen in Figure~\ref{fig:lsp-communication}
+The format of the messages sent between server and client can be seen in \Vref{listing:jsonrpc}, and
+an illustration of how clients and servers communicate during a normal editing session can be seen in \Vref{fig:lsp-communication}
 \footnote{\url{https://microsoft.github.io/language-server-protocol/overviews/lsp/overview/}}.
 % Messages between the server and client will have the following form:
 
@@ -341,7 +341,7 @@ and therefore resembles languages like Haskell and OCamel the most.
 
 \subsection{Functions and Values}
 The syntax for declaring top-level values and functions is very simple.
-Listing~\ref{ex:value_and_function} shows two declarations.
+\Vref{ex:value_and_function} shows two declarations.
 The first simply binds the value 5 to the identifier \textit{five},
 while the second defines a function that takes a number as an argument and increments it.
 Both declarations are preceded by a type signature, both of which are completely optional
@@ -447,7 +447,7 @@ The \textit{a} in this example is a type variable which indicates that \textit{M
 When this type has been defined, \textit{Nothing} is a constant value of type \textit{Maybe}, and \textit{Just}
 is a function with the type \textit{a -> Maybe a}, so \textit{Maybe}-values can be created
 with expressions such as \textbf{Nothing}, \textbf{Just 5} or \textbf{Just ``hello''} and so on.
-\begin{code}{elm}{There \textit{Maybe} Union Type}{maybe}
+\begin{code}{elm}{The \textit{Maybe} Union Type}{maybe}
 type Maybe a
     = Just a
     | Nothing

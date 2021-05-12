@@ -1,0 +1,64 @@
+
+\appendix
+\begin{appendices}
+\chapter{Interview Questions}
+% The contents...
+The interview consisted of two rounds of questions that was asked
+before and after the user test.
+
+\section{Questions Round 1}
+\begin{enumerate}[label*=Q1.\arabic*]
+    \item How long have you been programming?
+    \item How long have you been using Talon or other Voice Coding systems?
+    \item How much do you use Talon compared to keyboard and mouse in your day to day work?
+    \item Which speech engine are you using?
+    \item What command set are you using (is it based on knausj)?
+    \item Are you familiar with Elm or any similar languages such as Haskell or SML?
+    \item Do you have experience using Vim?
+    \item What are some issues or challenges you experience when programming with Talon?
+\end{enumerate}
+
+\newpage
+\section{User Test}
+
+After having installed the system, the user was asked do try the following
+navigational and editing commands:
+\begin{minted}[frame=lines]{text}
+go fun update
+go type update
+go to sandbox
+
+go to text
+go to next
+go to last
+
+go string
+go number
+go import
+
+select type person
+select fun view
+
+delete type message
+save it
+delete fun main
+\end{minted}
+They were then asked to try the following dictation commands:
+\begin{minted}[frame=lines]{text}
+word person <pause> of type person 
+--> person : Person
+word update <pause> of type message to model to model 
+--> update : Msg -> Model -> Model
+\end{minted}
+\section{Questions Round 2}
+\begin{enumerate}[label*=Q2.\arabic*]
+    \item In general, what is your impression of what you have seen during this session?
+    \item Were there any feature you thought was particularly useful?
+    \item Were there any behavior you found to be strange or unintuitive?
+    \item Are there any features that are not implemented that you think could improve the system?
+    \item Do you feel like the system addresses some of the challenges you have been experiencing with vocal programming?
+    \item Based on what you have seen so far, would you be interested in using a finished version of a system like this?
+\end{enumerate}
+
+
+\end{appendices}

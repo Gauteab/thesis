@@ -8,7 +8,7 @@ The goal of this project is to create a prototype of a system that can generate 
 for Talon from a source file in a given program language to the increase accuracy and efficiency of programming.
 The result should take the form of a server that can be easily integrated into any editor as a plug-in
 which handles the generation of voice commands and the communication with talon.
-While the final version of the system should be general enough to handle any language, and be integratable with any the editor,
+While the final version of the system should be general enough to handle any language, and be integrable with any the editor,
 the prototype only aims to handle the \textit{Elm} programming language in the \textit{Neovim} editor.
 This chapter will describe the design and architecture of the system.
 
@@ -105,9 +105,9 @@ might be extracted using a few different methods, and how they might be used in 
     \label{tab:constructs_of_interest}
 \end{table}
 
-\subsection{Identifer Classes}%
+\subsection{Identifier Classes}%
 \label{sub:identifer_classes}
-This section will provide a more in-depth explanation of the different identifer classes from Table~\ref{tab:constructs_of_interest}. 
+This section will provide a more in-depth explanation of the different identifier classes from Table~\ref{tab:constructs_of_interest}. 
 
 \subsubsection{Functions, Variables and Constructors}%
 \label{par:functions_and_variables}
@@ -226,7 +226,7 @@ There is a separate field for indirect dependencies, also known as transitive de
 but we are only interested in the direct dependencies because those are the ones the user might want to
 reference in their programs.
 The documentation to all packages in Elm is readily available by making a request to
-\textit{https://package.elm-lang.org/packages/<author>/<name>/<version>/docs.json}.
+\url{https://package.elm-lang.org/packages/<author>/<name>/<version>/docs.json}.
 Each documentation file is a list of module objects.
 The contents of these module objects along with an explanation can be seen in table~\ref{tab:documentation_fields}.
 
@@ -599,7 +599,7 @@ These two cases can be captured by the following query:
 
 \section{Voice Command Optimization}
 Simply extracting identifiers should result in a significant improvement, but there are still some cases
-where the naïve commands generated as described above could be improved upon.
+where the naive commands generated as described above could be improved upon.
 This section will discuss a few methods for achieving higher accuracy and shorter voice commands.
 
 \subsection{Automatic Acronyms}\label{automatic_acronyms}
@@ -617,7 +617,7 @@ for that identifier, users should be able to dictate more complex identifiers in
 
 \subsection{Prefix Elimination}\label{prefix_elimination}
 A common idiom in some programming languages is to have the start of an function name refer to the ``thing''
-or datatype on which it operates. This is mostly common in languages without user-defined name spaces such as \textit{C}
+or data type on which it operates. This is mostly common in languages without user-defined name spaces such as \textit{C}
 , but is also common in higher-level languages when a few functions share a domain, but they do not warrant
 being move to their own module/package.
 For example, if you have two functions \textit{handleHttpConnection} and \textit{handleTcpConnection}, and no other
@@ -646,12 +646,6 @@ can do a simple lookup to make substitutions in the final stage of command gener
 The list of overrides can be partially filled automatically by extracting the list of abbreviations and homophones
 from the users Talon configuration files.
 
-
-% TODO: Find example of words talon can't recognize
-
-% \subsection{Local Bindings}%
-% \label{sub:local_bindings}
-% Should local bindings be handled differently from top level bindings?
 
 \section{Code Navigation}%
 \label{sec:code_navigation}
@@ -765,7 +759,7 @@ Additionally, PureScript being a pure functional language similar to Haskell pro
 \textit{HTTPure}, a HTTP framework for PureScript, was used to develop the server.
 
 \subsection{Platforms}
-The prototype is multiplatform and has been tested on MacOS (Catalina and BigSur), Linux (Arch, Ubuntu) and Windows 10.
+The prototype is multi-platform and has been tested on MacOS (Catalina and BigSur), Linux (Arch, Ubuntu) and Windows 10.
 
 \subsection{Interprocess Communication}
 Talon does not currently have any officially recommended way of handling communication with external programs.

@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+word person \PYGZlt{}pause\PYGZgt{} of type person
+\PYGZhy{}\PYGZhy{}\PYGZgt{} person : Person
+word update \PYGZlt{}pause\PYGZgt{} of type message to model to model
+\PYGZhy{}\PYGZhy{}\PYGZgt{} update : Msg \PYGZhy{}\PYGZgt{} Model \PYGZhy{}\PYGZgt{} Model
+\end{Verbatim}
