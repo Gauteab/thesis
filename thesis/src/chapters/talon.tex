@@ -22,7 +22,7 @@ This section will serve as an overview of Talon and how it is used to make diffe
 The project is currently in version 0.1.5 and is available through public release or a private beta.
 Talon was previously only available on MacOS with the Dragon engine, but it was recently made available for Windows 10 and Linux.
 It is now also possible to use Talon with different speech engines such as \textit{wav2letter}.
-The project is undergoing very rapid development, and beta users are seeing multiple minor releases each week.
+The project is undergoing very rapid development, and beta users are seeing minor releases frequently.
 
 \section{Distribution and Monetization}
 Talon is freely distributed, but closed source.
@@ -33,26 +33,36 @@ There are currently 418 users donating on Patreon[08.05.21].
 The community is organized through a Slack channel where users can discuss topics related to using Talon such as equipment, health, etc.
 This is also where users go to seek help and discuss issues with the project.
 Hileman is usually available to answer question and help users, and is very quick to respond.
-Although the project is closed source, people can still contribute two user-level code and documentation.
+Although the project is closed source, people can still contribute to user-level code and documentation.
 
 \section{Learning Resources and Documentation}
-New users will face a quite steep learning curve.
-The official documentation is largely incomplete, so users are encouraged to learn the API primarily through looking at examples.
-Most new users we learn the basics of using Talon by reading Emily Shea's guide ``Getting Started with Voice Driven Development''.
-This guide covers the most essential concepts you need to learn to use Talon such as inputting basic keyboard combinations, dictating with formatters, bringing up the command reference, as well as some general tips for becoming proficient with Talon.
-The official documentation also refers to the official examples repository which provides a handful of examples that users can download directly, or use as reference for writing their own scripts.
-A common way to get started to download a larger command set such as knausj\_talon which comes with a lot of functionality out-of-the-box.
-There is also an unofficial documentation repository.
-While this covers more than the official documentation, and is very useful, it is also incomplete, and is not guaranteed to be immediately updated if the API is changed.
+The official documentation for Talon can be found at \url{https://talonvoice.com/docs},
+but the current version of Talon is not yet fully documented.
+A more comprehensive guide to using Talon can be found at \url{https://talon.wiki/}.
+This page is a community maintained project that helps new users getting started and provides useful tips for becoming proficient with Talon.
+It also provides a more extensive, although unofficial, documentation of the Talon scripting API with examples.
+% \footnote{\url{https://talon.wiki/unofficial_talon_docs/}}.
+New users are also encouraged to seek guidance in the \#help channel in the Slack.
+% New users will face a quite steep learning curve.
+% The official documentation is largely incomplete, so users are encouraged to learn the API primarily through looking at examples.
+% Most new users we learn the basics of using Talon by reading Emily Shea's guide ``Getting Started with Voice Driven Development''.
+% This guide covers the most essential concepts you need to learn to use Talon such as inputting basic keyboard combinations, dictating with formatters, bringing up the command reference, as well as some general tips for becoming proficient with Talon.
+% The official documentation also refers to the official examples repository which provides a handful of examples that users can download directly, or use as reference for writing their own scripts.
+% A common way to get started to download a larger command set such as knausj\_talon which comes with a lot of functionality out-of-the-box.
+% There is also an unofficial documentation repository.
+% While this covers more than the official documentation, and is very useful, it is also incomplete, and is not guaranteed to be immediately updated if the API is changed.
 
 \section{Using Talon}
 In this section I will explain Talon is used to enable full control of the desktop environment.
-This is relevant because the reader needs to see the advantages and disadvantages of using Talon compared to using a keboard.
+This is relevant because the reader needs to see the advantages and disadvantages of using Talon compared to using a keyboard.
 Talon does not come with any voice commands built-in.
-In the directory where Talon is installed, there is a folder called \textbf{user}.
+In the directory where Talon is installed, there is a folder called \texttt{user}.
 When scripts are added to this folder, they are immediately loaded, and the system will listen for any voice commands defined in the scripts.
 Voice commands are implemented by using TalonScript, in conjunction with Python.
 How this works will be explained in more detail in \Vref{wvc}.
+Most new users will start by downloading a larger command set,
+the most popular of which is \textit{knausj\_talon}\footnote{\url{https://github.com/knausj85/knausj_talon}}. 
+This is the command set used in the instructions in the Talon Wiki.
 % , but I will also be providing
 % a few simple examples in this section to give the reader a better understanding of what is going on.
 
@@ -65,8 +75,8 @@ hello world: "Hello World"
 results in the text ``Hello World'' being outputted.
 Text being outputted corresponds to
 a sequence of emulated keyboard presses.
-Lines starting with a \textbf{\#} are comments.
-Saving this file in the talon user directory with the file extension \textbf{.talon} will make this command available globally.
+Lines starting with a \texttt{\#} are comments.
+Saving this file in the Talon user directory with the file extension \texttt{.talon} will make this command available globally.
 In the rest of this section I will explain how people are able to control their computer 
 % and some common applications 
 with Talon.
@@ -79,19 +89,19 @@ The first step towards being able to use the computer is access basic functional
 \paragraph{The Alphabet:}
 One of the most basic actions you can perform is to utter a phrase that will emulate a single keystroke.
 The most convenient solution would be to map the spoken form of each letter to the action that input that key.
-So the phrase ``A'' would would press the \textbf{a} key, and so on.
+So the phrase ``A'' would would press the \texttt{a} key, and so on.
 This is however not practical because many of the English letters are in homophone groups.
 For example, the letter ``I'' is homophonic to the word ``eye'', the letter ``B'' is homophonic to ``be'' and ``bee''.
 Therefore it is necessary to define a separate alphabet for keystrokes.
-One solution is to use a standardized phonetic alphabet, such as \textbf{The International Radiotelephony Spelling Alphabet}
-(also known as \textbf{The NATO Phonetic Alphabet}) which maps easily distinguishable words to the letter the word begins with.
+One solution is to use a standardized phonetic alphabet, such as \textit{The International Radiotelephony Spelling Alphabet}
+(also known as \textit{The NATO Phonetic Alphabet}) which maps easily distinguishable words to the letter the word begins with.
 In this alphabet ``Alpha'' map to ``a'', ``Golf'' map to ``g'', etc.
 As this alphabet was designed for unambiguously spelling words even with poor connections it has very high accuracy.
 This is however not practical solution due to some words being very long. ``November'' is three syllables long, which
 is not ideal for such a basic command that will be used often.
 Therefore the alphabets being used are designed to be as quick and easy to say as possible, sometimes at the cost of
 being less mnemonic. An example can be seen in \Vref{alphabet}, but users will often make their own
-modifications. With this alphabet, to press the ``n'' key the user would say ``near''.
+modifications. With this alphabet, to press the \texttt{n} key the user would say ``near''.
 
 \begin{table}[htpb]
     \centering
@@ -117,10 +127,10 @@ modifications. With this alphabet, to press the ``n'' key the user would say ``n
 \paragraph{Basic Keys:}
 Special symbols and action keys can be triggered in the expected way.
 To press the space-key, the user would say ``space''.
-To input the symbol \textbf{+}, the user would say ``plus''.
+To input the symbol \texttt{+}, the user would say ``plus''.
 Some symbols have abbreviated forms, and some have simplified aliases.
-The symbol \textbf{?} can be entered by saying either ``question mark'', or simply ``question'',
-while the asterisk symbol \textbf{*} can be entered using either ``asterix'' or ``star''.
+The symbol \texttt{?} can be entered by saying either ``question mark'', or simply ``question'',
+while the asterisk symbol \texttt{*} can be entered using either ``asterisk'' or ``star''.
 Numbers can also be entered directly in command mode.
 Since the directions (left, right, down, up) can be hard to recognize, the commands for
 pressing the corresponding arrow key is prefixed by ``go'', e.i ``go left'' will press the left arrow key.
@@ -128,17 +138,17 @@ All of this is fully customizable, but requires basic knowledge of Python.
 Some basic keys are entered very often, so it might be beneficial to
 choose a different word to trigger case with names longer then one syllable.
 Travis Rudd % make sure is a reference before
-uses the phrase ``slap'' to press \textbf{enter}, which is an example of
+uses the phrase ``slap'' to press \texttt{enter}, which is an example of
 choosing non-mnemonic command to achieve higher efficiency.
 % refer to full symbol table/grammar?
 
 \paragraph{Complex Keys:}
 A modifier is a key that when pressed in conjunction with another
-modifies the behavior of the other key. This includes keys like \textbf{control}, \textbf{shift}, \textbf{alt/option},
-\textbf{super}, and combinations of these. \textbf{super} as a general term to refer to the \textbf{windows-key} (Windows), or \textbf{command} (Mac). Some of these combinations of names, such as (\textbf{shift+control+alt})
-is called \textbf{meh}, and (\textbf{med}+\textbf{super}) is called \textbf{hyper}.
+modifies the behavior of the other key. This includes keys like \texttt{control}, \texttt{shift}, \texttt{alt/option},
+\texttt{super}, and combinations of these. \texttt{super} as a general term to refer to the \texttt{windows-key} (Windows), or \texttt{command} (Mac). Some of these combinations of names, such as (\texttt{shift+control+alt})
+is called \texttt{meh}, and (\texttt{med}+\texttt{super}) is called \texttt{hyper}.
 Complex keys are those that require the use of one or more modifier.
-To enter an uppercase ``A'', one would type ``a'' while holding \textbf{shift}, which we denote \textbf{shift-a}.
+To enter an uppercase ``A'', one would type ``a'' while holding \texttt{shift}, which we denote \texttt{shift-a}.
 To trigger a complex key with talon the user would utter one or more modifier followed by the basic key.
 An uppercase ``A'' can then be entered using the phrase ``shift air''.
 
@@ -198,9 +208,9 @@ normal English.
 \section{Writing Voice Commands with Talon}\label{wvc}
 This section covers some of the key concepts in Talon programming necessary to
 create the reusable and accurate voice commands.
-As previously mentioned, Talon is configured using Python and \textit{.talon} files.
-The Talon files are used to define voice commands and implement \textit{Actions}, while Python is used to
-define \textit{Modules}, \textit{Contexts}, \textit{Actions}, \textit{Lists}, \textit{Captures} among others.
+As previously mentioned, Talon is configured using Python and \texttt{.talon} files.
+The Talon files are used to define voice commands and implement \texttt{Actions}, while Python is used to
+define \texttt{Modules}, \texttt{Contexts}, \texttt{Actions}, \texttt{Lists}, and \texttt{Captures} among others.
 
 \paragraph{Voice commands}
 consists of a rule and a body.
@@ -237,8 +247,8 @@ module = Module()
 
 \paragraph{Actions}
 are functions that can be called from a voice command.
-There are a few built-in action such as \textit{key} and \textit{insert}, and it is also possible for users to define their own actions.
-Actions can be declared by defining functions within a class with the \textit{action\_class} decorator.
+There are a few built-in action such as \texttt{key} and \texttt{insert}, and it is also possible for users to define their own actions.
+Actions can be declared by defining functions within a class with the \texttt{action\_class} decorator.
 \begin{code}{Python}{Talon Action}{action}
 @module.action_class
 class Actions:
@@ -258,7 +268,7 @@ call print: user.invoke_function("print")
 \paragraph{Contexts}
 specifies conditions under which to add new behavior or override existing behavior.
 By creating a context, the behavior of actions can be overwritten.
-For example, the behavior of \textit{invoke\_function} can be changed
+For example, the behavior of \texttt{invoke\_function} can be changed
 whenever the user is programming in a language that uses different syntax for function invocation.
 \Vref{context} defines a context that is active when the user is programming in Elm,
 and re-implements the action.
@@ -292,44 +302,17 @@ module.list('function', desc='Functions')
 the list can then be populated in the individual contexts as seen in \Vref{listing:lists}.
 \begin{code}{Python}{Talon lists for functions}{listing:lists}
 # javascript.py
-ctx.lists['user.function'] = {
+context.lists['user.function'] = {
     "print": "console.log",
     "to string": ".toString"
 }
 
 # elm.py
-ctx.lists['user.function'] = {
+context.lists['user.function'] = {
     "print": "Debug.log",
     "list map": "List.map"
 }
 \end{code}
-% \begin{listing}[ht]
-% \begin{tabular}{|r|r|}
-% \hline
-% \begin{minipage}[t]{0.49\textwidth}
-% \begin{minted}{python}
-% # javascript.py
-% ctx.lists['user.function'] = {
-%     "print": "console.log",
-%     "to string": ".toString"
-% }
-% \end{minted}
-% \end{minipage}
-% & 
-% \begin{minipage}[t]{0.49\textwidth}
-% \begin{minted}{python}
-% # elm.py
-% ctx.lists['user.function'] = {
-%     "print": "Debug.log",
-%     "list map": "List.map"
-% }
-% \end{minted}
-% \end{minipage}\\
-% \hline
-% \end{tabular}
-% \caption{Talon lists for functions}
-% \label{listing:lists}
-% \end{listing}
 
 This creates a list where the function vocabulary differs depending on the language.
 Notice that the word ``print'' refers to different functions depending on the current language context,
@@ -342,7 +325,7 @@ call {user.function}: user.invoke_function(function)
 \paragraph{Captures}
 can parse parts of a user spoken phrase in a voice command.
 These can be used day implement reusable pieces of a grammar.
-There are a few built-in ones the capture user input as is, such as \textit{<phrase>} and \textit{<word>}, 
+There are a few built-in ones the capture user input as is, such as \texttt{<phrase>} and \texttt{<word>}, 
 and it is also possible to create custom captures.
 The following example defines a capture that matches a sequence of one or more spoken letters
 and joins them together.

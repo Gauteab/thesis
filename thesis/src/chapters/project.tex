@@ -23,17 +23,18 @@ The primary feature of the system is to expose information about the code being 
 to Talon such that the user can dictate high-level commands with a limited vocabulary
 specific to the code being edited with high accuracy.
 Perhaps the most important feature is the ability to keep updated Talon lists
-of identifiers in different classes. For example, you might have a list \textit{user.functions} which would contain
+of identifiers in different classes. For example, you might have a list \texttt{user.functions} which would contain
 all the functions that are in scope in the file being edited.
 Then you could define a voice command such as 
 \begin{verbatim}
 function {user.functions}: insert(functions)
 \end{verbatim} 
 which would provide the user with a way to insert a known function from a limited vocabulary which would increase the accuracy.
-Given the code in \Vref{listing:elm_simple}, the list \textit{user.functions} might contain \textit{update} and \textit{view}
-(which were defined in this file), as well as \textit{onClick}, \textit{button}, \textit{text} and \textit{div} (from the import statements).
+Given the code in \Vref{listing:elm_simple}, the list \texttt{user.functions} might contain \texttt{update} and \texttt{view}
+(which were defined in this file), as well as \texttt{onClick}, \texttt{button}, \texttt{text} and \texttt{div} (from the import statements).
 As we saw in the section on~\nameref{sec:elm}, there are other ways functions can be introduced
 besides explicit declaration and imports, so some extra work is required define all relevant functions.
+There is also a normalization step when ensures that identifiers are in a form that is recognizable by the engine.
 % Additionally, not all function names are pronounceable, so this must also be handled as discussed in Section~\ref{spoken_identifier_algorithm}.
 % TODO
 
@@ -52,7 +53,7 @@ search <user.identifier>:
 \end{code}
 This can be improved even further by making the system aware of the
 location and class of these identifiers.
-A command like ``go function hello'' could move the user directly to the definition of the function named \textit{hello}.
+A command like ``go function hello'' could move the user directly to the definition of the function named \texttt{hello}.
 This is much more efficient than using the search functionality because the user would not have to
 consider whether or not there are occurrences of the same word between the current cursor position
 and the target location.
@@ -156,32 +157,32 @@ The two main use cases for keeping a list of modules is to dictate imports, and 
 The full list of modules available to the user can be found by retrieving the packages using the project, as described in \Vref{sub:dependencies}.
 % check if core is listed here
 % also user-defined modules
-Given a module \textit{Array} with a function called \textit{append}, the user should be able to
-reference this function with the phrase ``array append'', which would produce the output \textbf{Array.append}.
-Explicitly dictating the dot (\textbf{.}) can optionally be done to disambiguate in certain scenarios, but should usually not be necessary.
+Given a module \texttt{Array} with a function called \texttt{append}, the user should be able to
+reference this function with the phrase ``array append'', which would produce the output \texttt{Array.append}.
+Explicitly dictating the dot (\texttt{.}) can optionally be done to disambiguate in certain scenarios, but should usually not be necessary.
 
 Voice commands should also be aware of import aliases.
 If the Array module instead was imported as
 \begin{minted}{elm}
 import Array as A
 \end{minted}
-the phrase ``array append'' should instead produce the output \textbf{A.append}.
+the phrase ``array append'' should instead produce the output \texttt{A.append}.
 It should also be possible to reference the function using the alias (i.e ``A append'').
 
 \subsubsection{Record Fields}
 Record fields should be tracked for the same reason we track functions.
-Given the declaration of a value \textit{john} with the type \textit{Person} in \Vref{record_alias},
+Given the declaration of a value \texttt{john} with the type \texttt{Person} in \Vref{record_alias},
 % \begin{minted}{elm}
 % type alias Person = { name : String }
 % john : Person
 % john = ...
 % \end{minted}
-it should be possible to enter \textit{john.name} by saying ``John dot name''.
+it should be possible to enter \texttt{john.name} by saying ``John dot name''.
 Elm also has syntax for record access functions, so the phrase ``dot name'' can be used to
-refer to the function \textit{.name}.
+refer to the function \texttt{.name}.
 Since Elm support anonymous records, to find all possible record fields we also need to check
 any record literal and destructuring declaration.
-Note that the type of the value \textit{john} is not necessarily relevant unless we
+Note that the type of the value \texttt{john} is not necessarily relevant unless we
 aim to make the voice commands aware of the types as well. % referred to discussion on this in general
 This can be achieved with the following voice commands:
 \begin{verbatim}
@@ -196,7 +197,7 @@ The following regular expression captures the name of types from the regular typ
 type (?:alias )?(?<type>[A-Za-z]+)
 \end{verbatim}
 This expression creates a capture group named ``type'' which matches sequences of lower and upper case letters
-that are preceded by the keyword \textit{type} and optionally the keyword \textit{alias}.
+that are preceded by the keyword \texttt{type} and optionally the keyword \texttt{alias}.
 It is worth considering regular expressions as a solution to the identifier extraction problem
 considering the ubiquitous nature of regular expression engines and libraries, but they do have some serious limitations.
 Regular expressions recognize regular languages, but the main subject of analysis is programming languages
@@ -220,7 +221,7 @@ and which identifiers are exposed by these modules. Extracting information from 
 than extracting from source files because the data is exposed in a simpler format (json) which is much easier to parse then Elm source code.
 This section explains how we can analyze the Elm documentation to provide useful voice commands.
 
-The \textit{dependencies} field of the \textit{elm.json} file lists all the packages the authors of this project
+The \texttt{dependencies} field of the \texttt{elm.json} file lists all the packages the authors of this project
 are using directly.
 There is a separate field for indirect dependencies, also known as transitive dependencies, 
 but we are only interested in the direct dependencies because those are the ones the user might want to
@@ -250,7 +251,7 @@ The contents of these module objects along with an explanation can be seen in ta
 
 % \subsubsection{Snippets}% figure out how to use coc lists
 
-\Vref{array_excerpt} shows parts of the first module entry from \textit{elm/core}.
+\Vref{array_excerpt} shows parts of the first module entry from \texttt{elm/core}.
 \begin{code}{json}{Excerpt from docs.json}{array_excerpt}
   {
     "name": "Array",
@@ -277,10 +278,10 @@ The contents of these module objects along with an explanation can be seen in ta
   }
 \end{code}
 The rest of this section will explain each of these fields in more detail.
-All of the following examples will be from \textit{elm/core}.
+All of the following examples will be from \texttt{elm/core}.
 
 \subsubsection{Unions}\label{unions}
-The \textit{unions} field contains the exposed type declarations and their constructors.
+The \texttt{unions} field contains the exposed type declarations and their constructors.
 The word \textit{unions} refers to the fact that elm types are \textit{disjoint union types}, or \textit{tagged unions}.
 A type declaration like in the one in \Vref{maybe} would produce the union field in \Vref{maybe_json}.
 % \begin{minted}{elm}
@@ -300,17 +301,17 @@ A type declaration like in the one in \Vref{maybe} would produce the union field
   ]
 }
 \end{code}
-The \textit{args} field is a list of the names of the type parameters.
+The \texttt{args} field is a list of the names of the type parameters.
 A nonempty args indicates a polymorphic data type.
 There might be some potential for use of the name of these type arguments, but for now they will be ignored.
-The \textit{cases} field is a list of constructors for the type.
+The \texttt{cases} field is a list of constructors for the type.
 Each entry is a pair of the name of the constructor and list of the types of the arguments to that constructor.
 Constructors with no arguments are constants, otherwise they are functions.
 
 \subsubsection{Aliases}\label{aliases}
-\textit{Aliases} is a list of type alias declarations.
+\texttt{Aliases} is a list of type alias declarations.
 This entry is very simple.
-There is a \textit{type} field, which indicates which type is being aliased, and the name.
+There is a \texttt{type} field, which indicates which type is being aliased, and the name.
 We are only interested in the name field.
 A type alias like the one in \Vref{processid_declaration}
 would produce the alias field in \Vref{processid}.
@@ -330,7 +331,7 @@ type alias Id = Platform.ProcessId
 \end{code}
 
 \subsubsection{Values}\label{values}
-The \textit{values} field contains all the functions and constants in the module.
+The \texttt{values} field contains all the functions and constants in the module.
 One such example can be seen in \Vref{head_funk}.
 \begin{code}{json}{Value Declaration JSON}{head_funk}
 {
@@ -340,7 +341,7 @@ One such example can be seen in \Vref{head_funk}.
 }
 \end{code}
 Since functions are normal values, we need to look at the type to distinguish functions from constants.
-We can see that \textit{head} is a function from the use of the function type constructor (->).
+We can see that \texttt{head} is a function from the use of the function type constructor (->).
 It is however not as simple as checking whether (->) occurs in the type.
 The type
 \begin{minted}{elm}
@@ -351,8 +352,8 @@ Determining what values are functions therefore requires more sophisticated pars
 % reference: where do I explain this?
 
 \subsubsection{Binary Operators}\label{binary_operators}
-The \textit{binops} field contains the binary operators in that module.
-These entries are similar to \textit{values}, but also contain \textit{precedence} and \textit{associativity}.
+The \texttt{binops} field contains the binary operators in that module.
+These entries are similar to \texttt{values}, but also contain \texttt{precedence} and \texttt{associativity}.
 \begin{code}{json}{Cons Operator JSON}{cons}
 {
   "name": "::",
@@ -365,10 +366,10 @@ These entries are similar to \textit{values}, but also contain \textit{precedenc
 In some languages, such as PureScript, infix operators are defined as aliases
 for regular functions which ensures that each operator has a canonical way of referencing it vocally.
 Since Elm does not have this property, this connection is to be made another way.
-The operator in this example is historically referred to as \textit{cons}, but it could also be called
-\textit{prepend} if you want the name to be more descriptive.
+The operator in this example is historically referred to as \texttt{cons}, but it could also be called
+\texttt{prepend} if you want the name to be more descriptive.
 Elm support declaring infix operators, but normal users can not define operators as of version 0.19, so this might not be a problem in practice.
-Most operators are defined in \textit{elm/core}, but not all.% |., |=
+Most operators are defined in \texttt{elm/core}, but not all.% |., |=
 A reasonable way to handle this might be to check operators found in packages against the Talon list
 and warn the user if an operator is found, but has no way to be dictated.
 
@@ -399,7 +400,7 @@ Because of this, LSP might eliminate the need to analyze documentation directly 
 This is however not always the case as the workspace entries provides less information than the documentation.
 The entries are similar to those of the document symbols, but because there will be a lot more entries some
 information is left out (such as line number), and the kind uses an ID instead of the name.
-The location field also has a \textit{uri} which tells which file the symbols from.
+The location field also has a \texttt{uri} which tells which file the symbols from.
 This can be used to determine the package and module the symbol is from.
 \begin{code}{json}{Workspace Symbols Entry}{workspace_symbols_entry}
 { 
@@ -472,8 +473,8 @@ would be represented by the following TreeSitter S-expression:
        (value_expr name: (value_qid (lower_case_identifier)))))
 \end{verbatim}
 Note that it is a quirk of this implementation that all terminals in the grammar are named.
-Therefore nodes like \textit{(eq)} and \textit{(open\_quote)} are included in
-the textual representation of the tree, and you cannot use the \textit{is\_named} function
+Therefore nodes like \texttt{(eq)} and \texttt{(open\_quote)} are included in
+the textual representation of the tree, and you cannot use the \texttt{is\_named} function
 to identify terminals when traversing the tree in code.
 This is unlikely to be a problem, but if it is it can be resolved by a simple change in the grammar.
 
@@ -487,7 +488,7 @@ The following query finds the name of all types available in the given file:
 (type_alias_declaration (upper_case_identifier) @type)
 \end{verbatim}
 The query consists of three parts.
-Each of them matches an \textit{upper\_case\_identifier} and assigns to it the label \textit{type}.
+Each of them matches an \texttt{upper\_case\_identifier} and assigns to it the label \texttt{type}.
 The first one finds types in import statements, and the second and third finds names from regular type declarations
 and type alias declarations respectively.
 
@@ -522,9 +523,9 @@ A more granular query can be made to only include the desired kinds of lowercase
 (exposed_value) @value
 (lower_pattern) @value
 \end{verbatim}
-\textit{function\_declaration\_left} refers to the left-hand side of an assignment, so the first part of the query refers to the name of functions.
+\texttt{function\_declaration\_left} refers to the left-hand side of an assignment, so the first part of the query refers to the name of functions.
 The second part finds values in import statements, similarly as the first part of the type of query.
-The last part \textit{(lower\_pattern)} refers to variable names in pattern matching expressions as well as the parameters of function declarations.
+The last part \texttt{(lower\_pattern)} refers to variable names in pattern matching expressions as well as the parameters of function declarations.
 In the following declaration:
 \begin{minted}{elm}
 unwrap : Maybe value -> value
@@ -535,7 +536,7 @@ unwrap maybeValue =
         Nothing ->
             Debug.todo "trying to unwrap nothing"
 \end{minted}
-the query would find \textit{unwrap}, \textit{maybeValue} and \textit{content}, but not \textit{value} or \textit{todo}.
+the query would find \texttt{unwrap}, \texttt{maybeValue} and \texttt{content}, but not \texttt{value} or \texttt{todo}.
 
 \subsubsection{Modules}
 Extracting module names can be done with a simple query like:
@@ -546,7 +547,7 @@ Extracting module names can be done with a simple query like:
     (as_clause (upper_case_identifier) @module-alias))
 \end{verbatim}
 This would find all identifiers used in module names in the import statements as well as the module aliases from \textit{as clauses}.
-If one wanted to merge these two classes that could be achieved simply by renaming the \textit{module-alias} capture to \textit{module}.
+If one wanted to merge these two classes that could be achieved simply by renaming the \texttt{module-alias} capture to \texttt{module}.
 
 More advanced use cases needs to keep the connection between module aliases and the module from which it was created.
 For the system in question this is indeed the case because we want to use the alias as part of the command for dictating functions in that module.
@@ -573,8 +574,8 @@ For example in the declaration
 \begin{minted}{elm}
 f {a, b} = a.c.d
 \end{minted}
-we can see from the record destructuring expression \textit{\{a, b\}} that \textit{a} and \textit{b} are both used as record fields,
-and from the field access expression \textit{a.c} we can see that \textit{c} and \textit{d} are also record fields.
+we can see from the record destructuring expression \texttt{\{a, b\}} that \texttt{a} and \texttt{b} are both used as record fields,
+and from the field access expression \texttt{a.c} we can see that \texttt{c} and \texttt{d} are also record fields.
 These two cases can be captured by the following query:
 \begin{verbatim}
 (record_pattern (_ (lower_case_identifier) @record-field))
@@ -604,7 +605,7 @@ This section will discuss a few methods for achieving higher accuracy and shorte
 
 \subsection{Automatic Acronyms}\label{automatic_acronyms}
 If an identifier is very long, its name might not be the most efficient way to refer to it.
-An identifier like \textit{processAnalysisResults} consists of three words, but is eight syllables long.
+An identifier like \texttt{processAnalysisResults} consists of three words, but is eight syllables long.
 A common way to enter long identifiers is to rely on the auto complete feature of the editor.
 Entering ``p a r'' is usually sufficient to have the correct identifier as one of the top results for the auto-complete.
 Then the user would have to say the command used for triggering the auto-complete.
@@ -617,11 +618,11 @@ for that identifier, users should be able to dictate more complex identifiers in
 
 \subsection{Prefix Elimination}\label{prefix_elimination}
 A common idiom in some programming languages is to have the start of an function name refer to the ``thing''
-or data type on which it operates. This is mostly common in languages without user-defined name spaces such as \textit{C}
+or data type on which it operates. This is mostly common in languages without user-defined name spaces such as \texttt{C}
 , but is also common in higher-level languages when a few functions share a domain, but they do not warrant
 being move to their own module/package.
-For example, if you have two functions \textit{handleHttpConnection} and \textit{handleTcpConnection}, and no other
-functions/variables containing the name \textit{HttpConnection} or \textit{TcpConnection}, you might want to
+For example, if you have two functions \texttt{handleHttpConnection} and \texttt{handleTcpConnection}, and no other
+functions/variables containing the name \texttt{HttpConnection} or \texttt{TcpConnection}, you might want to
 be able to refer to those functions using only the suffix (without the ``handle'' prefix).
 This would be a relatively minor optimization, but nevertheless worth considering.
 
@@ -636,11 +637,9 @@ The name Jason is easily recognizable, so overriding the word json with Jason wi
 A simple solution to this problem is to allow users to declare a list of overrides for which the system
 can do a simple lookup to make substitutions in the final stage of command generation like so:
 \begin{minted}{json}
-{
-  "overrides": {
-    "json": "Jason",
-    "init": "in it"
-  }
+"overrides": {
+  "json": "Jason",
+  "init": "in it"
 }
 \end{minted}
 The list of overrides can be partially filled automatically by extracting the list of abbreviations and homophones
@@ -661,9 +660,9 @@ go type {user.symbol_type}:
 go fun {user.symbol_function}:
     user.symbol_navigate("{symbol_function}", "function")
 \end{code}
-The action \textit{symbol\_navigate} queries the server
+The action \texttt{symbol\_navigate} queries the server
 for the position of the identifier with name matching the first parameter, and type matching the second.
-It will then trigger \textit{editor\_go\_to\_position}, which will be implemented in the context of each editor,
+It will then trigger \texttt{editor\_go\_to\_position}, which will be implemented in the context of each editor,
 to navigate to the beginning of that symbol.
 
 Since we have access to the entire parse tree, it is also possible to navigate to nodes that
@@ -765,9 +764,9 @@ The prototype is multi-platform and has been tested on MacOS (Catalina and BigSu
 Talon does not currently have any officially recommended way of handling communication with external programs.
 There has been discussion of implementing some kind of RPC in Talon.
 Currently there are two ways the server can send commands to Talon.
-By using the \textit{Node.ChildProcess} API, the server can spawn an instance of the Talon REPL (\textit{~/.talon/.venv/bin/repl}).
+By using the \texttt{Node.ChildProcess} API, the server can spawn an instance of the Talon REPL (\texttt{~/.talon/.venv/bin/repl}).
 This server can then simply pipe an action into the REPL as a string.
-The other method is to write the action to be executed to a file that is being watched by Talon using the \textit{fs.watch}
+The other method is to write the action to be executed to a file that is being watched by Talon using the \texttt{fs.watch}
 method. Whenever the file is written to, Talon will pick up on the change and execute action within that file.
 The latter is slower, but was used in the Windows implementation due to a permissions issue executing the Talon REPL from within Windows Subsystem Linux (WSL).
 
@@ -904,7 +903,8 @@ more complicated editing commands such as moving nodes.
 \paragraph{Voice Command Optimization:}
 This chapter outlined three optimizations that could be made to maximize accuracy
 and minimize verbosity: \nameref{automatic_acronyms}, \nameref{prefix_elimination}, and \nameref{overrides}.
-Overrides has been fully implemented, while the other two are not implemented at all.
+Overrides has been implemented, but it is not currently loading acronyms from the users Talon configuration.
+The other two are not implemented at all.
 These require more complicated analysis, but are realistically achievable given a bit more time.
 
 \section{Extending the System}%
@@ -938,13 +938,13 @@ The existing commands should work as long as the new queries uses the same names
 
 \subsection{Adding Editors}%
 \label{sec:adding_editors}
-As stated earlier, the vim plug in is very small should be easy to reproduce in a different editor.
+As stated earlier, the Vim plug-in is very small should be easy to reproduce in a different editor.
 There are two steps to making the system work in a different editor:
 \begin{enumerate}
     \item Notify the server on file save
     \item Implement the editor actions for that context
 \end{enumerate}
-Notifying the server is done by making a HTTP call to the \textit{document-open} address with the filename.
+Notifying the server is done by making a HTTP call to the \texttt{document-open} address with the filename.
 There are currently three editor actions:
 \begin{itemize}
     \item editor\_go\_to\_position(row: int, column: int)

@@ -17,7 +17,7 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {listing}{\numberline {2.9}{\ignorespaces Record Alias\relax }}{14}{listing.2.9}%
 \defcounter {refsection}{0}\relax 
-\contentsline {listing}{\numberline {2.10}{\ignorespaces The \textit {Maybe} Union Type\relax }}{15}{listing.2.10}%
+\contentsline {listing}{\numberline {2.10}{\ignorespaces The \texttt {Maybe} Union Type\relax }}{15}{listing.2.10}%
 \defcounter {refsection}{0}\relax 
 \contentsline {listing}{\numberline {2.11}{\ignorespaces Polymorphic Function\relax }}{15}{listing.2.11}%
 \defcounter {refsection}{0}\relax 
@@ -31,7 +31,7 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {listing}{\numberline {3.4}{\ignorespaces Talon Context Declaration with Action Override\relax }}{25}{listing.3.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {listing}{\numberline {3.5}{\ignorespaces Talon lists for functions\relax }}{26}{listing.3.5}%
+\contentsline {listing}{\numberline {3.5}{\ignorespaces Talon lists for functions\relax }}{25}{listing.3.5}%
 \defcounter {refsection}{0}\relax 
 \contentsline {listing}{\numberline {3.6}{\ignorespaces Capture Example\relax }}{26}{listing.3.6}%
 \defcounter {refsection}{0}\relax 

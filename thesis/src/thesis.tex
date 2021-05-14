@@ -43,7 +43,7 @@
 \addbibresource{citations.bib}
 
 % \newcommand*{\xref}[1]{\hyperref[{#1}]{\Vref*{#1}, \nameref*{#1}}} % One single link
-\newcommand{\xref}[1]{\Ref{#1} \nameref{#1} \vpageref[\unskip]{#1}}
+% \newcommand{\xref}[1]{\Ref{#1} \nameref{#1} \vpageref[\unskip]{#1}}
 
 \newenvironment{code}[4][]
 {\VerbatimEnvironment
@@ -57,10 +57,10 @@
 \AtBeginEnvironment{minted}{%
     \renewcommand{\fcolorbox}[4][]{#4}}
 
-\renewcommand\listoflistingscaption{List of Code Listings}
+\renewcommand\listoflistingscaption{Listings}
 
-\title{Master Thesis}
-\subtitle{Leveraging Language Tooling for Better Voice Coding}
+\title{Leveraging Language Tooling for Better Voice Coding}
+\subtitle{Implementing program awareness and structural editing for Talon}
 \author{Gaute Berge}
 
 \begin{document}

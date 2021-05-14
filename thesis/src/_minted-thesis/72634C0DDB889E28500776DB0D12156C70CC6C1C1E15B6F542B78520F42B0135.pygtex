@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{l+s+s2}{\PYGZdq{}overrides\PYGZdq{}}\PYG{err}{:} \PYG{p}{\PYGZob{}}
+  \PYG{n+nt}{\PYGZdq{}json\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}Jason\PYGZdq{}}\PYG{p}{,}
+  \PYG{n+nt}{\PYGZdq{}init\PYGZdq{}}\PYG{p}{:} \PYG{l+s+s2}{\PYGZdq{}in it\PYGZdq{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

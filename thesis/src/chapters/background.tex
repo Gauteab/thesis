@@ -19,7 +19,7 @@ of the experiments presented in \Vref{the_project}.
 \section{Vocal Programming}
 
 Vocal programming is a complex field with many interesting challenges.
-Users need to be able to dictate and edit code, navigate files, as well as being able to performe a plethora
+Users need to be able to dictate and edit code, navigate files, as well as being able to perform a plethora
 of other tasks such as compiling and running the code, and use version control.
 This section provides a brief introduction, while Chapter~\ref{talon}
 provides a more in-depth explanation to how people are using Talon to program.
@@ -29,7 +29,7 @@ provides a more in-depth explanation to how people are using Talon to program.
 \paragraph{Dragon NaturallySpeaking}
 was the worlds first large-vocabulary general purpose dictation system.
 Dragon is in many ways the foundation for many of tools like Talon.
-Some voice systems use it as just a speach engine, but it also provides other functionality like mouse control.
+Some voice systems use it as just a speech engine, but it also provides other functionality like mouse control.
 It is available for Mac and Windows, but the product has been discontinued for Mac.% when??
 Mac users who would like to use Dragon can still purchase it online, and it still works.
 % The mac version is still available on eBay, and still works. % maybe something here about the download stuff.
@@ -37,7 +37,7 @@ Mac users who would like to use Dragon can still purchase it online, and it stil
 \paragraph{NatLink:}
 While Dragon alone is a very powerful dictation system, it's customization ability is limited.
 Dragon does provide a simple scripting language in the pro edition, but it has very limited capabilities compared to
-moden general purpose scripting languages.
+modern general purpose scripting languages.
 In 1999, NatLink was developed to address this problem. 
 It is a macro system for Dragon which lets the user write scripts that can be triggered by voice commands
 in Python~\parencite{gould2001implementation}.
@@ -46,7 +46,7 @@ Later on, more high-level APIs were built on top on NatLink such as Dragonfly. %
 \paragraph{}
 These technologies heavily influenced modern voice control systems such as Talon,
 many of which still support Dragon as the speech recognition engine.
-In 2013, Travis Rudd held a talk at pycon demonstrating the power
+In 2013, Travis Rudd held a talk at PyCon demonstrating the power
 of vocal programming\footnote{Using Python to Code by Voice: \url{https://www.youtube.com/watch?v=8SkdfdXWYaI}}.
 This talk was very influential and was for many people
 their first exposure to the field.
@@ -66,7 +66,7 @@ their first exposure to the field.
 \subsection{Dictation}
 Dictation, in this context, is the act of speaking phrases into a microphone and have those phrases translated into text.
 This is made possible by a technique called \textit{Speech Recognition} which combines techniques from natural language processing
-and signal processing. The soundwaves from the user is captured by the microphone, processed, and sent off to a machine learning algorithm
+and signal processing. The sound waves from the user is captured by the microphone, processed, and sent off to a machine learning algorithm
 that will try to fit the input into a sequence of words, or a sentence, in the target language (i.e English). Speech recognition
 has been around for a while, but has just in the past decade seeing huge boosts in accuracy, partly due to the advancements in deep learning.
 Voice controlled applications are built on top of programs implementing the speech recognition, often referred to as \textit{Speech Recognition Engines}.
@@ -118,7 +118,7 @@ There are however techniques for alleviating this problem, which will be discuss
 \section{Structural Editing}
 Structural editing is a technique used by some code editors to allow users to directly manipulate the underlying structure of the program.
 Computer programs typically have a textual representation that is readable both by humans and compilers.
-When a compiler reads a program, the text is converted to a datatype known as the Abstract Syntax Tree (AST), during the parsing phase.
+When a compiler reads a program, the text is converted to a data type known as the \textit{Abstract Syntax Tree} (AST), during the parsing phase.
 The AST contains all the information about the program necessary to produce the executable output program.
 When modifying a program the desired outcome is always a correct change in the underlying AST, however it is not always
 trivial to map of single text transformation to a transformation on the AST.
@@ -126,23 +126,23 @@ One of the goals of structural editing is to allow users to work on a higher abs
 Another is to reduce the amount of invalid states the program needs to go through
 before the desired modification is completed.
 For this reason it is a popular technique in editors designed specifically for beginners.
-One very well-known example is ``Scratch'' which is an educational tool for teaching children to code.
+One very well-known example is \textit{Scratch} which is an educational tool for teaching children to code.
 It provides a drag-and-drop interface enriched with visual cues that makes it easy to
 put together structurally valid programs.
 Scratch is an example of a purely structure oriented code editor.
 It does not provide a text based interface to the language.
-There are also hybrid approaches that adds a structural layer on top of a normal textbased editor.
+There are also hybrid approaches that adds a structural layer on top of a normal text based editor.
 These editors are sometimes referred to as structure-aware editors.
 
 \paragraph{}
 
-Despite having some clear advantages over traditional textbased editors, structural editors are not commonly used among professional developers.
+Despite having some clear advantages over traditional text based editors, structural editors are not commonly used among professional developers.
 One reason for this is that the editors that are popular today have many years of engineering behind them.
 There are no structural editors that come close in the amount of features or polish to that of IntelliJ, VSCode or Vim.
 Structural editor still have unresolved issues in their design that needs to be addressed before they will see commercial use.
 One example of a more advanced structural editor is
 ``Deuce'', which is a structure-aware editor developed as part of a research project at the University of Chicago~\parencite{deuce}.
-It suggests a hybrid approach that addresses some of the problems with current textbased work-flows.
+It suggests a hybrid approach that addresses some of the problems with current text based work-flows.
 % I will be using this as a reference for what the modern structural editor might look like.
 
 % \section{PL Theory}
@@ -193,17 +193,8 @@ Content-Length: ...\r\n
     \label{fig:lsp-communication}
 \end{figure}
 
-% \subsection{Editor Plugins}%
-% \label{sub:editor_plugins}
-% TODO
-
-
-% Client-server based approach to reuable language IDE features.
-% I'll compare this to the traditional IDE approach (Eclipse / Intellij)
-% and discuss how this can be used by other tools than editors.
-
 \section{TreeSitter}
-Tree-sitter is a parser generator tool and an incremental parsing library~\parencite{WinNT}.
+TreeSitter is a parser generator tool and an incremental parsing library~\parencite{WinNT}.
 It was conceived as a solution to the problem of quick semantic syntax highlighting,
 but is also used in the implementation of some language servers.
 An incremental parser is one that can update the parse tree without having to re-parse the entire
@@ -284,7 +275,7 @@ traverse the parse tree.
 Query patterns are written as \textit{S-expressions} where the first element within the parentheses
 is the type of node to match on, followed by zero or more patterns for the children of that node.
 The following query consist of a single pattern that will match in a binary expression were both operands are number literals
-such as \textit{1 + 2}, but not \textit{``hello '' + ``world''}:
+such as \texttt{1 + 2}, but not \texttt{``hello '' + ``world''}:
 \begin{verbatim}
 (binary_expression (number) (number))
 \end{verbatim}
@@ -299,16 +290,16 @@ one might write a query like:
 
 Captures can be introduced to store and organize the results of the query.
 The following query would find all identifiers that occur on the left-hand side of an assignment,
-and let you refer to them through the name \textit{declared-variable}:
+and let you refer to them through the name \texttt{declared-variable}:
 \begin{verbatim}
 (assignment_expression left: (identifier) @declared-variable)
 \end{verbatim}
 
 Predicates allow query results to be filtered based on the value of the captured variables.
 This makes TreeSitter queries a convenient way of searching for specific nodes in a program.
-In addition to the \textit{\#eq?} predicate for checking equality, there is the \textit{\#match?} predicate
+In addition to the \texttt{\#eq?} predicate for checking equality, there is the \texttt{\#match?} predicate
 to match by regular expressions.
-Listing~\ref{listing:queryX} shows a query that will find all occurrences of assigning a value to the a variable named ``x'':
+Listing~\ref{listing:queryX} shows a query that will find all occurrences of assigning a value to the variable named ``x'':
 \begin{code}{text}{Query for Declarations of ``x''}{listing:queryX}
 (
  (assignment_expression left: (identifier) @declared-variable)
@@ -324,7 +315,7 @@ The query API is quite expressive and supports more featured than covered in thi
 
 
 \section{Elm}\label{sec:elm}
-In this thisis I will be using Elm as the subject of the alysis.
+In this thesis I will be using Elm as the subject of the analysis.
 Elm is a feature rich, but relatively simple language.
 The reason elm was chosen for this project is that it has a solid implementation of
 the Language Server Protocol, a reliable TreeSitter parser, and its relative simplicity
@@ -342,7 +333,7 @@ and therefore resembles languages like Haskell and OCamel the most.
 \subsection{Functions and Values}
 The syntax for declaring top-level values and functions is very simple.
 \Vref{ex:value_and_function} shows two declarations.
-The first simply binds the value 5 to the identifier \textit{five},
+The first simply binds the value 5 to the identifier \texttt{five},
 while the second defines a function that takes a number as an argument and increments it.
 Both declarations are preceded by a type signature, both of which are completely optional
 due to the fact that Elm has global type inference.
@@ -371,21 +362,21 @@ between terms like ``constant'', ``variable'' and ``value'' like there is in man
 As in many ML languages, types are a central concept in Elm.
 This section covers the central aspects of the Elm type system.
 % \subsubsection{Built-in Types}
-The language has a few basic types such as \textit{Int}, \textit{Float}, \textit{Char} and \textit{String}
+The language has a few basic types such as \texttt{Int}, \texttt{Float}, \texttt{Char} and \texttt{String}
 which represents integers, floating-point numbers, characters and sequences of characters respectively.
 Additionally there are a few special types.
-\textit{Never} is a type that has no values.
-\textit{()} is the unit type which has exactly one value.
-Function types are denoted by an arrow (\textit{->}).
-If A and B are both types, a function that takes an A and returns a B would have the type (\textit{A -> B})
+\texttt{Never} is a type that has no values.
+\texttt{()} is the unit type which has exactly one value.
+Function types are denoted by an arrow (\texttt{->}).
+If A and B are both types, a function that takes an A and returns a B would have the type (\texttt{A -> B})
 which is commonly pronounced ``from A to B''.
-The function arrow is right associative, meaning that \textit{A -> B -> C} is the same as \textit{A -> (B -> C)}.
-There is also syntax for tuple types such as \textit{(A, B)} or \textit{(A, B, C)}
+The function arrow is right associative, meaning that \texttt{A -> B -> C} is the same as \texttt{A -> (B -> C)}.
+There is also syntax for tuple types such as \texttt{(A, B)} or \texttt{(A, B, C)}
 which represents pairs and triples.
 % Unlike other ML languages like Haskell, Elm does not support tuples of lengths greater than three.
 
 \subsubsection{Record Types}
-Elm supports record types which are product types with named fields, similar to \textit{structs} in languages like \textit{C}.
+Elm supports record types which are product types with named fields, similar to \textit{structs} in languages like \texttt{C}.
 Records can have any number of fields, each of which can have any type.
 A significant difference between Elm records and C structs is that Elm supports anonymous record types
 meaning that they can be used without being given a name as seen in Listing~\ref{ex:anonymous}.
@@ -395,7 +386,7 @@ john = { name = "John", age = 25 }
 \end{code}
 Elm records are also extensible which means you can define a lower bound
 for the fields a record needs to have.
-The canonical example, seen in Listing~\ref{extensible}, is a type that describes records with at least a field \textit{id} with the type \textit{Int}.
+The canonical example, seen in Listing~\ref{extensible}, is a type that describes records with at least a field \texttt{id} with the type \texttt{Int}.
 \begin{code}{elm}{Extensible Records}{extensible}
 type alias HasId r = { r | id : Int }
 \end{code}
@@ -409,7 +400,7 @@ There are two ways of declaring a new type:
     \item{``Normal'' Type Declarations} 
     \item{Type Alias Declarations} 
 \end{enumerate}
-Normal type declarations formally corresponds to \textit{Algebraic Datatypes} or \textit{Discriminated Union Types},
+Normal type declarations formally corresponds to \textit{Algebraic Data Types},
 often simply referred to as ``union types'' or ``custom types''.
 Type alias declarations corresponds to transparent type synonyms.
 % Additionally, Elm has anonymous and extensible record types.
@@ -426,8 +417,8 @@ moveNorth (x, y) = (x, y + 1)
 Type aliases has a special property when interacting with records in Elm.
 If a type alias is created for a record, a function with the same name as the type
 is automatically created to act as a constructor for this record.
-Given the declaration in Listing~\ref{record_alias}, a function \textit{Person}
-would be introduced with the type \textit{String -> Int -> Person}.
+Given the declaration in Listing~\ref{record_alias}, a function \texttt{Person}
+would be introduced with the type \texttt{String -> Int -> Person}.
 This is often convenient when creating records with higher-order functions.
 \begin{code}{elm}{Record Alias}{record_alias}
 type alias Person =
@@ -440,14 +431,14 @@ john = Person "John" 25
 \end{code}
 
 \paragraph{Union Types} are the main tool for data modeling in Elm.
-\Vref{maybe} shows the definition of an important data type called \textit{Maybe}
+\Vref{maybe} shows the definition of an important data type called \texttt{Maybe}
 which is used to represent the possibility of absence of a value.
-\textit{Maybe} has two constructors, the first of which has one argument while the second has zero arguments.
-The \textit{a} in this example is a type variable which indicates that \textit{Maybe} it is a polymorphic type.
-When this type has been defined, \textit{Nothing} is a constant value of type \textit{Maybe}, and \textit{Just}
-is a function with the type \textit{a -> Maybe a}, so \textit{Maybe}-values can be created
-with expressions such as \textbf{Nothing}, \textbf{Just 5} or \textbf{Just ``hello''} and so on.
-\begin{code}{elm}{The \textit{Maybe} Union Type}{maybe}
+\texttt{Maybe} has two constructors, the first of which has one argument while the second has zero arguments.
+The \texttt{a} in this example is a type variable which indicates that \texttt{Maybe} it is a polymorphic type.
+When this type has been defined, \texttt{Nothing} is a constant value of type \texttt{Maybe}, and \texttt{Just}
+is a function with the type \texttt{a -> Maybe a}, so \texttt{Maybe}-values can be created
+with expressions such as \texttt{Nothing}, \texttt{Just 5} or \texttt{Just ``hello''} and so on.
+\begin{code}{elm}{The \texttt{Maybe} Union Type}{maybe}
 type Maybe a
     = Just a
     | Nothing
@@ -465,7 +456,7 @@ as seen in \Vref{maybe} which defined a polymorphic container, and \Vref{ex:poly
 which defines a polymorphic function.
 The language does not support higher ranked types.
 Additionally Elm supports a limited form of ad hoc polymorphism.
-In order to overload operators such as \textit{(+)}, \textit{(<)} and \textit{(++)}
+In order to overload operators such as \texttt{(+)}, \texttt{(<)} and \texttt{(++)}
 there are special type variables called \textit{Constrained Type Variables}.
 \Vref{ctv} shows the name of these special variables along with the
 concrete types they are compatible with.
@@ -478,9 +469,9 @@ concrete types they are compatible with.
         Name & Permits \\
         \hline
         number & Int, Float \\
-        appendable & String, List \textit{a} \\
-        comparable & number, Char, String, (List|Tuple) \textit{comparable} \\
-        compappend & String, List \textit{comparable} \\
+        appendable & String, List \texttt{a} \\
+        comparable & number, Char, String, (List|Tuple) \texttt{comparable} \\
+        compappend & String, List \texttt{comparable} \\
         % \hline
         % \bottomrule
     \end{tabular}
@@ -498,13 +489,13 @@ Elm code is organized into modules which are used to organize projects
 and separate code into different name spaces.
 Each file starts with a module declaration which contains the name of the module (which must start with an uppercase letter)
 and the list of members to be exposed.
-Elm does not use visibility modifiers such as \textit{public/private}, as they do in languages
+Elm does not use visibility modifiers such as \texttt{public/private}, as they do in languages
 like Java, but elements of the exposing list are available to other modules through imports.
 An example of a module declaration and import statements can be seen in the first few lines of \Vref{listing:elm_simple}.
-When importing a module you can optionally provide an alias with the \textit{as}-keyword
+When importing a module you can optionally provide an alias with the \texttt{as}-keyword
 and/or an exposing list.
 After a module has been imported, exposed members of that module can be accessed
-through its name and a dot (\textbf{.}) as in \textbf{Browser.sandbox}.
+through its name and a dot (\texttt{.}) as in \texttt{Browser.sandbox}.
 Import aliases provides an alternate name for referring to the module within the current one
 which is convenient for modules with long names.
 Members included in the exposing list of an important statement can be used directly
@@ -514,14 +505,14 @@ without prefixing it with the module name.
 There are four types of items that can occur in the exposing list.
 Lowercase identifiers always refers to variables in the module.
 Uppercase identifiers always refers to a type.
-The double dot token (\textit{..}) means to include everything in the module.
+The double dot token (\texttt{..}) means to include everything in the module.
 An uppercase identifier followed by a double dot refers to a type as well as all the constructors on that type.
 
 \subsection{Namespaces}
 Most programming languages store identifiers in different name spaces, which allows a single name
 to refer to multiple constructs in the language.
 Elm has separate name spaces for modules, functions, and types.
-As a consequence, the identifier ``String'' may refer to the \textit{String} module in \textit{elm/core}, or the \textit{String} type.
+As a consequence, the identifier ``String'' may refer to the \texttt{String} module in \texttt{elm/core}, or the \texttt{String} type.
 
     
 \begin{code}{elm}{Simple Elm Program}{listing:elm_simple}

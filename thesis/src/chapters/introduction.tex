@@ -9,12 +9,12 @@ Hands-free input technology enables people who would not otherwise be able to wo
 Enabling people to use standard applications such as web browsers, text editors, etc.\ is a complex problem in and of itself, and the domain of programming
 introduces its own set of additional complexities.
 Vocal programming, as coined by~\parencite{Arnold}, is the act of writing computer programs by dictating into the microphone as the primary input method as opposed to using a keyboard and mouse.
-Programming differs from normal prose dictation in many subtitle ways such as higher frequency of special characters, and higher emphasis on editing text (and less emphasis on writing text).
-Software developers also use a wider variety of applications and tools in their day-to-day work which all needs to be made accessible for vocal programmers.
+Programming differs from normal prose dictation in many subtitle ways such as higher frequency of special characters, and higher emphasis on editing text (with less emphasis on writing text).
+Software developers also use a wide variety of applications and tools in their day-to-day work which all needs to be made accessible for vocal programmers.
 Many of the solutions proposed by researchers involve a specialized environment for programming, such as a structure oriented editor.
 % As will be discussed in~\ref{scgp}, this approach comes with some trade-offs.
 Recent advancements in programming language tooling, such as Microsoft's \textit{Language Server Protocol}, and GitHub's \textit{TreeSitter} is bringing the power of IDEs to standard text editors.
-In this paper I will use \textbf{Talon}, a general purpose system for hands-free input, to show how modern programming language
+In this paper I will use \textit{Talon}, a general purpose system for hands-free input, to show how modern programming language
    tools can be leveraged to improve the work flow of vocal programmers in the programming environments they are already used to.
 
 \section{Motivation}
@@ -42,9 +42,9 @@ normal English.
 This fact necessitates more frequent use of a variety of combinations of modifier keys on the keyboard
 which are not used as frequently in normal typing and are therefore less accessible.
 Programmers must therefore move their hands more and differently.
-``Emacs Pinky'' is the colloquial name for an RSI common amongst users of the Emacs editor.
-This is a condition that causes pain from the elbow up to the pinky finger, and is coused
-by a phenomenon called ``Ulnar deviation'' which happens when the hand is frequently rotated
+\textit{Emacs Pinky} is the colloquial name for an RSI common amongst users of the Emacs editor.
+This is a condition that causes pain from the elbow up to the pinkie, and is caused
+by a phenomenon called \textit{Ulnar deviation} which happens when the hand is frequently rotated
 outward.
 This creates pressure on the ulnar nerve, and is exactly what happens when you reach for the control key on a standard keyboard,
 which is a very frequent operation in Emacs.
@@ -52,13 +52,13 @@ which is a very frequent operation in Emacs.
 \subsubsection{The Case for Hands-free Input Methods}
 Tools for interacting with the computer other than keyboard and mouse
 are known as alternative input methods.
-These include things like digital pens, touchscreens, eye-trackers, foot pedals, et cetera.
+These include things like digital pens, touch screens, eye-trackers, foot pedals, et cetera.
 Users with severe RSI or other motor impairments might need tools that do not require any physical motion.
 Voice input, which will be the focus of this thesis, has very high potential for efficiency and can be made accessible to a wide variety of users.
 This can be used both for dictating text as well as issuing commands.
 \paragraph{}
 It is my belief that using voice input for programming (``vocal programming'')
-has extremely high potential not only for people with pre-existing conditions, 
+has extremely high potential not only for people with preexisting conditions, 
 but also for able-bodied programmers.
 The goal of vocal programming systems should, in my view, go beyond
 accessibility and aim to make programming more efficient and enjoyable for everyone
@@ -82,12 +82,12 @@ How can modern language tooling be leveraged to make vocal programming more effi
 How can the benefits of structural editors be achieved in text oriented environments for vocal programmers?
 
 \section{Approach}
-The way in which I will be attempting to answer these questions is to
+The way in which I attempted to answer these questions was to
 investigate different tools used by code editors for increasing efficiency
 when programming in a variety of different programming languages.
-The main part of this project is developing a prototype for an extension
-to Talon that will use these tools to make vocal programming more efficient.
-Additionally, I will conduct a user study to evaluate the usefulness and potential
+The main part of this project was developing a prototype for an extension
+to Talon that used these tools to make vocal programming more efficient.
+Additionally, I conducted a user study to evaluate the usefulness and potential
 of this prototype.
 
 \section{Chapter Overview}
@@ -96,9 +96,9 @@ This includes some information on vocal programming as well as technical backgro
 \paragraph{Chapter 3: \nameref{talon}} presents the vocal programming system chosen for this project
 and serves to set the context for the work presented later on.
 \paragraph{Chapter 4: \nameref{methodology_and_evaluation}} discusses possible research methods and explains
-how data collection for this project will be carried out.
+how data collection for this project was carried out.
 \paragraph{Chapter 5: \nameref{the_project}} covers the details of the project and explains
-how the prototype will be built while discussing alternative methods, design goals,
+how the prototype was built while discussing alternative methods, design goals,
 and additional features that are out of scope for this project.
 \paragraph{Chapter 6: \nameref{results}} presents the results from the study and the prototype.
 \paragraph{Chapter 7: \nameref{cha:discussion}} discusses the results of the study.
