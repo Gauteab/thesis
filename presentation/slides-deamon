@@ -1,0 +1,13 @@
+#!/bin/bash
+
+fswatch -o --event Updated *.md | while read num ;
+do
+pandoc -t revealjs -s -o slides.html talk.md -V theme=$THEME -V revealjs-url=./node_modules/reveal.js
+# wait
+# osascript <<EOD
+#     tell application "Google Chrome" to activate
+#     tell application "System Events" to keystroke "r" using command down
+#     tell application "iTerm" to activate
+# EOD
+done
+pandoc -t revealjs -s -o slides.html talk.md -V theme=$THEME -V revealjs-url=./node_modules/reveal.js
