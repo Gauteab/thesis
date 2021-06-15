@@ -105,7 +105,7 @@ x = 5
 
 # My contribution
 
-<a href="https://github.com/Gauteab/talon-tree-sitter-service" target="_blank">talon-tree-sitter-service</a>
+[talon-tree-sitter-service](https://github.com/Gauteab/talon-tree-sitter-service)
 
 # Goals
 
